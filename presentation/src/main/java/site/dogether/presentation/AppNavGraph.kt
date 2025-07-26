@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import site.dogether.presentation.screen.splash.SplashScreen
 
 @Composable
 fun AppNavGraph(
@@ -15,7 +16,7 @@ fun AppNavGraph(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(Screen.Splash.route) { }
+        composable(Screen.Splash.route) { SplashScreen() }
     }
 }
 

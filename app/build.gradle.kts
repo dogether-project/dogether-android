@@ -47,6 +47,9 @@ dependencies {
     // Compose core
     implementation(libs.bundles.compose.core)
 
+    // Orbit
+    implementation(libs.bundles.orbit)
+
     // Koin
     implementation(libs.bundles.koin)
 }
