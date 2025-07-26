@@ -52,4 +52,7 @@ dependencies {
 
     // Koin
     implementation(libs.bundles.koin)
+
+    // Ktor
+    implementation(libs.bundles.ktor)
 }

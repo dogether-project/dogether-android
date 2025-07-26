@@ -69,7 +69,8 @@ konsist = { group = "com.lemonappdev", name = "konsist", version.ref = "konsist"
 
 # Ktor
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
-ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-serialization = { group = "io.ktor", name = "ktor-client-serialization", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
@@ -130,7 +131,8 @@ koin = [
 
 ktor = [
     "ktor-client-core",
-    "ktor-client-okhttp",
+    "ktor-client-cio",
+    "ktor-client-content-negotiation",
     "ktor-client-serialization",
     "ktor-serialization-kotlinx-json",
     "ktor-client-logging"
