@@ -1,4 +1,4 @@
-package site.dogether.android.ui.theme
+package site.dogether.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
