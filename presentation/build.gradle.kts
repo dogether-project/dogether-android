@@ -49,6 +49,9 @@ dependencies {
     // Compose core
     implementation(libs.bundles.compose.core)
 
+    // Orbit
+    implementation(libs.bundles.orbit)
+
     // Navigation
     implementation(libs.bundles.navigation)
 
