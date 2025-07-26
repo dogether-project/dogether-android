@@ -3,7 +3,7 @@
 
     <style name="Theme.DogetherAndroid" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/black</item>
-        <item name="android:windowBackground">@color/black</item>
-        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@color/transparent</item>
+        <item name="android:windowBackground">@color/splash</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@color/splash</item>
     </style>
 </resources>
