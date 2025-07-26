@@ -1,22 +1,26 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "site.dogether.android"
+    namespace = "site.dogether.presentation"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "site.dogether.android"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
     }
 
     buildFeatures {
@@ -36,9 +40,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":presentation"))
     implementation(project(":domain"))
-    implementation(project(":data"))
     implementation(project(":common"))
 
     // Compose BOM
@@ -50,9 +52,9 @@ dependencies {
     // Orbit
     implementation(libs.bundles.orbit)
 
-    // Koin
-    implementation(libs.bundles.koin)
+    // Navigation
+    implementation(libs.bundles.navigation)
 
-    // Ktor
-    implementation(libs.bundles.ktor)
+    // Coil
+    implementation(libs.bundles.coil)
 }
