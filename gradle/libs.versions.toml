@@ -9,6 +9,9 @@ lifecycleRuntimeKtx = "2.9.2"
 activityCompose = "1.10.1"
 composeBom = "2025.07.00"
 
+# Navigation
+navigation = "2.9.2"
+
 # Koin
 koin = "4.1.0"
 
@@ -23,11 +26,6 @@ ktor = "3.2.2"
 
 # Coil
 coil = "2.7.0"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-appcompat = "1.7.1"
-material = "1.12.0"
 jetbrainsKotlinJvm = "2.2.0"
 
 [libraries]
@@ -44,6 +42,10 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+# Navigation
+navigation-runtime = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigation" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 
 # Koin
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
@@ -68,11 +70,8 @@ ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version
 # Coil
 coil-base = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -100,6 +99,11 @@ compose-debug = [
 
 compose-test = [
     "androidx-ui-test-junit4"
+]
+
+navigation = [
+    "navigation-runtime",
+    "navigation-compose"
 ]
 
 kotest = [
