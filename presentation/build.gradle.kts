@@ -57,4 +57,7 @@ dependencies {
 
     // Coil
     implementation(libs.bundles.coil)
+
+    // Compose debug
+    implementation(libs.bundles.compose.debug)
 }

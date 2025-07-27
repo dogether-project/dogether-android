@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 @Composable
 fun DogetherAndroidTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        typography = Typography,
         content = content
     )
 }
