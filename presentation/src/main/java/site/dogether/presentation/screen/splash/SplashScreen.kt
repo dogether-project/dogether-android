@@ -1,13 +1,212 @@
 package site.dogether.presentation.screen.splash
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
+import site.dogether.presentation.R
+import site.dogether.presentation.composables.CTAButton
+import site.dogether.presentation.composables.NegativeCTAButton
+import site.dogether.presentation.theme.Blue300
+import site.dogether.presentation.theme.Body1_R
+import site.dogether.presentation.theme.Grey0
+import site.dogether.presentation.theme.Grey200
+import site.dogether.presentation.theme.Grey700
+import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.LifecycleEvent
+import site.dogether.presentation.utils.isPermissionGranted
 
 @Composable
 fun SplashScreen() {
-    Box(modifier = Modifier.fillMaxSize()) {
+    val viewModel = viewModel<SplashViewModel>()
+    val context = LocalContext.current
 
+    viewModel.collectSideEffect { uiEffect ->
+        when (uiEffect) {
+            is SplashUiEffect.CheckNotificationPermission -> checkNotificationPermission(
+                context = context,
+                onGranted = { viewModel.onPermissionGranted() },
+                onDenied = { viewModel.onPermissionDenied() }
+            )
+
+            is SplashUiEffect.NavigateToNotificationSetting -> navigateToNotificationSetting(context)
+        }
     }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        LifecycleEvent(Lifecycle.Event.ON_START) {
+            viewModel.onStarted()
+        }
+    }
+
+    SplashScreenContents()
+    InitDialog()
+}
+
+@SuppressLint("InlinedApi")
+private fun checkNotificationPermission(
+    context: Context,
+    onGranted: () -> Unit,
+    onDenied: () -> Unit,
+) {
+    if (context.isPermissionGranted(Manifest.permission.POST_NOTIFICATIONS)) {
+        onGranted()
+    } else {
+        onDenied()
+    }
+}
+
+private fun navigateToNotificationSetting(context: Context) {
+    context.startActivity(
+        Intent().apply {
+            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+        }
+    )
+}
+
+@Composable
+private fun SplashScreenContents() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            modifier = Modifier.align(Alignment.Center),
+            painter = painterResource(R.drawable.ic_splash),
+            contentDescription = "icon_splash"
+        )
+    }
+}
+
+@Composable
+private fun InitDialog() {
+    val uiState = viewModel<SplashViewModel>().collectAsState().value
+
+    if (uiState.isPermissionDialogShowing) {
+        PermissionDialog()
+    }
+}
+
+@Composable
+private fun PermissionDialog() {
+    val viewModel = viewModel<SplashViewModel>()
+
+    Dialog(
+        onDismissRequest = { viewModel.onPermissionDialogDismissRequested() },
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .fillMaxWidth()
+                .background(Grey700)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(
+                        start = 20.dp,
+                        end = 20.dp,
+                        top = 32.dp,
+                        bottom = 24.dp
+                    )
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_notice),
+                    tint = Blue300,
+                    contentDescription = "icon_notice"
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 12.dp),
+                    text = stringResource(R.string.dialog_title_permission),
+                    style = Head1_B,
+                    color = Grey0
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 8.dp),
+                    text = stringResource(R.string.dialog_body_permission),
+                    style = Body1_R,
+                    color = Grey200,
+                    textAlign = TextAlign.Center
+                )
+
+                Row(
+                    modifier = Modifier
+                        .padding(top = 20.dp)
+                        .fillMaxWidth()
+                ) {
+                    NegativeCTAButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp),
+                        text = stringResource(R.string.dialog_button_later),
+                        radius = 8.dp,
+                        onClick = { viewModel.onPermissionDialogDismissRequested() }
+                    )
+
+                    Spacer(modifier = Modifier.width(11.dp))
+
+                    CTAButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp),
+                        text = stringResource(R.string.dialog_button_settings),
+                        isEnabled = true,
+                        radius = 8.dp,
+                        onClick = { viewModel.onClickNavigateToNotificationSetting() }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PermissionDialogPreview() {
+    PermissionDialog()
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SplashScreenPreview() {
+    SplashScreenContents()
 }

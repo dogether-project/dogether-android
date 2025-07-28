@@ -1,9 +1,11 @@
 package site.dogether.presentation.screen.splash
 
 data class SplashUiState(
-    val isLoading: Boolean = false,
+    val isPermissionDialogShowing: Boolean = false
 )
 
 sealed interface SplashUiEffect {
+    data object CheckNotificationPermission : SplashUiEffect
 
+    data object NavigateToNotificationSetting : SplashUiEffect
 }
