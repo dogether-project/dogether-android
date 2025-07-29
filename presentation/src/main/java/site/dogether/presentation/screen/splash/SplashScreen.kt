@@ -9,14 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.compose.koinViewModel
 import site.dogether.presentation.R
 import site.dogether.presentation.utils.LifecycleEvent
 
 @Composable
-fun SplashScreen() {
-    val viewModel = viewModel<SplashViewModel>()
-
+fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
     LifecycleEvent(Lifecycle.Event.ON_START) {
         viewModel.onEvent(SplashUiEvent.Lifecycle.OnStart)
     }
