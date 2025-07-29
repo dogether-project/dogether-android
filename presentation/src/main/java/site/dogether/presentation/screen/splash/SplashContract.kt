@@ -4,8 +4,12 @@ data class SplashUiState(
     val isPermissionDialogShowing: Boolean = false
 )
 
-sealed interface SplashUiEffect {
-    data object CheckNotificationPermission : SplashUiEffect
+sealed interface SplashUiEvent {
+    sealed interface Lifecycle : SplashUiEvent {
+        data object OnStart : Lifecycle
+    }
+}
 
-    data object NavigateToNotificationSetting : SplashUiEffect
+sealed interface SplashUiEffect {
+
 }

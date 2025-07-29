@@ -1,78 +1,59 @@
 package site.dogether.presentation.screen.splash
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
-import site.dogether.presentation.composables.CTAButton
-import site.dogether.presentation.composables.NegativeCTAButton
-import site.dogether.presentation.theme.Body1_R
-import site.dogether.presentation.theme.ColorBgSurface
-import site.dogether.presentation.theme.ColorIconPrimary
-import site.dogether.presentation.theme.ColorTextDefault
-import site.dogether.presentation.theme.ColorTextSubtle
-import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.LifecycleEvent
-import site.dogether.presentation.utils.isPermissionGranted
 
 @Composable
 fun SplashScreen() {
     val viewModel = viewModel<SplashViewModel>()
-    val context = LocalContext.current
 
-    viewModel.collectSideEffect { uiEffect ->
-        when (uiEffect) {
-            is SplashUiEffect.CheckNotificationPermission -> checkNotificationPermission(
-                context = context,
-                onGranted = { viewModel.onPermissionGranted() },
-                onDenied = { viewModel.onPermissionDenied() }
-            )
-
-            is SplashUiEffect.NavigateToNotificationSetting -> navigateToNotificationSetting(context)
-        }
-    }
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        LifecycleEvent(Lifecycle.Event.ON_START) {
-            viewModel.onStarted()
-        }
+    LifecycleEvent(Lifecycle.Event.ON_START) {
+        viewModel.onEvent(SplashUiEvent.Lifecycle.OnStart)
     }
 
     SplashScreenContents()
-    InitDialog()
+}
+
+@Composable
+private fun SplashScreenContents() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            modifier = Modifier.align(Alignment.Center),
+            painter = painterResource(R.drawable.ic_splash),
+            contentDescription = "icon_splash"
+        )
+    }
+}
+
+/*
+val context = LocalContext.current
+
+viewModel.collectSideEffect { uiEffect ->
+    when (uiEffect) {
+        is SplashUiEffect.CheckNotificationPermission -> checkNotificationPermission(
+            context = context,
+            onGranted = { viewModel.onPermissionGranted() },
+            onDenied = { viewModel.onPermissionDenied() }
+        )
+
+        is SplashUiEffect.NavigateToNotificationSetting -> navigateToNotificationSetting(context)
+    }
+}
+
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    LifecycleEvent(Lifecycle.Event.ON_START) {
+        viewModel.onStarted()
+    }
 }
 
 @SuppressLint("InlinedApi")
@@ -95,17 +76,6 @@ private fun navigateToNotificationSetting(context: Context) {
             putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
         }
     )
-}
-
-@Composable
-private fun SplashScreenContents() {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            modifier = Modifier.align(Alignment.Center),
-            painter = painterResource(R.drawable.ic_splash),
-            contentDescription = "icon_splash"
-        )
-    }
 }
 
 @Composable
@@ -204,6 +174,8 @@ private fun PermissionDialog() {
 private fun PermissionDialogPreview() {
     PermissionDialog()
 }
+
+ */
 
 @Preview(showBackground = true)
 @Composable

@@ -1,41 +1,27 @@
 package site.dogether.presentation.screen.splash
 
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
+import site.dogether.presentation.base.BaseViewModel
 
-class SplashViewModel :
-    ContainerHost<SplashUiState, SplashUiEffect>,
-    ViewModel() {
+class SplashViewModel : BaseViewModel<SplashUiState, SplashUiEvent, SplashUiEffect>(SplashUiState()) {
 
     override val container: Container<SplashUiState, SplashUiEffect> = container(SplashUiState())
 
-    fun onStarted() = intent {
-        postSideEffect(SplashUiEffect.CheckNotificationPermission)
-    }
+    override fun onEvent(event: SplashUiEvent) {
+        when (event) {
+            is SplashUiEvent.Lifecycle -> {
+                when(event) {
+                    is SplashUiEvent.Lifecycle.OnStart -> {
+                        viewModelScope.launch {
 
-    fun onPermissionGranted() = intent {
-
-    }
-
-    fun onPermissionDenied() = intent {
-        reduce {
-            state.copy(isPermissionDialogShowing = true)
+                        }
+                    }
+                }
+            }
         }
-    }
-
-    fun onPermissionDialogDismissRequested() = intent {
-        reduce {
-            state.copy(isPermissionDialogShowing = false)
-        }
-    }
-
-    fun onClickNavigateToNotificationSetting() = intent {
-        reduce {
-            state.copy(isPermissionDialogShowing = false)
-        }
-
-        postSideEffect(SplashUiEffect.NavigateToNotificationSetting)
     }
 }
