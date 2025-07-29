@@ -55,6 +55,9 @@ dependencies {
     // Navigation
     implementation(libs.bundles.navigation)
 
+    // Koin
+    implementation(libs.bundles.koin)
+
     // Coil
     implementation(libs.bundles.coil)
 
