@@ -17,12 +17,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import site.dogether.presentation.R
-import site.dogether.presentation.theme.Blue300
 import site.dogether.presentation.theme.Body1_B
-import site.dogether.presentation.theme.Grey300
-import site.dogether.presentation.theme.Grey400
-import site.dogether.presentation.theme.Grey500
-import site.dogether.presentation.theme.Grey800
+import site.dogether.presentation.theme.ColorBgDisabled
+import site.dogether.presentation.theme.ColorBgPrimary
+import site.dogether.presentation.theme.ColorTextBlack
+import site.dogether.presentation.theme.ColorTextDisabled
+import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.conditionedClickableWithoutRipple
 
@@ -32,20 +32,20 @@ fun CTAButton(
     isEnabled: Boolean = true,
     radius: Dp = 12.dp,
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier.then(
             Modifier
                 .clip(RoundedCornerShape(radius))
-                .background(if (isEnabled) Blue300 else Grey500)
+                .background(if (isEnabled) ColorBgPrimary else ColorBgDisabled)
                 .conditionedClickableWithoutRipple(isEnabled) { onClick() })
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = text,
             style = Body1_B,
-            color = if (isEnabled) Grey800 else Grey400
+            color = if (isEnabled) ColorTextBlack else ColorTextDisabled
         )
     }
 }
@@ -68,25 +68,20 @@ fun NegativeCTAButton(
     modifier: Modifier,
     text: String,
     radius: Dp = 12.dp,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier.then(
             Modifier
                 .clip(RoundedCornerShape(radius))
-                .background(Transparent)
-                .border(
-                    width = 1.dp,
-                    shape = RoundedCornerShape(radius),
-                    color = Grey500
-                )
+                .background(ColorBgDisabled)
                 .clickableWithoutRipple { onClick() })
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = text,
             style = Body1_B,
-            color = Grey300
+            color = ColorTextSubtle
         )
     }
 }

@@ -50,3 +50,4 @@ val ColorTextDisabled = Grey400
 val ColorTextPrimary = Blue300
 val ColorTextError = Red400
 val ColorTextInverse = Grey800
+val ColorTextBlack = Grey900
