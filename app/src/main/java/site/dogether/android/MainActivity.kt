@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowInsetsControllerCompat
 import site.dogether.presentation.AppNavGraph
+import site.dogether.presentation.theme.ColorBgDefault
 import site.dogether.presentation.theme.DogetherAndroidTheme
-import site.dogether.presentation.theme.Grey900
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Grey900)
+                        .background(ColorBgDefault)
                         .statusBarsPadding()
                         .navigationBarsPadding()
                 ) {

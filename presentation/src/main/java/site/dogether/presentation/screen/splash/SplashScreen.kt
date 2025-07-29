@@ -39,11 +39,11 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.NegativeCTAButton
-import site.dogether.presentation.theme.Blue300
 import site.dogether.presentation.theme.Body1_R
-import site.dogether.presentation.theme.Grey0
-import site.dogether.presentation.theme.Grey200
-import site.dogether.presentation.theme.Grey700
+import site.dogether.presentation.theme.ColorBgSurface
+import site.dogether.presentation.theme.ColorIconPrimary
+import site.dogether.presentation.theme.ColorTextDefault
+import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.isPermissionGranted
@@ -134,7 +134,7 @@ private fun PermissionDialog() {
                 .padding(horizontal = 16.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .fillMaxWidth()
-                .background(Grey700)
+                .background(ColorBgSurface)
         ) {
             Column(
                 modifier = Modifier
@@ -149,7 +149,7 @@ private fun PermissionDialog() {
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_notice),
-                    tint = Blue300,
+                    tint = ColorIconPrimary,
                     contentDescription = "icon_notice"
                 )
 
@@ -157,14 +157,14 @@ private fun PermissionDialog() {
                     modifier = Modifier.padding(top = 12.dp),
                     text = stringResource(R.string.dialog_title_permission),
                     style = Head1_B,
-                    color = Grey0
+                    color = ColorTextDefault
                 )
 
                 Text(
                     modifier = Modifier.padding(top = 8.dp),
                     text = stringResource(R.string.dialog_body_permission),
                     style = Body1_R,
-                    color = Grey200,
+                    color = ColorTextSubtle,
                     textAlign = TextAlign.Center
                 )
 

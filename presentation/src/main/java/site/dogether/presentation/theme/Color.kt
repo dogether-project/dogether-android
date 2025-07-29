@@ -19,5 +19,35 @@ val Blue200 = Color(0xFF56A5FF)
 val Blue300 = Color(0xFF56A5FF)
 val Blue400 = Color(0xFF3E8AE1)
 
-val Red = Color(0xFFFB5171)
+val Red400 = Color(0xFFFB5171)
 val Yellow = Color(0xFFEDD16F)
+
+val ColorBgDefault = Grey900
+val ColorBgElevated = Grey800
+val ColorBgSurface = Grey700
+val ColorBgDisabled = Grey500
+val ColorBgPrimary = Blue300
+val ColorBgInverse = Grey50
+
+val ColorIconDefault = Grey0
+val ColorIconElevated = Grey200
+val ColorIconSecondary = Grey400
+val ColorIconDisabled = Grey600
+val ColorIconPrimary = Blue300
+val colorIconError = Red400
+
+val ColorBorderDefault = Grey0
+val ColorBorderElevated = Grey200
+val ColorBorderSecondary = Grey400
+val ColorBorderDisabled = Grey600
+val ColorBorderPrimary = Blue300
+val ColorBorderError = Red400
+
+val ColorTextDefault = Grey0
+val ColorTextSubtle = Grey200
+val ColorTextSecondary = Grey300
+val ColorTextDisabled = Grey400
+val ColorTextPrimary = Blue300
+val ColorTextError = Red400
+val ColorTextInverse = Grey800
+val ColorTextBlack = Grey900
