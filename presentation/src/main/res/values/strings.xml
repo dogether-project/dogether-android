@@ -1,8 +1,14 @@
 <resources>
+    <string name="title_force_update">두게더가 새로워졌어요!</string>
+
+    <string name="body_force_update">두게더가 유저분들의 의견을 반영하여\n더 편하게 사용하도록 사용성을 개선했어요.\n지금 바로 업데이트하고 인증하러 가요!</string>
+
     <string name="dialog_title_permission">알림 권한이 꺼져 있어요.</string>
 
     <string name="dialog_body_permission">팀원들의 인증을 놓칠 수도 있어요!\n검사를 위해 설정에서 알림 권한을 켜주세요.</string>
 
     <string name="dialog_button_later">나중에</string>
     <string name="dialog_button_settings">설정 열기</string>
+
+    <string name="cta_button_force_update">업데이트 하러가기</string>
 </resources>
