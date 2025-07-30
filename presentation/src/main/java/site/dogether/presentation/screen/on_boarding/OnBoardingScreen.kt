@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.on_boarding
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +31,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import org.koin.androidx.compose.koinViewModel
-import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.CTAButton
@@ -62,6 +62,25 @@ private val pageList: List<OnBoardingPageItem> = listOf(
 
 @Composable
 fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
+    val context = LocalContext.current
+
+    viewModel.collectSideEffect { uiEffect ->
+        when (uiEffect) {
+            is OnBoardingUiEffect.LoginWithKakao -> {
+                loginWithKakao(
+                    context = context,
+                    onSuccess = { name, idToken ->
+                        onSuccessKakaoLogin(
+                            name = name,
+                            idToken = idToken
+                        )
+                    },
+                    onError = { throwable -> onErrorKakaoLogin(throwable) }
+                )
+            }
+        }
+    }
+
     OnBoardingScreenContents(
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
@@ -178,15 +197,30 @@ private fun OnBoardingScreenContents(
             }
         }
 
-        CTAButton(
+        Row(
             modifier = Modifier
                 .padding(bottom = 16.dp)
+                .clip(RoundedCornerShape(8.dp))
                 .fillMaxWidth()
-                .height(50.dp),
-            radius = 8.dp,
-            text = stringResource(R.string.cta_button_kakao_login),
-            onClick = { onEvent(OnBoardingUiEvent.Click.OnClickKakaoLogin) }
-        )
+                .height(50.dp)
+                .background(ColorKakaoYellow)
+                .clickableWithoutRipple { viewModel.onEvent(OnBoardingUiEvent.Click.OnClickKakaoLogin) },
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_kakao),
+                tint = ColorKakaoLogo,
+                contentDescription = "icon_kakao"
+            )
+
+            Text(
+                modifier = Modifier.padding(start = 8.dp),
+                text = stringResource(R.string.cta_button_kakao_login),
+                style = Body1_S,
+                color = ColorKakaoLabel
+            )
+        }
     }
 }
 

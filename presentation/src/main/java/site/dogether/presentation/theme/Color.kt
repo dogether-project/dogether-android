@@ -55,3 +55,7 @@ val ColorTextInverse = Grey800
 val ColorTextBlack = Grey900
 
 val ColorShadow = Grey900.copy(alpha = 0.3f)
+
+val ColorKakaoYellow = Color(0xFFFEE500)
+val ColorKakaoLogo = Color(0xFF000000)
+val ColorKakaoLabel = Color(0xD9000000)
