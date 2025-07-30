@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import site.dogether.presentation.screen.force_update.ForceUpdateScreen
+import site.dogether.presentation.screen.on_boarding.OnBoardingScreen
 import site.dogether.presentation.screen.splash.SplashScreen
 
 @Composable
@@ -19,10 +20,12 @@ fun AppNavGraph(
     ) {
         composable(Screen.Splash.route) { SplashScreen() }
         composable(Screen.ForceUpdate.route) { ForceUpdateScreen() }
+        composable(Screen.OnBoarding.route) { OnBoardingScreen() }
     }
 }
 
 enum class Screen(val route: String) {
     Splash("splash"),
     ForceUpdate("force_update"),
+    OnBoarding("on_boarding"),
 }
