@@ -10,7 +10,7 @@ class OnBoardingViewModel : BaseViewModel<OnBoardingUiState, OnBoardingUiEvent, 
             is OnBoardingUiEvent.Click -> {
                 when (event) {
                     is OnClickKakaoLogin -> {
-
+                        postEffect(OnBoardingUiEffect.LoginWithKakao)
                     }
                 }
             }

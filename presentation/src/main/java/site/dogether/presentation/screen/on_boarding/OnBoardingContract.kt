@@ -11,5 +11,5 @@ sealed interface OnBoardingUiEvent {
 }
 
 sealed interface OnBoardingUiEffect {
-
+    object LoginWithKakao : OnBoardingUiEffect
 }

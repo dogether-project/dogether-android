@@ -20,13 +20,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.user.UserApiClient
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.screen.on_boarding.model.OnBoardingPageItem
@@ -61,6 +66,55 @@ fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
+}
+
+private fun loginWithKakao(
+    context: Context,
+    onSuccess: (String, String) -> Unit,
+    onError: (Throwable) -> Unit
+) {
+    val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+        error?.let { throwable ->
+            onError(throwable)
+        } ?: run {
+            token?.let {
+                val idToken = token.idToken ?: ""
+                UserApiClient.instance.me { user, meError ->
+                    meError?.let {
+                        onError(meError)
+                    } ?: run {
+                        user?.let {
+                            val name = user.kakaoAccount?.profile?.nickname ?: ""
+                            onSuccess(name, idToken)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
+        UserApiClient.instance.loginWithKakaoTalk(
+            context = context,
+            callback = callback
+        )
+    } else {
+        UserApiClient.instance.loginWithKakaoAccount(
+            context = context,
+            callback = callback
+        )
+    }
+}
+
+private fun onSuccessKakaoLogin(
+    name: String,
+    idToken: String
+) {
+
+}
+
+private fun onErrorKakaoLogin(throwable: Throwable) {
+
 }
 
 @Composable
