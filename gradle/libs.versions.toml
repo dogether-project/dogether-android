@@ -31,6 +31,9 @@ ktor = "3.2.2"
 coil = "2.7.0"
 jetbrainsKotlinJvm = "2.2.0"
 
+# Kakao
+kakao = "2.21.5"
+
 [libraries]
 # AndroidX / Compose
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -78,6 +81,9 @@ ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version
 # Coil
 coil-base = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+
+# Kakao
+kakao = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

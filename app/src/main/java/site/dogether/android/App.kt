@@ -1,6 +1,7 @@
 package site.dogether.android
 
 import android.app.Application
+import com.kakao.sdk.common.KakaoSdk
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 import site.dogether.android.di.appModule
@@ -13,5 +14,7 @@ class App : Application() {
             androidContext(this@App)
             modules(appModule)
         }
+
+        KakaoSdk.init(this, "")
     }
 }

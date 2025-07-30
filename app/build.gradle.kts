@@ -53,6 +53,9 @@ dependencies {
     // Koin
     implementation(libs.bundles.koin)
 
+    // Kakao
+    implementation(libs.kakao)
+
     // Ktor
     implementation(libs.bundles.ktor)
 }
