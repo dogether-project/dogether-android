@@ -18,7 +18,9 @@ import site.dogether.presentation.screen.splash.SplashViewModel
 val viewModelModule = module {
     viewModel { SplashViewModel() }
     viewModel { ForceUpdateViewModel() }
-    viewModel { OnBoardingViewModel() }
+    viewModel {
+        OnBoardingViewModel(loginWithKakaoUseCase = get())
+    }
     viewModel { ParticipationMethodViewModel() }
     viewModel { CreateGroupViewModel() }
     viewModel { GroupCreatedViewModel() }

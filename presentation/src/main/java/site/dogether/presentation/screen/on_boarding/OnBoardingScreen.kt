@@ -69,12 +69,14 @@ fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
                 loginWithKakao(
                     context = context,
                     onSuccess = { name, idToken ->
-                        onSuccessKakaoLogin(
-                            name = name,
-                            idToken = idToken
+                        viewModel.onEvent(
+                            OnBoardingUiEvent.Callback.OnSuccessKakaoLogin(
+                                name = name,
+                                idToken = idToken
+                            )
                         )
                     },
-                    onError = { throwable -> onErrorKakaoLogin(throwable) }
+                    onError = { throwable -> viewModel.onEvent(OnBoardingUiEvent.Callback.OnErrorKakaoLogin(throwable)) }
                 )
             }
         }
@@ -122,17 +124,6 @@ private fun loginWithKakao(
             callback = callback
         )
     }
-}
-
-private fun onSuccessKakaoLogin(
-    name: String,
-    idToken: String
-) {
-
-}
-
-private fun onErrorKakaoLogin(throwable: Throwable) {
-
 }
 
 @Composable
