@@ -15,6 +15,6 @@ class App : Application() {
             modules(appModule)
         }
 
-        KakaoSdk.init(this, "")
+        KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY)
     }
 }

@@ -33,7 +33,6 @@ import com.kakao.sdk.user.UserApiClient
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
-import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.screen.on_boarding.model.OnBoardingPageItem
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.ColorIconDefault
@@ -90,7 +89,7 @@ fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
 private fun loginWithKakao(
     context: Context,
     onSuccess: (String, String) -> Unit,
-    onError: (Throwable) -> Unit
+    onError: (Throwable) -> Unit,
 ) {
     val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         error?.let { throwable ->
