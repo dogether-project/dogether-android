@@ -1,7 +1,6 @@
 package site.dogether.presentation.composables
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -96,4 +94,41 @@ private fun NegativeCTAButtonPreview() {
         text = stringResource(R.string.dialog_button_later),
         onClick = {}
     )
+}
+
+@Composable
+fun TopBar(
+    start: (@Composable () -> Unit)? = null,
+    center: (@Composable () -> Unit)? = null,
+    end: (@Composable () -> Unit)? = null,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+    ) {
+        start?.let {
+            Box(modifier = Modifier.align(Alignment.CenterStart)) {
+                start()
+            }
+        }
+
+        center?.let {
+            Box(modifier = Modifier.align(Alignment.Center)) {
+                center()
+            }
+        }
+
+        end?.let {
+            Box(modifier = Modifier.align(Alignment.CenterEnd)) {
+                end()
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TopBarPreview() {
+    TopBar()
 }
