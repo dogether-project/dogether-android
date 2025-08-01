@@ -1,7 +1,6 @@
 package site.dogether.data.utils
 
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
@@ -9,12 +8,19 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
+import kotlinx.serialization.json.Json
 import site.dogether.common.exception.NetworkErrorException
 import site.dogether.common.exception.NetworkFailureException
 import site.dogether.data.model.DataMapper
 import site.dogether.data.model.DataModel
 import site.dogether.data.remote.ApiRoutes
+import site.dogether.data.remote.model.res.user.BaseResponse
 import site.dogether.domain.model.DomainModel
+
+val json = Json {
+    ignoreUnknownKeys = true
+    prettyPrint = true
+}
 
 fun createUrl(apiRoute: String): String = "${ApiRoutes.BASE_URL}/$apiRoute"
 
@@ -30,11 +36,22 @@ suspend inline fun <reified T> safeApiCall(
     return try {
         val response = apiCall()
         if (response.status.isSuccess()) {
-            val body = response.body<T>()
-            Result.success(body)
+            val text = response.bodyAsText()
+            val baseResponse = json.decodeFromString<BaseResponse<T>>(text)
+            val data = baseResponse.data
+            if (data != null) {
+                Result.success(data)
+            } else {
+                Result.failure(IllegalStateException("Response body 'data' is null"))
+            }
         } else {
             val errorBody = response.bodyAsText()
-            Result.failure(NetworkFailureException(response.status.value, errorBody))
+            Result.failure(
+                NetworkFailureException(
+                    code = response.status.value,
+                    message = json.decodeFromString<BaseResponse<Nothing>>(errorBody).message
+                )
+            )
         }
     } catch (e: Throwable) {
         Result.failure(NetworkErrorException(e))
