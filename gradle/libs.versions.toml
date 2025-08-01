@@ -21,6 +21,9 @@ koin = "4.1.0"
 # Kotest
 kotest = "5.9.1"
 
+# Mockk
+mockk = "1.13.8"
+
 # Konsist
 konsist = "0.17.3"
 
@@ -66,6 +69,9 @@ koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compos
 kotest-runner-junit5 = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest" }
 kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
 kotest-framework-engine = { group = "io.kotest", name = "kotest-framework-engine", version.ref = "kotest" }
+
+# Mockk
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk"}
 
 # Kotlin reflect
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }

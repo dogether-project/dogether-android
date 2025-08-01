@@ -8,6 +8,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
 kotlin {
     compilerOptions {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
@@ -16,4 +20,7 @@ kotlin {
 
 dependencies {
     implementation(project(":common"))
+
+    testImplementation(libs.bundles.kotest)
+    testImplementation(libs.mockk)
 }
