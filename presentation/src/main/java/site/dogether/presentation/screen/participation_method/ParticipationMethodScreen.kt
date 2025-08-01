@@ -330,6 +330,6 @@ private fun PermissionDialogPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun ParticipationMethodScreenPreview() {
+private fun ParticipationMethodScreenContentsPreview() {
     ParticipationMethodScreenContents()
 }
