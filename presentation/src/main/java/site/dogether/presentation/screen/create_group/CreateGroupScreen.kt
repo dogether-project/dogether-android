@@ -1,10 +1,12 @@
 package site.dogether.presentation.screen.create_group
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,7 +35,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
@@ -40,11 +42,14 @@ import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.screen.create_group.model.CreateGroupPageItem
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_S
+import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.Body2_S
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgSurface
+import site.dogether.presentation.theme.ColorBorderPrimary
 import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorIconElevated
+import site.dogether.presentation.theme.ColorIconPrimary
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.theme.ColorTextSecondary
@@ -260,7 +265,176 @@ private fun SchedulePageContents(
     viewModel: CreateGroupViewModel = koinViewModel(),
     ctaButtonText: String
 ) {
+    val uiState = viewModel.collectAsState().value
 
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(R.string.input_title_period),
+                style = Body1_B,
+                color = ColorTextSubtle
+            )
+
+            Row(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                PeriodButton(
+                    period = 3,
+                    selectedPeriod = uiState.period,
+                    onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickPeriod(3)) }
+                )
+
+                PeriodButton(
+                    period = 7,
+                    selectedPeriod = uiState.period,
+                    onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickPeriod(7)) }
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                PeriodButton(
+                    period = 14,
+                    selectedPeriod = uiState.period,
+                    onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickPeriod(14)) }
+                )
+
+                PeriodButton(
+                    period = 28,
+                    selectedPeriod = uiState.period,
+                    onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickPeriod(28)) }
+                )
+            }
+
+            Text(
+                modifier = Modifier.padding(top = 20.dp),
+                text = stringResource(R.string.input_title_launch_date),
+                style = Body1_B,
+                color = ColorTextSubtle
+            )
+
+            Row(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                LaunchFromButton(
+                    isLaunchFromToday = true,
+                    isLaunchFromTodayState = uiState.isLaunchFromToday,
+                    onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickLaunchFrom(true)) }
+                )
+
+                LaunchFromButton(
+                    isLaunchFromToday = false,
+                    isLaunchFromTodayState = uiState.isLaunchFromToday,
+                    onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickLaunchFrom(false)) }
+                )
+            }
+        }
+
+        CTAButton(
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .fillMaxWidth()
+                .height(50.dp),
+            radius = 8.dp,
+            text = ctaButtonText,
+            onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickNext) }
+        )
+    }
+}
+
+@Composable
+private fun RowScope.PeriodButton(
+    period: Int,
+    selectedPeriod: Int,
+    onClick: () -> Unit
+) {
+    val isSelected = period == selectedPeriod
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .weight(1f)
+            .background(ColorBgElevated)
+            .border(
+                width = (1.5).dp,
+                color = if (isSelected) ColorBorderPrimary else Color.Transparent,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(
+                start = 16.dp,
+                top = 12.dp,
+                bottom = 12.dp
+            )
+            .clickableWithoutRipple { onClick() }
+    ) {
+        Text(
+            modifier = Modifier.align(Alignment.CenterStart),
+            text = if (period < 7) {
+                "$period" + stringResource(R.string.unit_day)
+            } else {
+                "${period / 7}" + stringResource(R.string.unit_week)
+            },
+            style = Body1_B.copy(lineHeightStyle = LineHeightStyle.Default),
+            color = if (isSelected) ColorTextPrimary else ColorTextDefault
+        )
+    }
+}
+
+@Composable
+private fun RowScope.LaunchFromButton(
+    isLaunchFromToday: Boolean,
+    isLaunchFromTodayState: Boolean,
+    onClick: () -> Unit
+) {
+    val isSelected = isLaunchFromToday == isLaunchFromTodayState
+
+    Column(
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .weight(1f)
+            .background(ColorBgElevated)
+            .border(
+                width = (1.5).dp,
+                color = if (isSelected) ColorBorderPrimary else Color.Transparent,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(
+                top = 26.dp,
+                bottom = 26.dp,
+                start = 20.dp,
+            )
+            .clickableWithoutRipple { onClick() }
+    ) {
+        Icon(
+            painter = painterResource(if (isLaunchFromToday) R.drawable.ic_launch_from_today else R.drawable.ic_launch_from_tomorrow),
+            tint = if (isSelected) ColorIconPrimary else ColorIconDefault,
+            contentDescription = "icon_launch_From"
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 10.dp),
+            text = stringResource(if (isLaunchFromToday) R.string.cta_button_title_launch_from_today else R.string.cta_button_title_launch_from_tomorrow),
+            style = Body1_B.copy(lineHeightStyle = LineHeightStyle.Default),
+            color = if (isSelected) ColorTextPrimary else ColorTextDefault
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 12.dp),
+            text = stringResource(if (isLaunchFromToday) R.string.cta_button_body_launch_from_today else R.string.cta_button_body_launch_from_tomorrow),
+            style = Body2_R,
+            color = if (isSelected) ColorTextPrimary else ColorTextDefault
+        )
+    }
 }
 
 @Composable

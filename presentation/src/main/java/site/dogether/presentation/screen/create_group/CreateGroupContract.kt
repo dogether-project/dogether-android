@@ -7,7 +7,9 @@ data class CreateGroupUiState(
     val isLoading: Boolean = false,
     val currentPage: Int = 0,
     val groupName: String = "",
-    val memberLimit: Int = 10
+    val memberLimit: Int = 10,
+    val period: Int = 3,
+    val isLaunchFromToday: Boolean = true
 )
 
 sealed interface CreateGroupUiEvent {
@@ -21,6 +23,10 @@ sealed interface CreateGroupUiEvent {
         data object OnClickPlusMemberLimit : Click
 
         data object OnClickNext : Click
+
+        data class OnClickPeriod(val period: Int) : Click
+
+        data class OnClickLaunchFrom(val isLaunchFromToday: Boolean) : Click
     }
 }
 

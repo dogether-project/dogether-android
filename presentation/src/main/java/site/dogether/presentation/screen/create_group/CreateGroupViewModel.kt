@@ -33,6 +33,14 @@ class CreateGroupViewModel : BaseViewModel<CreateGroupUiState, CreateGroupUiEven
                     is CreateGroupUiEvent.Click.OnClickNext -> {
                         updateState { it.copy(currentPage = it.currentPage + 1) }
                     }
+
+                    is CreateGroupUiEvent.Click.OnClickPeriod -> {
+                        updateState { it.copy(period = event.period) }
+                    }
+
+                    is CreateGroupUiEvent.Click.OnClickLaunchFrom -> {
+                        updateState { it.copy(isLaunchFromToday = event.isLaunchFromToday) }
+                    }
                 }
             }
         }

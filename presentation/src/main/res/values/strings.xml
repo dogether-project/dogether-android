@@ -31,13 +31,13 @@
 
     <string name="cta_button_title_create_group">그룹 만들기</string>
     <string name="cta_button_title_participate_with_code">초대 코드로 참여하기</string>
-    <string name="cta_button_title_launch_today">오늘 시작</string>
-    <string name="cta_button_title_launch_tomorrow">내일 시작</string>
+    <string name="cta_button_title_launch_from_today">오늘 시작</string>
+    <string name="cta_button_title_launch_from_tomorrow">내일 시작</string>
 
     <string name="cta_button_body_create_group">그룹을 만들고 그룹원을 초대해보세요</string>
     <string name="cta_button_body_participate_with_code">그룹원에게 받은 초대 코드로 참여하세요</string>
-    <string name="cta_button_body_launch_today">오늘부터 실천!\n지금 바로 시작하기</string>
-    <string name="cta_button_body_launch_tomorrow">조금 더 준비하고,\n내일부터 시작하기</string>
+    <string name="cta_button_body_launch_from_today">오늘부터 실천!\n지금 바로 시작하기</string>
+    <string name="cta_button_body_launch_from_tomorrow">조금 더 준비하고,\n내일부터 시작하기</string>
 
     <string name="input_title_group_name">그룹명</string>
     <string name="input_title_group_member_limit">그룹 인원</string>
@@ -48,4 +48,6 @@
 
     <string name="unit_prefix_whole">총</string>
     <string name="unit_member">명</string>
+    <string name="unit_day">일</string>
+    <string name="unit_week">주</string>
 </resources>
