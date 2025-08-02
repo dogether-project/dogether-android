@@ -72,10 +72,7 @@ private fun OnBoardingScreenContents(viewModel: OnBoardingViewModel = koinViewMo
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            val pagerState = rememberPagerState(
-                initialPage = 0,
-                pageCount = { pageList.size }
-            )
+            val pagerState = rememberPagerState { pageList.size }
 
             Column(
                 modifier = Modifier.align(Alignment.Center),

@@ -122,13 +122,7 @@ private fun ParticipationMethodScreenContents(viewModel: ParticipationMethodView
                         contentDescription = "icon_arrow_back"
                     )
                 },
-                center = {
-                    Text(
-                        text = stringResource(R.string.title_add_new_group),
-                        style = Head2_B,
-                        color = ColorTextDefault,
-                    )
-                }
+                centerText = stringResource(R.string.title_add_new_group),
             )
         } else {
             TopBar(

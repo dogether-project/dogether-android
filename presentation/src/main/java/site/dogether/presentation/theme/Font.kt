@@ -5,6 +5,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import site.dogether.presentation.R
 import site.dogether.presentation.R.font.pretendard_extra_light
@@ -30,8 +31,12 @@ val Emphasis1_B: TextStyle
             fontFamily = Pretendard,
             fontWeight = FontWeight.Bold,
             fontSize = fontSize,
-            lineHeight = fontSize,
-            letterSpacing = -(fontSize * 0.02f)
+            lineHeight = 36.dp.toSp(),
+            letterSpacing = -(fontSize * 0.02f),
+            lineHeightStyle = LineHeightStyle.Default.copy(
+                alignment = LineHeightStyle.Alignment.Top,
+                trim = LineHeightStyle.Trim.None
+            )
         )
     }
 
@@ -44,7 +49,11 @@ val Emphasis2_B: TextStyle
             fontWeight = FontWeight.Bold,
             fontSize = fontSize,
             lineHeight = 45.dp.toSp(),
-            letterSpacing = -(fontSize * 0.02f)
+            letterSpacing = -(fontSize * 0.02f),
+            lineHeightStyle = LineHeightStyle.Default.copy(
+                alignment = LineHeightStyle.Alignment.Top,
+                trim = LineHeightStyle.Trim.None
+            )
         )
     }
 
@@ -57,7 +66,11 @@ val Head1_B: TextStyle
             fontWeight = FontWeight.Bold,
             fontSize = fontSize,
             lineHeight = 36.dp.toSp(),
-            letterSpacing = -(fontSize * 0.02f)
+            letterSpacing = -(fontSize * 0.02f),
+            lineHeightStyle = LineHeightStyle.Default.copy(
+                alignment = LineHeightStyle.Alignment.Top,
+                trim = LineHeightStyle.Trim.None
+            )
         )
     }
 
@@ -70,7 +83,11 @@ val Head2_B: TextStyle
             fontWeight = FontWeight.Bold,
             fontSize = fontSize,
             lineHeight = 28.dp.toSp(),
-            letterSpacing = -(fontSize * 0.02f)
+            letterSpacing = -(fontSize * 0.02f),
+            lineHeightStyle = LineHeightStyle.Default.copy(
+                alignment = LineHeightStyle.Alignment.Top,
+                trim = LineHeightStyle.Trim.None
+            )
         )
     }
 
@@ -83,7 +100,11 @@ val Body1_B: TextStyle
             fontWeight = FontWeight.Bold,
             fontSize = fontSize,
             lineHeight = 25.dp.toSp(),
-            letterSpacing = -(fontSize * 0.02f)
+            letterSpacing = -(fontSize * 0.02f),
+            lineHeightStyle = LineHeightStyle.Default.copy(
+                alignment = LineHeightStyle.Alignment.Top,
+                trim = LineHeightStyle.Trim.None
+            )
         )
     }
 
@@ -96,7 +117,11 @@ val Body1_S: TextStyle
             fontWeight = FontWeight.SemiBold,
             fontSize = fontSize,
             lineHeight = 25.dp.toSp(),
-            letterSpacing = -(fontSize * 0.02f)
+            letterSpacing = -(fontSize * 0.02f),
+            lineHeightStyle = LineHeightStyle.Default.copy(
+                alignment = LineHeightStyle.Alignment.Top,
+                trim = LineHeightStyle.Trim.None
+            )
         )
     }
 
@@ -109,7 +134,11 @@ val Body2_S: TextStyle
             fontWeight = FontWeight.SemiBold,
             fontSize = fontSize,
             lineHeight = 21.dp.toSp(),
-            letterSpacing = -(fontSize * 0.02f)
+            letterSpacing = -(fontSize * 0.02f),
+            lineHeightStyle = LineHeightStyle.Default.copy(
+                alignment = LineHeightStyle.Alignment.Top,
+                trim = LineHeightStyle.Trim.None
+            )
         )
     }
 
@@ -122,7 +151,11 @@ val Small_S: TextStyle
             fontWeight = FontWeight.SemiBold,
             fontSize = fontSize,
             lineHeight = 18.dp.toSp(),
-            letterSpacing = -(fontSize * 0.02f)
+            letterSpacing = -(fontSize * 0.02f),
+            lineHeightStyle = LineHeightStyle.Default.copy(
+                alignment = LineHeightStyle.Alignment.Top,
+                trim = LineHeightStyle.Trim.None
+            )
         )
     }
 
@@ -135,7 +168,11 @@ val Head1_R: TextStyle
             fontWeight = FontWeight.Normal,
             fontSize = fontSize,
             lineHeight = 36.dp.toSp(),
-            letterSpacing = -(fontSize * 0.02f)
+            letterSpacing = -(fontSize * 0.02f),
+            lineHeightStyle = LineHeightStyle.Default.copy(
+                alignment = LineHeightStyle.Alignment.Top,
+                trim = LineHeightStyle.Trim.None
+            )
         )
     }
 
@@ -148,7 +185,11 @@ val Body1_R: TextStyle
             fontWeight = FontWeight.Normal,
             fontSize = fontSize,
             lineHeight = 25.dp.toSp(),
-            letterSpacing = -(fontSize * 0.02f)
+            letterSpacing = -(fontSize * 0.02f),
+            lineHeightStyle = LineHeightStyle.Default.copy(
+                alignment = LineHeightStyle.Alignment.Top,
+                trim = LineHeightStyle.Trim.None
+            )
         )
     }
 
@@ -161,7 +202,11 @@ val Body2_R: TextStyle
             fontWeight = FontWeight.Normal,
             fontSize = fontSize,
             lineHeight = 21.dp.toSp(),
-            letterSpacing = -(fontSize * 0.02f)
+            letterSpacing = -(fontSize * 0.02f),
+            lineHeightStyle = LineHeightStyle.Default.copy(
+                alignment = LineHeightStyle.Alignment.Top,
+                trim = LineHeightStyle.Trim.None
+            )
         )
     }
 
@@ -174,6 +219,10 @@ val Small_R: TextStyle
             fontWeight = FontWeight.Normal,
             fontSize = fontSize,
             lineHeight = 18.dp.toSp(),
-            letterSpacing = -(fontSize * 0.02f)
+            letterSpacing = -(fontSize * 0.02f),
+            lineHeightStyle = LineHeightStyle.Default.copy(
+                alignment = LineHeightStyle.Alignment.Top,
+                trim = LineHeightStyle.Trim.None
+            )
         )
     }

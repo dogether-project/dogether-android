@@ -13,8 +13,21 @@ abstract class BaseViewModel<State : Any, Event, Effect : Any>(
 
     abstract fun onEvent(event: Event)
 
-    protected fun updateState(reducer: (State) -> State) {
-        intent { reduce { reducer(state) } }
+    protected fun updateState(
+        condition: ((State) -> Boolean)? = null,
+        reducer: (State) -> State
+    ) {
+        intent {
+            reduce {
+                condition?.let {
+                    if (condition(state)) {
+                        reducer(state)
+                    } else {
+                        state
+                    }
+                } ?: run { reducer(state) }
+            }
+        }
     }
 
     protected fun postEffect(effect: Effect) {
