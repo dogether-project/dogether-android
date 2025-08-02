@@ -18,6 +18,8 @@ sealed interface CreateGroupUiEvent {
     }
 
     sealed interface Click : CreateGroupUiEvent {
+        data object OnClickBack : Click
+
         data object OnClickMinusMemberLimit : Click
 
         data object OnClickPlusMemberLimit : Click

@@ -83,7 +83,7 @@ private fun CreateGroupScreenContents(viewModel: CreateGroupViewModel = koinView
     val uiState = viewModel.collectAsState().value
     val pagerState = rememberPagerState { pageList.size }
 
-    LaunchedEffect(uiState.currentPage) { pagerState.animateScrollToPage(uiState.currentPage) }
+    LaunchedEffect(uiState.currentPage) { pagerState.scrollToPage(uiState.currentPage) }
 
     Column(
         modifier = Modifier
@@ -93,6 +93,7 @@ private fun CreateGroupScreenContents(viewModel: CreateGroupViewModel = koinView
         TopBar(
             start = {
                 Icon(
+                    modifier = Modifier.clickableWithoutRipple { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickBack) },
                     painter = painterResource(R.drawable.ic_arrow_back),
                     tint = ColorIconDefault,
                     contentDescription = "icon_arrow_back"

@@ -16,6 +16,13 @@ class CreateGroupViewModel : BaseViewModel<CreateGroupUiState, CreateGroupUiEven
 
             is CreateGroupUiEvent.Click -> {
                 when (event) {
+                    is CreateGroupUiEvent.Click.OnClickBack -> {
+                        updateState(
+                            condition = { it.currentPage != 0 },
+                            reducer = { it.copy(currentPage = it.currentPage - 1) }
+                        )
+                    }
+
                     is CreateGroupUiEvent.Click.OnClickMinusMemberLimit -> {
                         updateState(
                             condition = { it.memberLimit > MinimumMemberLimit },
