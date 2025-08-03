@@ -28,6 +28,7 @@ val ColorBgSurface = Grey700
 val ColorBgDisabled = Grey500
 val ColorBgPrimary = Blue300
 val ColorBgInverse = Grey50
+val ColorBgDim = Grey900.copy(alpha = 0.8f)
 
 val ColorIconDefault = Grey0
 val ColorIconElevated = Grey200
@@ -51,3 +52,5 @@ val ColorTextPrimary = Blue300
 val ColorTextError = Red400
 val ColorTextInverse = Grey800
 val ColorTextBlack = Grey900
+
+val ColorShadow = Grey900.copy(alpha = 0.3f)

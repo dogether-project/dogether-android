@@ -17,11 +17,15 @@
     <string name="body_add_new_group">소속된 그룹이 없어요.\n그룹을 만들거나 참여하세요!</string>
 
     <string name="dialog_title_permission">알림 권한이 꺼져 있어요.</string>
+    <string name="dialog_title_duplicated_name">동일한 이름의 그룹이\n이미 존재합니다.</string>
 
     <string name="dialog_body_permission">팀원들의 인증을 놓칠 수도 있어요!\n검사를 위해 설정에서 알림 권한을 켜주세요.</string>
+    <string name="dialog_body_duplicated_name">같은 이름으로도 그룹을 생성할 수 있어요.</string>
 
     <string name="dialog_button_later">나중에</string>
     <string name="dialog_button_settings">설정 열기</string>
+    <string name="dialog_button_back">뒤로 가기</string>
+    <string name="dialog_button_create_group">그룹 생성</string>
 
     <string name="cta_button_force_update">업데이트 하러가기</string>
     <string name="cta_button_kakao_login">카카오 로그인</string>
@@ -50,4 +54,9 @@
     <string name="unit_member">명</string>
     <string name="unit_day">일</string>
     <string name="unit_week">주</string>
+
+    <string name="info_title_period">활동 기간</string>
+    <string name="info_title_group_member_limit">그룹원</string>
+    <string name="info_title_launch_date">시작일</string>
+    <string name="info_title_end_date">종료일</string>
 </resources>

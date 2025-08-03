@@ -126,12 +126,13 @@ private fun NegativeCTAButtonPreview() {
 
 @Composable
 fun TopBar(
+    modifier: Modifier = Modifier,
     start: (@Composable () -> Unit)? = null,
     centerText: String? = null,
     end: (@Composable () -> Unit)? = null,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
     ) {

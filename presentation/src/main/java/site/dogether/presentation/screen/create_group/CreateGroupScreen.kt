@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,17 +37,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
+import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.screen.create_group.model.CreateGroupPageItem
 import site.dogether.presentation.theme.Body1_B
+import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.Body2_S
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgSurface
+import site.dogether.presentation.theme.ColorBorderDisabled
 import site.dogether.presentation.theme.ColorBorderPrimary
 import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorIconElevated
@@ -57,13 +63,15 @@ import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.hideKeyboardOnTap
+import site.dogether.presentation.utils.toFormattedString
+import site.dogether.presentation.utils.today
+import site.dogether.presentation.utils.tomorrow
 
 private val pageList: List<CreateGroupPageItem> = listOf(
     CreateGroupPageItem(
         titleStringId = R.string.title_create_group_purpose,
         content = { PurposePageContents(ctaButtonText = stringResource(R.string.cta_button_next)) },
-    ),
-    CreateGroupPageItem(
+    ), CreateGroupPageItem(
         titleStringId = R.string.title_create_group_schedule,
         content = { SchedulePageContents(ctaButtonText = stringResource(R.string.cta_button_next)) },
     ),
@@ -75,7 +83,11 @@ private val pageList: List<CreateGroupPageItem> = listOf(
 
 @Composable
 fun CreateGroupScreen(viewModel: CreateGroupViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
+
     CreateGroupScreenContents()
+
+    InitDialog()
 }
 
 @Composable
@@ -83,14 +95,11 @@ private fun CreateGroupScreenContents(viewModel: CreateGroupViewModel = koinView
     val uiState = viewModel.collectAsState().value
     val pagerState = rememberPagerState { pageList.size }
 
-    LaunchedEffect(uiState.currentPage) { pagerState.scrollToPage(uiState.currentPage) }
+    LaunchedEffect(uiState.currentPage) { pagerState.animateScrollToPage(uiState.currentPage) }
 
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxSize()
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
+            modifier = Modifier.padding(horizontal = 16.dp),
             start = {
                 Icon(
                     modifier = Modifier.clickableWithoutRipple { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickBack) },
@@ -103,7 +112,11 @@ private fun CreateGroupScreenContents(viewModel: CreateGroupViewModel = koinView
         )
 
         Text(
-            modifier = Modifier.padding(top = 20.dp),
+            modifier = Modifier
+                .padding(
+                    top = 20.dp,
+                    start = 16.dp
+                ),
             text = buildAnnotatedString {
                 withStyle(SpanStyle(color = ColorTextPrimary)) {
                     append("${pagerState.currentPage + 1}")
@@ -119,7 +132,9 @@ private fun CreateGroupScreenContents(viewModel: CreateGroupViewModel = koinView
         HorizontalPager(
             modifier = Modifier.padding(top = 8.dp),
             state = pagerState,
-            userScrollEnabled = false
+            userScrollEnabled = false,
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            pageSpacing = 16.dp
         ) { pageIndex ->
             Column(modifier = Modifier.fillMaxSize()) {
                 Text(
@@ -160,8 +175,8 @@ private fun PurposePageContents(
                     .padding(top = 8.dp)
                     .fillMaxWidth()
                     .height(50.dp),
-                value = uiState.groupName,
-                onValueChanged = { text -> viewModel.onEvent(CreateGroupUiEvent.Type.OnGroupNameTyped(text)) },
+                value = uiState.name,
+                onValueChanged = { text -> viewModel.onEvent(CreateGroupUiEvent.Typed.OnGroupNameTyped(text)) },
                 hintText = stringResource(R.string.input_hint_group_name),
                 lengthLimit = 20
             )
@@ -230,7 +245,7 @@ private fun PurposePageContents(
                 .padding(bottom = 16.dp)
                 .fillMaxWidth()
                 .height(50.dp),
-            isEnabled = uiState.groupName.isNotEmpty(),
+            isEnabled = uiState.name.isNotEmpty(),
             radius = 8.dp,
             text = ctaButtonText,
             onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickNext) }
@@ -263,8 +278,7 @@ private fun MemberLimitCalculateButton(
 
 @Composable
 private fun SchedulePageContents(
-    viewModel: CreateGroupViewModel = koinViewModel(),
-    ctaButtonText: String
+    viewModel: CreateGroupViewModel = koinViewModel(), ctaButtonText: String
 ) {
     val uiState = viewModel.collectAsState().value
 
@@ -443,7 +457,121 @@ private fun CheckPageContents(
     viewModel: CreateGroupViewModel = koinViewModel(),
     ctaButtonText: String
 ) {
+    val uiState = viewModel.collectAsState().value
 
+    Column(modifier = Modifier.fillMaxSize()) {
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .fillMaxWidth()
+                    .background(ColorBgSurface)
+                    .border(
+                        width = 1.dp, shape = RoundedCornerShape(12.dp), color = ColorBorderDisabled
+                    )
+                    .padding(
+                        horizontal = 20.dp, vertical = 24.dp
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = uiState.name.ifEmpty { "Say Yes 후회 뿐인 사랑에" },
+                    style = Head1_B.copy(lineHeightStyle = LineHeightStyle.Default),
+                    color = ColorTextDefault
+                )
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(top = 24.dp),
+                    thickness = 1.dp,
+                    color = ColorBorderDisabled
+                )
+
+                Column(
+                    modifier = Modifier.padding(top = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    InfoRow(
+                        title = stringResource(R.string.info_title_period),
+                        body = if (uiState.period < 7) {
+                            "${uiState.period}" + stringResource(R.string.unit_day)
+                        } else {
+                            "${uiState.period / 7}" + stringResource(R.string.unit_week)
+                        },
+                    )
+
+                    InfoRow(
+                        title = stringResource(R.string.info_title_group_member_limit),
+                        body = stringResource(R.string.unit_prefix_whole) + " ${uiState.memberLimit}" + stringResource(R.string.unit_member)
+                    )
+
+                    InfoRow(
+                        title = stringResource(R.string.info_title_launch_date),
+                        body = if (uiState.isLaunchFromToday) today.toFormattedString() else tomorrow.toFormattedString()
+                    )
+
+                    InfoRow(
+                        title = stringResource(R.string.info_title_end_date),
+                        body = if (uiState.isLaunchFromToday) today.plusDays(uiState.period.toLong()).toFormattedString() else tomorrow.plusDays(uiState.period.toLong()).toFormattedString()
+                    )
+                }
+            }
+        }
+
+        CTAButton(
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .fillMaxWidth()
+                .height(50.dp),
+            radius = 8.dp,
+            text = ctaButtonText,
+            onClick = { }
+        )
+    }
+}
+
+@Composable
+private fun InfoRow(
+    title: String,
+    body: String
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            style = Body1_B.copy(lineHeightStyle = LineHeightStyle.Default),
+            color = ColorTextPrimary
+        )
+
+        Text(
+            text = body,
+            style = Body1_R.copy(lineHeightStyle = LineHeightStyle.Default),
+            color = ColorTextSubtle
+        )
+    }
+}
+
+@Composable
+private fun InitDialog(viewModel: CreateGroupViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
+
+    if (uiState.duplicatedNameDialogState.isShowing) {
+        ActionDialog(
+            title = stringResource(R.string.dialog_title_duplicated_name),
+            body = stringResource(R.string.dialog_body_duplicated_name),
+            icon = painterResource(R.drawable.ic_notice),
+            negativeText = stringResource(R.string.dialog_button_back),
+            positiveText = stringResource(R.string.dialog_button_create_group),
+            onClickNegative = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogNegative) },
+            onClickPositive = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogPositive) },
+            onDismissRequest = { viewModel.onEvent(CreateGroupUiEvent.Callback.OnDuplicatedNameDialogDismissRequested) }
+        )
+    }
 }
 
 @Preview(showBackground = true)

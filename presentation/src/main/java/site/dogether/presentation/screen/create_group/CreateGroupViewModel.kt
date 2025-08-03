@@ -6,10 +6,10 @@ class CreateGroupViewModel : BaseViewModel<CreateGroupUiState, CreateGroupUiEven
 
     override fun onEvent(event: CreateGroupUiEvent) {
         when (event) {
-            is CreateGroupUiEvent.Type -> {
+            is CreateGroupUiEvent.Typed -> {
                 when (event) {
-                    is CreateGroupUiEvent.Type.OnGroupNameTyped -> {
-                        updateState { it.copy(groupName = event.text) }
+                    is CreateGroupUiEvent.Typed.OnGroupNameTyped -> {
+                        updateState { it.copy(name = event.text) }
                     }
                 }
             }
@@ -48,8 +48,37 @@ class CreateGroupViewModel : BaseViewModel<CreateGroupUiState, CreateGroupUiEven
                     is CreateGroupUiEvent.Click.OnClickLaunchFrom -> {
                         updateState { it.copy(isLaunchFromToday = event.isLaunchFromToday) }
                     }
+
+                    is CreateGroupUiEvent.Click.OnClickCreateGroup -> {
+
+                    }
+
+                    is CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogNegative -> {
+                        updateState {
+                            dismissDuplicatedNameDialog()
+                            it.copy(
+                                currentPage = 0
+                            )
+                        }
+                    }
+
+                    is CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogPositive -> {
+                        dismissDuplicatedNameDialog()
+                    }
+                }
+            }
+
+            is CreateGroupUiEvent.Callback -> {
+                when (event) {
+                    is CreateGroupUiEvent.Callback.OnDuplicatedNameDialogDismissRequested -> {
+                        dismissDuplicatedNameDialog()
+                    }
                 }
             }
         }
+    }
+
+    private fun dismissDuplicatedNameDialog() {
+        updateState { it.copy(duplicatedNameDialogState = it.duplicatedNameDialogState.copy(isShowing = false)) }
     }
 }
