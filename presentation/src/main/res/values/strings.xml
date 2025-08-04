@@ -9,6 +9,7 @@
     <string name="title_create_group_schedule">어떤 일정으로 진행할까요?</string>
     <string name="title_create_group_check">그룹 정보를 확인해주세요</string>
     <string name="title_create_group_complete">그룹 생성 완료 !\n팀원들에게 코드를 공유해보세요</string>
+    <string name="title_group_created">그룹 생성 완료 !\n팀원들에게 코드를 공유해보세요</string>
 
     <string name="body_force_update">두게더가 유저분들의 의견을 반영하여\n더 편하게 사용하도록 사용성을 개선했어요.\n지금 바로 업데이트하고 인증하러 가요!</string>
     <string name="body_on_boarding_0">목표만 세우면 끝?! 인증까지 해야 진짜 실천이에요</string>
@@ -59,4 +60,6 @@
     <string name="info_title_group_member_limit">그룹원</string>
     <string name="info_title_launch_date">시작일</string>
     <string name="info_title_end_date">종료일</string>
+
+    <string name="notice_share">카카오톡, 문자 등을 통해 공유해보세요 !</string>
 </resources>
