@@ -4,6 +4,11 @@
     <string name="title_on_boarding_1">투두를 인증하면\n날아오는 팀원의 피드백</string>
     <string name="title_on_boarding_2">서로 검사해야 다음 목표로 GO</string>
     <string name="title_add_new_group">새 그룹 추가</string>
+    <string name="title_create_group">그룹 만들기</string>
+    <string name="title_create_group_purpose">어떤 그룹을 만들까요?</string>
+    <string name="title_create_group_schedule">어떤 일정으로 진행할까요?</string>
+    <string name="title_create_group_check">그룹 정보를 확인해주세요</string>
+    <string name="title_create_group_complete">그룹 생성 완료 !\n팀원들에게 코드를 공유해보세요</string>
 
     <string name="body_force_update">두게더가 유저분들의 의견을 반영하여\n더 편하게 사용하도록 사용성을 개선했어요.\n지금 바로 업데이트하고 인증하러 가요!</string>
     <string name="body_on_boarding_0">목표만 세우면 끝?! 인증까지 해야 진짜 실천이에요</string>
@@ -12,18 +17,46 @@
     <string name="body_add_new_group">소속된 그룹이 없어요.\n그룹을 만들거나 참여하세요!</string>
 
     <string name="dialog_title_permission">알림 권한이 꺼져 있어요.</string>
+    <string name="dialog_title_duplicated_name">동일한 이름의 그룹이\n이미 존재합니다.</string>
 
     <string name="dialog_body_permission">팀원들의 인증을 놓칠 수도 있어요!\n검사를 위해 설정에서 알림 권한을 켜주세요.</string>
+    <string name="dialog_body_duplicated_name">같은 이름으로도 그룹을 생성할 수 있어요.</string>
 
     <string name="dialog_button_later">나중에</string>
     <string name="dialog_button_settings">설정 열기</string>
+    <string name="dialog_button_back">뒤로 가기</string>
+    <string name="dialog_button_create_group">그룹 생성</string>
 
     <string name="cta_button_force_update">업데이트 하러가기</string>
     <string name="cta_button_kakao_login">카카오 로그인</string>
+    <string name="cta_button_next">다음</string>
+    <string name="cta_button_create_group">그룹 생성</string>
+    <string name="cta_button_navigate_to_home">홈으로 가기</string>
 
     <string name="cta_button_title_create_group">그룹 만들기</string>
     <string name="cta_button_title_participate_with_code">초대 코드로 참여하기</string>
+    <string name="cta_button_title_launch_from_today">오늘 시작</string>
+    <string name="cta_button_title_launch_from_tomorrow">내일 시작</string>
 
     <string name="cta_button_body_create_group">그룹을 만들고 그룹원을 초대해보세요</string>
     <string name="cta_button_body_participate_with_code">그룹원에게 받은 초대 코드로 참여하세요</string>
+    <string name="cta_button_body_launch_from_today">오늘부터 실천!\n지금 바로 시작하기</string>
+    <string name="cta_button_body_launch_from_tomorrow">조금 더 준비하고,\n내일부터 시작하기</string>
+
+    <string name="input_title_group_name">그룹명</string>
+    <string name="input_title_group_member_limit">그룹 인원</string>
+    <string name="input_title_period">활동 기간</string>
+    <string name="input_title_launch_date">시작일</string>
+
+    <string name="input_hint_group_name">멋진 그룹명으로 동기부여를 해보세요 !</string>
+
+    <string name="unit_prefix_whole">총</string>
+    <string name="unit_member">명</string>
+    <string name="unit_day">일</string>
+    <string name="unit_week">주</string>
+
+    <string name="info_title_period">활동 기간</string>
+    <string name="info_title_group_member_limit">그룹원</string>
+    <string name="info_title_launch_date">시작일</string>
+    <string name="info_title_end_date">종료일</string>
 </resources>

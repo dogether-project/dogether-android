@@ -35,6 +35,6 @@ private fun SplashScreenContents() {
 
 @Preview(showBackground = true)
 @Composable
-private fun SplashScreenPreview() {
+private fun SplashScreenContentsPreview() {
     SplashScreenContents()
 }

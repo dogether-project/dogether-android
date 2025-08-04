@@ -6,7 +6,6 @@ import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -28,28 +26,21 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
-import site.dogether.presentation.composables.CTAButton
-import site.dogether.presentation.composables.NegativeCTAButton
+import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.TopBar
-import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBgElevated
-import site.dogether.presentation.theme.ColorBgSurface
 import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorIconElevated
 import site.dogether.presentation.theme.ColorIconPrimary
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSecondary
-import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Yellow
@@ -122,13 +113,7 @@ private fun ParticipationMethodScreenContents(viewModel: ParticipationMethodView
                         contentDescription = "icon_arrow_back"
                     )
                 },
-                center = {
-                    Text(
-                        text = stringResource(R.string.title_add_new_group),
-                        style = Head2_B,
-                        color = ColorTextDefault,
-                    )
-                }
+                centerText = stringResource(R.string.title_add_new_group),
             )
         } else {
             TopBar(
@@ -236,100 +221,25 @@ private fun ParticipationMethod(
 }
 
 @Composable
-private fun InitDialog() {
-    val uiState = koinViewModel<ParticipationMethodViewModel>().collectAsState().value
+private fun InitDialog(viewModel: ParticipationMethodViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
 
     if (uiState.permissionDialogState.isShowing) {
-        PermissionDialog()
-    }
-}
-
-@Composable
-private fun PermissionDialog(viewModel: ParticipationMethodViewModel = koinViewModel()) {
-    Dialog(
-        onDismissRequest = { viewModel.onEvent(ParticipationMethodUiEvent.Callback.OnPermissionDialogDismissRequested) },
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true,
-            usePlatformDefaultWidth = false
+        ActionDialog(
+            title = stringResource(R.string.dialog_title_permission),
+            body = stringResource(R.string.dialog_body_permission),
+            icon = painterResource(R.drawable.ic_notice),
+            negativeText = stringResource(R.string.dialog_button_later),
+            positiveText = stringResource(R.string.dialog_button_settings),
+            onClickNegative = { viewModel.onEvent(ParticipationMethodUiEvent.Click.OnClickPermissionDialogNegative) },
+            onClickPositive = { viewModel.onEvent(ParticipationMethodUiEvent.Click.OnClickPermissionDialogPositive)},
+            onDismissRequest = { viewModel.onEvent(ParticipationMethodUiEvent.Callback.OnPermissionDialogDismissRequested) }
         )
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .fillMaxWidth()
-                .background(ColorBgSurface)
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(
-                        horizontal = 20.dp,
-                        vertical = 24.dp
-                    )
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_notice),
-                    tint = ColorIconPrimary,
-                    contentDescription = "icon_notice"
-                )
-
-                Text(
-                    modifier = Modifier.padding(top = 12.dp),
-                    text = stringResource(R.string.dialog_title_permission),
-                    style = Head1_B,
-                    color = ColorTextDefault
-                )
-
-                Text(
-                    modifier = Modifier.padding(top = 8.dp),
-                    text = stringResource(R.string.dialog_body_permission),
-                    style = Body1_R,
-                    color = ColorTextSubtle,
-                    textAlign = TextAlign.Center
-                )
-
-                Row(
-                    modifier = Modifier
-                        .padding(top = 24.dp)
-                        .fillMaxWidth()
-                ) {
-                    NegativeCTAButton(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(50.dp),
-                        text = stringResource(R.string.dialog_button_later),
-                        radius = 8.dp,
-                        onClick = { viewModel.onEvent(ParticipationMethodUiEvent.Click.OnClickPermissionDialogNegative) }
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    CTAButton(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(50.dp),
-                        text = stringResource(R.string.dialog_button_settings),
-                        isEnabled = true,
-                        radius = 8.dp,
-                        onClick = { viewModel.onEvent(ParticipationMethodUiEvent.Click.OnClickPermissionDialogPositive) }
-                    )
-                }
-            }
-        }
     }
-}
-
-@Preview
-@Composable
-private fun PermissionDialogPreview() {
-    PermissionDialog()
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun ParticipationMethodScreenPreview() {
+private fun ParticipationMethodScreenContentsPreview() {
     ParticipationMethodScreenContents()
 }

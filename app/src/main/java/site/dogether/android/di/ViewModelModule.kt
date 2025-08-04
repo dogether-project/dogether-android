@@ -2,6 +2,7 @@ package site.dogether.android.di
 
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import site.dogether.presentation.screen.create_group.CreateGroupViewModel
 import site.dogether.presentation.screen.force_update.ForceUpdateViewModel
 import site.dogether.presentation.screen.on_boarding.OnBoardingViewModel
 import site.dogether.presentation.screen.participation_method.ParticipationMethodViewModel
@@ -12,4 +13,5 @@ val viewModelModule = module {
     viewModel { ForceUpdateViewModel() }
     viewModel { OnBoardingViewModel() }
     viewModel { ParticipationMethodViewModel() }
+    viewModel { CreateGroupViewModel() }
 }
