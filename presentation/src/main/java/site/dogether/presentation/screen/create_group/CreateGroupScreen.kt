@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -85,9 +84,12 @@ private fun CreateGroupScreenContents(
 
     LaunchedEffect(uiState.currentPage) { pagerState.animateScrollToPage(uiState.currentPage) }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxSize()
+    ) {
         TopBar(
-            modifier = Modifier.padding(horizontal = 16.dp),
             start = {
                 Icon(
                     modifier = Modifier.clickableWithoutRipple { onEvent(CreateGroupUiEvent.Click.OnClickBack) },
@@ -100,11 +102,7 @@ private fun CreateGroupScreenContents(
         )
 
         Text(
-            modifier = Modifier
-                .padding(
-                    top = 20.dp,
-                    start = 16.dp
-                ),
+            modifier = Modifier.padding(top = 20.dp),
             text = buildAnnotatedString {
                 withStyle(SpanStyle(color = ColorTextPrimary)) {
                     append("${pagerState.currentPage + 1}")
@@ -121,7 +119,6 @@ private fun CreateGroupScreenContents(
             modifier = Modifier.padding(top = 8.dp),
             state = pagerState,
             userScrollEnabled = false,
-            contentPadding = PaddingValues(horizontal = 16.dp),
             pageSpacing = 16.dp
         ) { pageIndex ->
             Column(modifier = Modifier.fillMaxSize()) {
@@ -511,6 +508,42 @@ private fun InitDialog(
 @Composable
 private fun CreateGroupScreenContentsPreview() {
     CreateGroupScreenContents(
+        uiState = CreateGroupUiState(),
+        onEvent = {}
+    )
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF101010
+)
+@Composable
+private fun PurposePageContentsPreview() {
+    PurposePageContents(
+        uiState = CreateGroupUiState(),
+        onEvent = {}
+    )
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF101010
+)
+@Composable
+private fun SchedulePageContentsPreview() {
+    SchedulePageContents(
+        uiState = CreateGroupUiState(),
+        onEvent = {}
+    )
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF101010
+)
+@Composable
+fun CheckPageContentsPreview() {
+    CheckPageContents(
         uiState = CreateGroupUiState(),
         onEvent = {}
     )
