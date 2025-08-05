@@ -92,7 +92,10 @@ private fun ParticipateGroupScreenContents(
     }
 }
 
-@Preview()
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF101010
+)
 @Composable
 private fun ParticipateGroupScreenContentsPreview() {
     ParticipateGroupScreenContents(

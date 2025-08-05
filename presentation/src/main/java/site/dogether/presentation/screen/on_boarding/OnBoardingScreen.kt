@@ -157,7 +157,10 @@ private fun PagerIndicator(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF101010
+)
 @Composable
 private fun OnBoardingScreenContentsPreview() {
     OnBoardingScreenContents(

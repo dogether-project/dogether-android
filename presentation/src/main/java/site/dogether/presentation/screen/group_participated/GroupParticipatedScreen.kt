@@ -84,7 +84,10 @@ private fun GroupParticipatedScreenContents(
     }
 }
 
-@Preview
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF101010
+)
 @Composable
 private fun GroupParticipatedScreenContentsPreview() {
     GroupParticipatedScreenContents(

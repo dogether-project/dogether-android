@@ -242,7 +242,10 @@ private fun InitDialog(viewModel: ParticipationMethodViewModel = koinViewModel()
     }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF101010
+)
 @Composable
 private fun ParticipationMethodScreenContentsPreview() {
     ParticipationMethodScreenContents(
