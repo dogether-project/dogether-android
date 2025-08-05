@@ -10,12 +10,15 @@
     <string name="title_create_group_check">그룹 정보를 확인해주세요</string>
     <string name="title_create_group_complete">그룹 생성 완료 !\n팀원들에게 코드를 공유해보세요</string>
     <string name="title_group_created">그룹 생성 완료 !\n팀원들에게 코드를 공유해보세요</string>
+    <string name="title_participate_group">그룹 가입하기</string>
+    <string name="title_type_invite_code">초대코드 입력</string>
 
     <string name="body_force_update">두게더가 유저분들의 의견을 반영하여\n더 편하게 사용하도록 사용성을 개선했어요.\n지금 바로 업데이트하고 인증하러 가요!</string>
     <string name="body_on_boarding_0">목표만 세우면 끝?! 인증까지 해야 진짜 실천이에요</string>
     <string name="body_on_boarding_1">열심히 하면 ‘인정’, 대충하면 ‘노인정’을 받아요</string>
     <string name="body_on_boarding_2">팀원의 인증을 검사해야\n새로운 목표를 설정할 수 있어요</string>
     <string name="body_add_new_group">소속된 그룹이 없어요.\n그룹을 만들거나 참여하세요!</string>
+    <string name="body_type_invite_code">초대받은 링크에서 초대코드를 확인할 수 있어요</string>
 
     <string name="dialog_title_permission">알림 권한이 꺼져 있어요.</string>
     <string name="dialog_title_duplicated_name">동일한 이름의 그룹이\n이미 존재합니다.</string>
@@ -33,6 +36,7 @@
     <string name="cta_button_next">다음</string>
     <string name="cta_button_create_group">그룹 생성</string>
     <string name="cta_button_navigate_to_home">홈으로 가기</string>
+    <string name="cta_button_participate">가입하기</string>
 
     <string name="cta_button_title_create_group">그룹 만들기</string>
     <string name="cta_button_title_participate_with_code">초대 코드로 참여하기</string>
@@ -50,6 +54,7 @@
     <string name="input_title_launch_date">시작일</string>
 
     <string name="input_hint_group_name">멋진 그룹명으로 동기부여를 해보세요 !</string>
+    <string name="input_hint_type_invite_code">코드입력 (8자리 이상)</string>
 
     <string name="unit_prefix_whole">총</string>
     <string name="unit_member">명</string>
