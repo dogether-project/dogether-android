@@ -304,7 +304,7 @@ fun GroupInfoColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             InfoRow(
-                title = stringResource(R.string.info_title_period),
+                title = stringResource(R.string.info_period),
                 body = if (period < 7) {
                     "$period" + stringResource(R.string.unit_day)
                 } else {
@@ -313,17 +313,17 @@ fun GroupInfoColumn(
             )
 
             InfoRow(
-                title = stringResource(R.string.info_title_group_member_limit),
+                title = stringResource(R.string.info_group_member_limit),
                 body = stringResource(R.string.unit_prefix_whole) + " $memberLimit" + stringResource(R.string.unit_member)
             )
 
             InfoRow(
-                title = stringResource(R.string.info_title_launch_date),
+                title = stringResource(R.string.info_launch_date),
                 body = if (isLaunchFromToday) today.toFormattedString() else tomorrow.toFormattedString()
             )
 
             InfoRow(
-                title = stringResource(R.string.info_title_end_date),
+                title = stringResource(R.string.info_end_date),
                 body = if (isLaunchFromToday) today.plusDays(period.toLong()).toFormattedString() else tomorrow.plusDays(period.toLong()).toFormattedString()
             )
         }
