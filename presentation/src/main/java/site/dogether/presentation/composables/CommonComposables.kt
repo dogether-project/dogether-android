@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +25,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -41,6 +43,7 @@ import site.dogether.presentation.theme.ColorBgDisabled
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgPrimary
 import site.dogether.presentation.theme.ColorBorderPrimary
+import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorTextBlack
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextDisabled
@@ -200,7 +203,7 @@ fun DogetherTextField(
             modifier = Modifier.weight(1f),
             value = value,
             cursorBrush = SolidColor(Color.White),
-            onValueChange = { text -> if (lengthLimit != 0 && text.length <= lengthLimit) onValueChanged(text) },
+            onValueChange = { text -> if (lengthLimit != 0 && text.length <= lengthLimit) onValueChanged(text) else onValueChanged(text) },
             singleLine = singleLine,
             textStyle = textStyle.copy(color = textColor),
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
@@ -241,4 +244,14 @@ fun DogetherTextField(
             )
         }
     }
+}
+
+@Composable
+fun BackButton(onClick: () -> Unit) {
+    Icon(
+        modifier = Modifier.clickableWithoutRipple { onClick() },
+        painter = painterResource(R.drawable.ic_arrow_back),
+        tint = ColorIconDefault,
+        contentDescription = "icon_arrow_back"
+    )
 }
