@@ -86,7 +86,7 @@ private fun ForceUpdateScreenContents(
                 .fillMaxWidth()
                 .height(50.dp),
             radius = 8.dp,
-            text = stringResource(R.string.cta_button_force_update),
+            text = stringResource(R.string.cta_button_update),
             onClick = { onEvent(ForceUpdateUiEvent.Click.OnClickUpdate) }
         )
     }
