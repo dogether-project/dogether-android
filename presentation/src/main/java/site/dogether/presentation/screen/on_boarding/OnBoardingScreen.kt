@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.koin.androidx.compose.koinViewModel
+import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.screen.on_boarding.model.OnBoardingPageItem
@@ -56,12 +56,18 @@ private val pageList: List<OnBoardingPageItem> = listOf(
 )
 
 @Composable
-fun OnBoardingScreen() {
-    OnBoardingScreenContents()
+fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
+    OnBoardingScreenContents(
+        uiState = viewModel.collectAsState().value,
+        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+    )
 }
 
 @Composable
-private fun OnBoardingScreenContents(viewModel: OnBoardingViewModel = koinViewModel()) {
+private fun OnBoardingScreenContents(
+    uiState: OnBoardingUiState,
+    onEvent: (OnBoardingUiEvent) -> Unit,
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -125,7 +131,7 @@ private fun OnBoardingScreenContents(viewModel: OnBoardingViewModel = koinViewMo
                 .height(50.dp),
             radius = 8.dp,
             text = stringResource(R.string.cta_button_kakao_login),
-            onClick = { viewModel.onEvent(OnBoardingUiEvent.Click.OnClickKakaoLogin) }
+            onClick = { onEvent(OnBoardingUiEvent.Click.OnClickKakaoLogin) }
         )
     }
 }
@@ -151,8 +157,14 @@ private fun PagerIndicator(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF101010
+)
 @Composable
 private fun OnBoardingScreenContentsPreview() {
-    OnBoardingScreenContents(viewModel())
+    OnBoardingScreenContents(
+        uiState = OnBoardingUiState(),
+        onEvent = {}
+    )
 }

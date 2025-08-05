@@ -33,7 +33,10 @@ private fun SplashScreenContents() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF101010
+)
 @Composable
 private fun SplashScreenContentsPreview() {
     SplashScreenContents()

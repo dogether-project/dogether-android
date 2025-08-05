@@ -2,7 +2,7 @@ package site.dogether.presentation.screen.group_created
 
 data class GroupCreatedUiState(
     val isLoading: Boolean = false,
-    val code: String = "011210"
+    val code: String = ""
 )
 
 sealed interface GroupCreatedUiEvent {

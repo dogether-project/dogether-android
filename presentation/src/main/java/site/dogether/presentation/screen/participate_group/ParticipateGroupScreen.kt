@@ -26,13 +26,17 @@ import site.dogether.presentation.theme.Head1_B
 
 @Composable
 fun ParticipateGroupScreen(viewModel: ParticipateGroupViewModel = koinViewModel()) {
-    ParticipateGroupScreenContents()
+    ParticipateGroupScreenContents(
+        uiState = viewModel.collectAsState().value,
+        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+    )
 }
 
 @Composable
-private fun ParticipateGroupScreenContents(viewModel: ParticipateGroupViewModel = koinViewModel()) {
-    val uiState = viewModel.collectAsState().value
-
+private fun ParticipateGroupScreenContents(
+    uiState: ParticipateGroupUiState,
+    onEvent: (ParticipateGroupUiEvent) -> Unit,
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -70,7 +74,7 @@ private fun ParticipateGroupScreenContents(viewModel: ParticipateGroupViewModel 
                     .fillMaxWidth()
                     .height(50.dp),
                 value = uiState.inviteCode,
-                onValueChanged = { text -> viewModel.onEvent(ParticipateGroupUiEvent.Type.OnInviteCodeTyped(text)) },
+                onValueChanged = { text -> onEvent(ParticipateGroupUiEvent.Type.OnInviteCodeTyped(text)) },
                 hintText = stringResource(R.string.input_hint_type_invite_code)
             )
         }
@@ -88,8 +92,14 @@ private fun ParticipateGroupScreenContents(viewModel: ParticipateGroupViewModel 
     }
 }
 
-@Preview
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF101010
+)
 @Composable
 private fun ParticipateGroupScreenContentsPreview() {
-    ParticipateGroupScreenContents()
+    ParticipateGroupScreenContents(
+        uiState = ParticipateGroupUiState(),
+        onEvent = {}
+    )
 }

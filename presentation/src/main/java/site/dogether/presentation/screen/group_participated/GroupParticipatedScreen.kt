@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
+import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.GroupInfoColumn
@@ -25,11 +26,17 @@ import site.dogether.presentation.theme.Head1_B
 
 @Composable
 fun GroupParticipatedScreen(viewModel: GroupParticipatedViewModel = koinViewModel()) {
-    GroupParticipatedScreenContents()
+    GroupParticipatedScreenContents(
+        uiState = viewModel.collectAsState().value,
+        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+    )
 }
 
 @Composable
-private fun GroupParticipatedScreenContents() {
+private fun GroupParticipatedScreenContents(
+    uiState: GroupParticipatedUiState,
+    onEvent: (GroupParticipatedUiEvent) -> Unit,
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -77,8 +84,14 @@ private fun GroupParticipatedScreenContents() {
     }
 }
 
-@Preview
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF101010
+)
 @Composable
 private fun GroupParticipatedScreenContentsPreview() {
-    GroupParticipatedScreen()
+    GroupParticipatedScreenContents(
+        uiState = GroupParticipatedUiState(),
+        onEvent = {}
+    )
 }
