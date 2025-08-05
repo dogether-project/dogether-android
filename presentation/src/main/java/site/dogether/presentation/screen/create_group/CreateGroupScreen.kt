@@ -42,7 +42,7 @@ import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
 import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.TopBar
-import site.dogether.presentation.screen.create_group.model.CreateGroupPageItem
+import site.dogether.presentation.screen.create_group.model.CreateGroupPage
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
@@ -61,32 +61,26 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.hideKeyboardOnTap
 
-private val pageList: List<CreateGroupPageItem> = listOf(
-    CreateGroupPageItem(
-        titleStringId = R.string.title_create_group_purpose,
-        content = { PurposePageContents(ctaButtonText = stringResource(R.string.cta_button_next)) },
-    ), CreateGroupPageItem(
-        titleStringId = R.string.title_create_group_schedule,
-        content = { SchedulePageContents(ctaButtonText = stringResource(R.string.cta_button_next)) },
-    ),
-    CreateGroupPageItem(
-        titleStringId = R.string.title_create_group_check,
-        content = { CheckPageContents(ctaButtonText = stringResource(R.string.cta_button_create_group)) },
-    )
-)
+private val pageList: List<CreateGroupPage> = CreateGroupPage.entries
 
 @Composable
 fun CreateGroupScreen(viewModel: CreateGroupViewModel = koinViewModel()) {
-    val uiState = viewModel.collectAsState().value
+    CreateGroupScreenContents(
+        uiState = viewModel.collectAsState().value,
+        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+    )
 
-    CreateGroupScreenContents()
-
-    InitDialog()
+    InitDialog(
+        uiState = viewModel.collectAsState().value,
+        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+    )
 }
 
 @Composable
-private fun CreateGroupScreenContents(viewModel: CreateGroupViewModel = koinViewModel()) {
-    val uiState = viewModel.collectAsState().value
+private fun CreateGroupScreenContents(
+    uiState: CreateGroupUiState,
+    onEvent: (CreateGroupUiEvent) -> Unit,
+) {
     val pagerState = rememberPagerState { pageList.size }
 
     LaunchedEffect(uiState.currentPage) { pagerState.animateScrollToPage(uiState.currentPage) }
@@ -96,7 +90,7 @@ private fun CreateGroupScreenContents(viewModel: CreateGroupViewModel = koinView
             modifier = Modifier.padding(horizontal = 16.dp),
             start = {
                 Icon(
-                    modifier = Modifier.clickableWithoutRipple { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickBack) },
+                    modifier = Modifier.clickableWithoutRipple { onEvent(CreateGroupUiEvent.Click.OnClickBack) },
                     painter = painterResource(R.drawable.ic_arrow_back),
                     tint = ColorIconDefault,
                     contentDescription = "icon_arrow_back"
@@ -132,14 +126,32 @@ private fun CreateGroupScreenContents(viewModel: CreateGroupViewModel = koinView
         ) { pageIndex ->
             Column(modifier = Modifier.fillMaxSize()) {
                 Text(
-                    text = stringResource(pageList[pageIndex].titleStringId),
+                    text = stringResource(
+                        when (pageList[pageIndex]) {
+                            CreateGroupPage.Purpose -> R.string.title_create_group_purpose
+                            CreateGroupPage.Schedule -> R.string.title_create_group_schedule
+                            CreateGroupPage.Check -> R.string.title_create_group_check
+                        }
+                    ),
                     style = Head1_B,
                     color = ColorTextDefault
                 )
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                pageList[pageIndex].content()
+                when (pageList[pageIndex]) {
+                    CreateGroupPage.Purpose -> PurposePageContents(
+                        uiState = uiState,
+                        onEvent = { uiEvent -> onEvent(uiEvent) }
+                    )
+
+                    CreateGroupPage.Schedule -> SchedulePageContents(
+                        uiState = uiState,
+                        onEvent = { uiEvent -> onEvent(uiEvent) }
+                    )
+
+                    CreateGroupPage.Check -> TODO()
+                }
             }
         }
     }
@@ -147,11 +159,9 @@ private fun CreateGroupScreenContents(viewModel: CreateGroupViewModel = koinView
 
 @Composable
 private fun PurposePageContents(
-    viewModel: CreateGroupViewModel = koinViewModel(),
-    ctaButtonText: String,
+    uiState: CreateGroupUiState,
+    onEvent: (CreateGroupUiEvent) -> Unit,
 ) {
-    val uiState = viewModel.collectAsState().value
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -170,7 +180,7 @@ private fun PurposePageContents(
                     .fillMaxWidth()
                     .height(50.dp),
                 value = uiState.name,
-                onValueChanged = { text -> viewModel.onEvent(CreateGroupUiEvent.Typed.OnGroupNameTyped(text)) },
+                onValueChanged = { text -> onEvent(CreateGroupUiEvent.Typed.OnGroupNameTyped(text)) },
                 hintText = stringResource(R.string.input_hint_group_name),
                 lengthLimit = 20
             )
@@ -196,7 +206,7 @@ private fun PurposePageContents(
                         .padding(start = 5.dp),
                     painter = painterResource(R.drawable.ic_minus),
                     contentDescription = "icon_minus"
-                ) { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickMinusMemberLimit) }
+                ) { onEvent(CreateGroupUiEvent.Click.OnClickMinusMemberLimit) }
 
                 Text(
                     modifier = Modifier.align(Alignment.Center),
@@ -211,7 +221,7 @@ private fun PurposePageContents(
                         .padding(end = 5.dp),
                     painter = painterResource(R.drawable.ic_plus),
                     contentDescription = "icon_plus"
-                ) { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickPlusMemberLimit) }
+                ) { onEvent(CreateGroupUiEvent.Click.OnClickPlusMemberLimit) }
             }
 
             Row(
@@ -241,8 +251,8 @@ private fun PurposePageContents(
                 .height(50.dp),
             isEnabled = uiState.name.isNotEmpty(),
             radius = 8.dp,
-            text = ctaButtonText,
-            onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickNext) }
+            text = stringResource(R.string.cta_button_next),
+            onClick = { onEvent(CreateGroupUiEvent.Click.OnClickNext) }
         )
     }
 }
@@ -272,10 +282,9 @@ private fun MemberLimitCalculateButton(
 
 @Composable
 private fun SchedulePageContents(
-    viewModel: CreateGroupViewModel = koinViewModel(), ctaButtonText: String,
+    uiState: CreateGroupUiState,
+    onEvent: (CreateGroupUiEvent) -> Unit,
 ) {
-    val uiState = viewModel.collectAsState().value
-
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -293,13 +302,13 @@ private fun SchedulePageContents(
                 PeriodButton(
                     period = 3,
                     selectedPeriod = uiState.period,
-                    onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickPeriod(3)) }
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickPeriod(3)) }
                 )
 
                 PeriodButton(
                     period = 7,
                     selectedPeriod = uiState.period,
-                    onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickPeriod(7)) }
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickPeriod(7)) }
                 )
             }
 
@@ -312,13 +321,13 @@ private fun SchedulePageContents(
                 PeriodButton(
                     period = 14,
                     selectedPeriod = uiState.period,
-                    onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickPeriod(14)) }
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickPeriod(14)) }
                 )
 
                 PeriodButton(
                     period = 28,
                     selectedPeriod = uiState.period,
-                    onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickPeriod(28)) }
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickPeriod(28)) }
                 )
             }
 
@@ -338,13 +347,13 @@ private fun SchedulePageContents(
                 LaunchFromButton(
                     isLaunchFromToday = true,
                     isLaunchFromTodayState = uiState.isLaunchFromToday,
-                    onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickLaunchFrom(true)) }
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickLaunchFrom(true)) }
                 )
 
                 LaunchFromButton(
                     isLaunchFromToday = false,
                     isLaunchFromTodayState = uiState.isLaunchFromToday,
-                    onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickLaunchFrom(false)) }
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickLaunchFrom(false)) }
                 )
             }
         }
@@ -355,8 +364,8 @@ private fun SchedulePageContents(
                 .fillMaxWidth()
                 .height(50.dp),
             radius = 8.dp,
-            text = ctaButtonText,
-            onClick = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickNext) }
+            text = stringResource(R.string.cta_button_next),
+            onClick = { onEvent(CreateGroupUiEvent.Click.OnClickNext) }
         )
     }
 }
@@ -448,11 +457,9 @@ private fun RowScope.LaunchFromButton(
 
 @Composable
 private fun CheckPageContents(
-    viewModel: CreateGroupViewModel = koinViewModel(),
-    ctaButtonText: String,
+    uiState: CreateGroupUiState,
+    onEvent: (CreateGroupUiEvent) -> Unit,
 ) {
-    val uiState = viewModel.collectAsState().value
-
     Column(modifier = Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -472,16 +479,17 @@ private fun CheckPageContents(
                 .fillMaxWidth()
                 .height(50.dp),
             radius = 8.dp,
-            text = ctaButtonText,
+            text = stringResource(R.string.cta_button_create_group),
             onClick = { }
         )
     }
 }
 
 @Composable
-private fun InitDialog(viewModel: CreateGroupViewModel = koinViewModel()) {
-    val uiState = viewModel.collectAsState().value
-
+private fun InitDialog(
+    uiState: CreateGroupUiState,
+    onEvent: (CreateGroupUiEvent) -> Unit,
+) {
     if (uiState.duplicatedNameDialogState.isShowing) {
         ActionDialog(
             title = stringResource(R.string.dialog_title_duplicated_name),
@@ -489,9 +497,9 @@ private fun InitDialog(viewModel: CreateGroupViewModel = koinViewModel()) {
             icon = painterResource(R.drawable.ic_notice),
             negativeText = stringResource(R.string.dialog_button_back),
             positiveText = stringResource(R.string.dialog_button_create_group),
-            onClickNegative = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogNegative) },
-            onClickPositive = { viewModel.onEvent(CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogPositive) },
-            onDismissRequest = { viewModel.onEvent(CreateGroupUiEvent.Callback.OnDuplicatedNameDialogDismissRequested) }
+            onClickNegative = { onEvent(CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogNegative) },
+            onClickPositive = { onEvent(CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogPositive) },
+            onDismissRequest = { onEvent(CreateGroupUiEvent.Callback.OnDuplicatedNameDialogDismissRequested) }
         )
     }
 }
@@ -499,5 +507,8 @@ private fun InitDialog(viewModel: CreateGroupViewModel = koinViewModel()) {
 @Preview(showBackground = true)
 @Composable
 private fun CreateGroupScreenContentsPreview() {
-
+    CreateGroupScreenContents(
+        uiState = CreateGroupUiState(),
+        onEvent = {}
+    )
 }

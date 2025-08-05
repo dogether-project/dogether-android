@@ -38,13 +38,17 @@ import site.dogether.presentation.theme.Head1_B
 
 @Composable
 fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
-    GroupCreatedScreenContents()
+    GroupCreatedScreenContents(
+        uiState = viewModel.collectAsState().value,
+        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+    )
 }
 
 @Composable
-private fun GroupCreatedScreenContents(viewModel: GroupCreatedViewModel = koinViewModel()) {
-    val uiState = viewModel.collectAsState().value
-
+private fun GroupCreatedScreenContents(
+    uiState: GroupCreatedUiState,
+    onEvent: (GroupCreatedUiEvent) -> Unit,
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -138,5 +142,8 @@ private fun GroupCreatedScreenContents(viewModel: GroupCreatedViewModel = koinVi
 @Preview
 @Composable
 private fun GroupCreatedScreenContentsPreview() {
-    GroupCreatedScreenContents()
+    GroupCreatedScreenContents(
+        uiState = GroupCreatedUiState(),
+        onEvent = {}
+    )
 }

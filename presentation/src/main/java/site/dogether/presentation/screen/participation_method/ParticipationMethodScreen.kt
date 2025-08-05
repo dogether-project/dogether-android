@@ -70,7 +70,10 @@ fun ParticipationMethodScreen(viewModel: ParticipationMethodViewModel = koinView
         viewModel.onEvent(ParticipationMethodUiEvent.Lifecycle.OnFirstComposition)
     }
 
-    ParticipationMethodScreenContents()
+    ParticipationMethodScreenContents(
+        uiState = viewModel.collectAsState().value,
+        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+    )
 
     InitDialog()
 }
@@ -96,9 +99,10 @@ private fun navigateToNotificationSetting(context: Context) {
 }
 
 @Composable
-private fun ParticipationMethodScreenContents(viewModel: ParticipationMethodViewModel = koinViewModel()) {
-    val uiState = viewModel.collectAsState().value
-
+private fun ParticipationMethodScreenContents(
+    uiState: ParticipationMethodUiState,
+    onEvent: (ParticipationMethodUiEvent) -> Unit,
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -175,7 +179,7 @@ private fun ParticipationMethod(
     iconContentDescription: String,
     title: String,
     body: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -232,7 +236,7 @@ private fun InitDialog(viewModel: ParticipationMethodViewModel = koinViewModel()
             negativeText = stringResource(R.string.dialog_button_later),
             positiveText = stringResource(R.string.dialog_button_settings),
             onClickNegative = { viewModel.onEvent(ParticipationMethodUiEvent.Click.OnClickPermissionDialogNegative) },
-            onClickPositive = { viewModel.onEvent(ParticipationMethodUiEvent.Click.OnClickPermissionDialogPositive)},
+            onClickPositive = { viewModel.onEvent(ParticipationMethodUiEvent.Click.OnClickPermissionDialogPositive) },
             onDismissRequest = { viewModel.onEvent(ParticipationMethodUiEvent.Callback.OnPermissionDialogDismissRequested) }
         )
     }
@@ -241,5 +245,8 @@ private fun InitDialog(viewModel: ParticipationMethodViewModel = koinViewModel()
 @Preview(showBackground = true)
 @Composable
 private fun ParticipationMethodScreenContentsPreview() {
-    ParticipationMethodScreenContents()
+    ParticipationMethodScreenContents(
+        uiState = ParticipationMethodUiState(),
+        onEvent = {}
+    )
 }
