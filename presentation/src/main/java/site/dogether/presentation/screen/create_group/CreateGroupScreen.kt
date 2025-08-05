@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,21 +36,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
+import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.screen.create_group.model.CreateGroupPageItem
 import site.dogether.presentation.theme.Body1_B
-import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.Body2_S
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgSurface
-import site.dogether.presentation.theme.ColorBorderDisabled
 import site.dogether.presentation.theme.ColorBorderPrimary
 import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorIconElevated
@@ -63,9 +60,6 @@ import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.hideKeyboardOnTap
-import site.dogether.presentation.utils.toFormattedString
-import site.dogether.presentation.utils.today
-import site.dogether.presentation.utils.tomorrow
 
 private val pageList: List<CreateGroupPageItem> = listOf(
     CreateGroupPageItem(
@@ -258,7 +252,7 @@ private fun MemberLimitCalculateButton(
     modifier: Modifier,
     painter: Painter,
     contentDescription: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -278,7 +272,7 @@ private fun MemberLimitCalculateButton(
 
 @Composable
 private fun SchedulePageContents(
-    viewModel: CreateGroupViewModel = koinViewModel(), ctaButtonText: String
+    viewModel: CreateGroupViewModel = koinViewModel(), ctaButtonText: String,
 ) {
     val uiState = viewModel.collectAsState().value
 
@@ -371,7 +365,7 @@ private fun SchedulePageContents(
 private fun RowScope.PeriodButton(
     period: Int,
     selectedPeriod: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val isSelected = period == selectedPeriod
 
@@ -409,7 +403,7 @@ private fun RowScope.PeriodButton(
 private fun RowScope.LaunchFromButton(
     isLaunchFromToday: Boolean,
     isLaunchFromTodayState: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val isSelected = isLaunchFromToday == isLaunchFromTodayState
 
@@ -455,7 +449,7 @@ private fun RowScope.LaunchFromButton(
 @Composable
 private fun CheckPageContents(
     viewModel: CreateGroupViewModel = koinViewModel(),
-    ctaButtonText: String
+    ctaButtonText: String,
 ) {
     val uiState = viewModel.collectAsState().value
 
@@ -463,61 +457,13 @@ private fun CheckPageContents(
         Spacer(modifier = Modifier.height(40.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 32.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .fillMaxWidth()
-                    .background(ColorBgSurface)
-                    .border(
-                        width = 1.dp, shape = RoundedCornerShape(12.dp), color = ColorBorderDisabled
-                    )
-                    .padding(
-                        horizontal = 20.dp, vertical = 24.dp
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = uiState.name.ifEmpty { "Say Yes 후회 뿐인 사랑에" },
-                    style = Head1_B.copy(lineHeightStyle = LineHeightStyle.Default),
-                    color = ColorTextDefault
-                )
-
-                HorizontalDivider(
-                    modifier = Modifier.padding(top = 24.dp),
-                    thickness = 1.dp,
-                    color = ColorBorderDisabled
-                )
-
-                Column(
-                    modifier = Modifier.padding(top = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    InfoRow(
-                        title = stringResource(R.string.info_title_period),
-                        body = if (uiState.period < 7) {
-                            "${uiState.period}" + stringResource(R.string.unit_day)
-                        } else {
-                            "${uiState.period / 7}" + stringResource(R.string.unit_week)
-                        },
-                    )
-
-                    InfoRow(
-                        title = stringResource(R.string.info_title_group_member_limit),
-                        body = stringResource(R.string.unit_prefix_whole) + " ${uiState.memberLimit}" + stringResource(R.string.unit_member)
-                    )
-
-                    InfoRow(
-                        title = stringResource(R.string.info_title_launch_date),
-                        body = if (uiState.isLaunchFromToday) today.toFormattedString() else tomorrow.toFormattedString()
-                    )
-
-                    InfoRow(
-                        title = stringResource(R.string.info_title_end_date),
-                        body = if (uiState.isLaunchFromToday) today.plusDays(uiState.period.toLong()).toFormattedString() else tomorrow.plusDays(uiState.period.toLong()).toFormattedString()
-                    )
-                }
-            }
+            GroupInfoColumn(
+                modifier = Modifier.padding(horizontal = 32.dp),
+                name = uiState.name,
+                period = uiState.period,
+                memberLimit = uiState.memberLimit,
+                isLaunchFromToday = uiState.isLaunchFromToday
+            )
         }
 
         CTAButton(
@@ -528,30 +474,6 @@ private fun CheckPageContents(
             radius = 8.dp,
             text = ctaButtonText,
             onClick = { }
-        )
-    }
-}
-
-@Composable
-private fun InfoRow(
-    title: String,
-    body: String
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title,
-            style = Body1_B.copy(lineHeightStyle = LineHeightStyle.Default),
-            color = ColorTextPrimary
-        )
-
-        Text(
-            text = body,
-            style = Body1_R.copy(lineHeightStyle = LineHeightStyle.Default),
-            color = ColorTextSubtle
         )
     }
 }
