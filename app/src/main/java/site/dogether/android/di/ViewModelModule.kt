@@ -5,6 +5,7 @@ import org.koin.dsl.module
 import site.dogether.presentation.screen.create_group.CreateGroupViewModel
 import site.dogether.presentation.screen.force_update.ForceUpdateViewModel
 import site.dogether.presentation.screen.group_created.GroupCreatedViewModel
+import site.dogether.presentation.screen.group_participated.GroupParticipatedViewModel
 import site.dogether.presentation.screen.on_boarding.OnBoardingViewModel
 import site.dogether.presentation.screen.participate_group.ParticipateGroupViewModel
 import site.dogether.presentation.screen.participation_method.ParticipationMethodViewModel
@@ -18,4 +19,5 @@ val viewModelModule = module {
     viewModel { CreateGroupViewModel() }
     viewModel { GroupCreatedViewModel() }
     viewModel { ParticipateGroupViewModel() }
+    viewModel { GroupParticipatedViewModel() }
 }

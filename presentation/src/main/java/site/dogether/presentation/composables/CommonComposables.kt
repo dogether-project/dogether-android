@@ -2,7 +2,9 @@ package site.dogether.presentation.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,10 +41,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import site.dogether.presentation.R
 import site.dogether.presentation.theme.Body1_B
+import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.ColorBgDisabled
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgPrimary
+import site.dogether.presentation.theme.ColorBgSurface
+import site.dogether.presentation.theme.ColorBorderDisabled
 import site.dogether.presentation.theme.ColorBorderPrimary
 import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorTextBlack
@@ -50,10 +56,14 @@ import site.dogether.presentation.theme.ColorTextDisabled
 import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
+import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Small_S
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.conditionedClickableWithoutRipple
+import site.dogether.presentation.utils.toFormattedString
+import site.dogether.presentation.utils.today
+import site.dogether.presentation.utils.tomorrow
 
 @Composable
 fun CTAButton(
@@ -254,4 +264,92 @@ fun BackButton(onClick: () -> Unit) {
         tint = ColorIconDefault,
         contentDescription = "icon_arrow_back"
     )
+}
+
+@Composable
+fun GroupInfoColumn(
+    modifier: Modifier,
+    name: String,
+    period: Int,
+    memberLimit: Int,
+    isLaunchFromToday: Boolean,
+) {
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .fillMaxWidth()
+            .background(ColorBgSurface)
+            .border(
+                width = 1.dp, shape = RoundedCornerShape(12.dp), color = ColorBorderDisabled
+            )
+            .padding(
+                horizontal = 20.dp, vertical = 24.dp
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = name,
+            style = Head1_B.copy(lineHeightStyle = LineHeightStyle.Default),
+            color = ColorTextDefault
+        )
+
+        HorizontalDivider(
+            modifier = Modifier.padding(top = 24.dp),
+            thickness = 1.dp,
+            color = ColorBorderDisabled
+        )
+
+        Column(
+            modifier = Modifier.padding(top = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            InfoRow(
+                title = stringResource(R.string.info_title_period),
+                body = if (period < 7) {
+                    "$period" + stringResource(R.string.unit_day)
+                } else {
+                    "${period / 7}" + stringResource(R.string.unit_week)
+                },
+            )
+
+            InfoRow(
+                title = stringResource(R.string.info_title_group_member_limit),
+                body = stringResource(R.string.unit_prefix_whole) + " $memberLimit" + stringResource(R.string.unit_member)
+            )
+
+            InfoRow(
+                title = stringResource(R.string.info_title_launch_date),
+                body = if (isLaunchFromToday) today.toFormattedString() else tomorrow.toFormattedString()
+            )
+
+            InfoRow(
+                title = stringResource(R.string.info_title_end_date),
+                body = if (isLaunchFromToday) today.plusDays(period.toLong()).toFormattedString() else tomorrow.plusDays(period.toLong()).toFormattedString()
+            )
+        }
+    }
+}
+
+@Composable
+private fun InfoRow(
+    title: String,
+    body: String
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            style = Body1_B.copy(lineHeightStyle = LineHeightStyle.Default),
+            color = ColorTextPrimary
+        )
+
+        Text(
+            text = body,
+            style = Body1_R.copy(lineHeightStyle = LineHeightStyle.Default),
+            color = ColorTextSubtle
+        )
+    }
 }
