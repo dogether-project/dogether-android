@@ -123,13 +123,7 @@ private fun CreateGroupScreenContents(
         ) { pageIndex ->
             Column(modifier = Modifier.fillMaxSize()) {
                 Text(
-                    text = stringResource(
-                        when (pageList[pageIndex]) {
-                            CreateGroupPage.Purpose -> R.string.title_create_group_purpose
-                            CreateGroupPage.Schedule -> R.string.title_create_group_schedule
-                            CreateGroupPage.Check -> R.string.title_create_group_check
-                        }
-                    ),
+                    text = stringResource(pageList[pageIndex].titleStringId),
                     style = Head1_B,
                     color = ColorTextDefault
                 )

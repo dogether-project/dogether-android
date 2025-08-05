@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import site.dogether.presentation.screen.create_group.CreateGroupScreen
+import site.dogether.presentation.screen.error.ErrorScreen
 import site.dogether.presentation.screen.force_update.ForceUpdateScreen
 import site.dogether.presentation.screen.group_created.GroupCreatedScreen
 import site.dogether.presentation.screen.group_participated.GroupParticipatedScreen
@@ -16,7 +17,7 @@ import site.dogether.presentation.screen.splash.SplashScreen
 
 @Composable
 fun AppNavGraph(
-    startDestination: String = Screen.Splash.route,
+    startDestination: String = Screen.Error.route,
     navController: NavHostController = rememberNavController(),
 ) {
     NavHost(
@@ -31,6 +32,7 @@ fun AppNavGraph(
         composable(Screen.GroupCreated.route) { GroupCreatedScreen() }
         composable(Screen.ParticipateGroup.route) { ParticipateGroupScreen() }
         composable(Screen.GroupParticipated.route) { GroupParticipatedScreen() }
+        composable(Screen.Error.route) { ErrorScreen() }
     }
 }
 
@@ -43,4 +45,5 @@ enum class Screen(val route: String) {
     GroupCreated("group_created"),
     ParticipateGroup("participate_group"),
     GroupParticipated("group_participated"),
+    Error("error")
 }
