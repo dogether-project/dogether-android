@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -43,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
+import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 import site.dogether.presentation.theme.Body1_S
@@ -358,23 +358,27 @@ private fun HomeScreenContents(
                 }
             }
 
-            TomorrowTimer(
+//            LaunchFromTomorrowContents(
+//                uiState = uiState,
+//                onEvent = { uiEvent -> onEvent(uiEvent) }
+//            )
+
+            FirstDayContents(
                 uiState = uiState,
-                onEvent = { uiEvent -> onEvent(uiEvent) }
+                onEvent = onEvent
             )
         }
     }
 }
 
 @Composable
-private fun ColumnScope.TomorrowTimer(
+private fun LaunchFromTomorrowContents(
     uiState: HomeUiState,
     onEvent: (HomeUiEvent) -> Unit
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -436,6 +440,54 @@ private fun ColumnScope.TomorrowTimer(
             text = stringResource(R.string.body_launch_from_tomorrow),
             style = Body2_R,
             color = ColorTextSecondary
+        )
+    }
+}
+
+@Composable
+private fun FirstDayContents(
+    uiState: HomeUiState,
+    onEvent: (HomeUiEvent) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                modifier = Modifier.padding(horizontal = 64.dp),
+                painter = painterResource(R.drawable.img_first_day_contents),
+                contentDescription = "image_first_day_contents"
+            )
+
+            Text(
+                modifier = Modifier.padding(top = 10.dp),
+                text = stringResource(R.string.title_create_todo_from_today),
+                style = Head2_B,
+                color = ColorTextDefault
+            )
+
+
+            Text(
+                modifier = Modifier.padding(top = 4.dp),
+                text = stringResource(R.string.body_create_todo_from_today),
+                style = Body2_R,
+                color = ColorTextSecondary
+            )
+        }
+
+        CTAButton(
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .fillMaxWidth()
+                .height(50.dp),
+            radius = 8.dp,
+            text = stringResource(R.string.cta_button_create_todo),
+            onClick = {}
         )
     }
 }
