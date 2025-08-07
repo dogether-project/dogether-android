@@ -1,7 +1,9 @@
 package site.dogether.android.di
 
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import site.dogether.common.DefaultDispatcher
 import site.dogether.presentation.screen.create_group.CreateGroupViewModel
 import site.dogether.presentation.screen.error.ErrorViewModel
 import site.dogether.presentation.screen.force_update.ForceUpdateViewModel
@@ -23,5 +25,7 @@ val viewModelModule = module {
     viewModel { ParticipateGroupViewModel() }
     viewModel { GroupParticipatedViewModel() }
     viewModel { ErrorViewModel() }
-    viewModel { HomeViewModel() }
+    viewModel {
+        HomeViewModel(defaultDispatcher = get(named(DefaultDispatcher)))
+    }
 }

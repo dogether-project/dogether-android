@@ -1,6 +1,5 @@
 package site.dogether.presentation.screen.home
 
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,24 +9,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +44,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBgElevated
@@ -63,8 +61,13 @@ import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Small_R
+import site.dogether.presentation.theme.Yellow
 import site.dogether.presentation.utils.alphaByProgress
 import site.dogether.presentation.utils.bottomSheetSnappable
+import site.dogether.presentation.utils.toDp
+import site.dogether.presentation.utils.toFormattedString
+import site.dogether.presentation.utils.today
+import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
@@ -80,20 +83,15 @@ private fun HomeScreenContents(
     onEvent: (HomeUiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    var upperAnchorY by remember { mutableIntStateOf(0) }
-    var lowerAnchorY by remember { mutableIntStateOf(0) }
-    val sheetOffsetY = remember { Animatable(0f) }
-    val bottomSheetExpandingProgress by remember {
-        derivedStateOf {
-            ((sheetOffsetY.value - upperAnchorY) / (lowerAnchorY - upperAnchorY)).coerceIn(0f, 1f)
-        }
-    }
-    var frameHeight by remember { mutableIntStateOf(0) }
+    val density = LocalDensity.current
+    val anchoredBottomSheetState = remember { AnchoredBottomSheetState() }
 
-    LaunchedEffect(lowerAnchorY) {
-        if (lowerAnchorY != 0 && sheetOffsetY.value == 0f) {
-            sheetOffsetY.snapTo(lowerAnchorY.toFloat())
-        }
+    WindowInsets.systemBars.getTop(density).takeIf { it != 0 }?.let {
+        anchoredBottomSheetState.statusBarHeight = it
+    }
+
+    LaunchedEffect(anchoredBottomSheetState.lowerAnchorY) {
+        anchoredBottomSheetState.snapToLowerAnchorIfNeeded()
     }
 
     Box(
@@ -102,7 +100,7 @@ private fun HomeScreenContents(
             .onLayoutRectChanged(
                 throttleMillis = 50L,
                 debounceMillis = 0L
-            ) { bounds -> frameHeight = bounds.height }
+            ) { bounds -> anchoredBottomSheetState.frameHeight = bounds.height }
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             TopBar(
@@ -145,8 +143,9 @@ private fun HomeScreenContents(
 
                     Row(
                         modifier = Modifier
+                            .alphaByProgress(anchoredBottomSheetState.expandingProgress)
                             .padding(top = 12.dp)
-                            .onLayoutRectChanged { bounds -> upperAnchorY = bounds.positionInRoot.y - bounds.height }
+                            .onLayoutRectChanged { bounds -> anchoredBottomSheetState.upperAnchorY = bounds.positionInWindow.y }
                     ) {
                         Column {
                             Text(
@@ -202,7 +201,7 @@ private fun HomeScreenContents(
 
                 Image(
                     modifier = Modifier
-                        .alphaByProgress(bottomSheetExpandingProgress)
+                        .alphaByProgress(anchoredBottomSheetState.expandingProgress)
                         .size(100.dp),
                     painter = painterResource(R.drawable.img_dosik_main),
                     contentDescription = "image_dosik_main"
@@ -211,6 +210,7 @@ private fun HomeScreenContents(
 
             Row(
                 modifier = Modifier
+                    .alphaByProgress(anchoredBottomSheetState.expandingProgress)
                     .padding(top = 22.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -246,6 +246,7 @@ private fun HomeScreenContents(
 
             Row(
                 modifier = Modifier
+                    .alphaByProgress(anchoredBottomSheetState.expandingProgress)
                     .padding(top = 16.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .fillMaxWidth()
@@ -280,10 +281,11 @@ private fun HomeScreenContents(
             Spacer(
                 modifier = Modifier
                     .height(20.dp)
+                    .background(Yellow)
                     .onLayoutRectChanged(
                         throttleMillis = 50L,
                         debounceMillis = 0L
-                    ) { bounds -> lowerAnchorY = bounds.positionInWindow.y - bounds.height }
+                    ) { bounds -> anchoredBottomSheetState.lowerAnchorY = bounds.positionInWindow.y + bounds.height }
             )
         }
 
@@ -292,16 +294,21 @@ private fun HomeScreenContents(
                 .offset {
                     IntOffset(
                         x = 0,
-                        y = sheetOffsetY.value.toInt()
+                        y = anchoredBottomSheetState.sheetOffsetY.value.roundToInt() - anchoredBottomSheetState.statusBarHeight
                     )
                 }
-                .clip(RoundedCornerShape(12.dp))
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 12.dp,
+                        topEnd = 12.dp
+                    )
+                )
                 .fillMaxWidth()
-                .height(with(LocalDensity.current) { (frameHeight - sheetOffsetY.value).toDp() })
+                .height((anchoredBottomSheetState.frameHeight - anchoredBottomSheetState.sheetOffsetY.value + anchoredBottomSheetState.statusBarHeight).toDp())
                 .bottomSheetSnappable(
-                    sheetOffsetY = sheetOffsetY,
-                    upperLimit = upperAnchorY,
-                    lowerLimit = lowerAnchorY,
+                    sheetOffsetY = anchoredBottomSheetState.sheetOffsetY,
+                    upperLimit = anchoredBottomSheetState.upperAnchorY,
+                    lowerLimit = anchoredBottomSheetState.lowerAnchorY,
                     scope = scope
                 )
                 .background(ColorBgElevated)
@@ -331,7 +338,7 @@ private fun HomeScreenContents(
                 }
 
                 Text(
-                    text = "2025.08.06",
+                    text = today.toFormattedString(),
                     style = Head2_B.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextDefault
                 )
@@ -351,13 +358,19 @@ private fun HomeScreenContents(
                 }
             }
 
-            TomorrowTimer()
+            TomorrowTimer(
+                uiState = uiState,
+                onEvent = { uiEvent -> onEvent(uiEvent) }
+            )
         }
     }
 }
 
 @Composable
-private fun ColumnScope.TomorrowTimer() {
+private fun ColumnScope.TomorrowTimer(
+    uiState: HomeUiState,
+    onEvent: (HomeUiEvent) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -365,7 +378,10 @@ private fun ColumnScope.TomorrowTimer() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Box(modifier = Modifier.size(142.dp)) {
+        Box(
+            modifier = Modifier.size(142.dp),
+            contentAlignment = Alignment.Center
+        ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val strokeWidth = 6.dp.toPx()
                 val inset = strokeWidth / 2
@@ -381,14 +397,29 @@ private fun ColumnScope.TomorrowTimer() {
                 drawArc(
                     brush = SolidColor(ColorBgPrimary),
                     startAngle = -90f,
-                    sweepAngle = 120f,
+                    sweepAngle = uiState.timerProgress * 360f,
                     useCenter = false,
                     style = Stroke(
                         width = strokeWidth,
-                        cap = StrokeCap.Butt
+                        cap = StrokeCap.Round
                     ),
                     size = arcRect.size,
                     topLeft = arcRect.topLeft
+                )
+            }
+
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_timer),
+                    tint = ColorIconPrimary,
+                    contentDescription = "icon_timer"
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = uiState.timerText,
+                    style = Head1_B.copy(fontFeatureSettings = "tnum"),
+                    color = ColorTextDefault
                 )
             }
         }
@@ -408,6 +439,7 @@ private fun ColumnScope.TomorrowTimer() {
         )
     }
 }
+
 
 @Preview(
     showBackground = true,
