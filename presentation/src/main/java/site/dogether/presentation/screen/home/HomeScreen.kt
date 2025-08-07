@@ -360,7 +360,7 @@ private fun HomeScreenContents(
 
 //            LaunchFromTomorrowContents(
 //                uiState = uiState,
-//                onEvent = { uiEvent -> onEvent(uiEvent) }
+//                onEvent = onEvent
 //            )
 
             FirstDayContents(
