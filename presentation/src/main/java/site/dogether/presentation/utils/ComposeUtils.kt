@@ -4,8 +4,11 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.DraggableState
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBars
@@ -27,6 +30,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 
 @Composable
 fun Dp.toSp(): TextUnit = with(LocalDensity.current) { this@toSp.toSp() }
@@ -131,10 +135,3 @@ fun Modifier.alphaByProgress(progress: Float): Modifier = this.then(
         )
     )
 )
-
-@Composable
-fun rememberStatusBarHeight(): Int {
-    val density = LocalDensity.current
-    val statusBarHeight = WindowInsets.statusBars.getTop(density).takeIf { it != 0 } ?: 0
-    return remember(statusBarHeight) { statusBarHeight }
-}

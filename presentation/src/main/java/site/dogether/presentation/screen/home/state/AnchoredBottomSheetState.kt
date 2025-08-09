@@ -1,6 +1,7 @@
 package site.dogether.presentation.screen.home.state
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -22,5 +23,18 @@ class AnchoredBottomSheetState {
         if (lowerAnchorY != 0 && sheetOffsetY.value == 0f) {
             sheetOffsetY.snapTo(lowerAnchorY.toFloat())
         }
+    }
+
+    suspend fun setOffset(newValue: Float) {
+        val clamped = newValue.coerceIn(upperAnchorY.toFloat(), lowerAnchorY.toFloat())
+        sheetOffsetY.snapTo(clamped)
+    }
+
+    suspend fun animateToUpper(durationMillis: Int = 200) {
+        sheetOffsetY.animateTo(upperAnchorY.toFloat(), animationSpec = tween(durationMillis))
+    }
+
+    suspend fun animateToLower(durationMillis: Int = 200) {
+        sheetOffsetY.animateTo(lowerAnchorY.toFloat(), animationSpec = tween(durationMillis))
     }
 }

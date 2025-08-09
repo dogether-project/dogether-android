@@ -63,6 +63,8 @@
     <string name="cta_button_create_new_group">새로운 그룹 생성</string>
     <string name="cta_button_group_navigate_to_activity_summary">그룹 활동 한눈에 보기 !</string>
     <string name="cta_button_create_todo">투두 작성하기</string>
+    <string name="cta_button_certificate">인증하기</string>
+    <string name="cta_button_add_todo">투두 추가하기</string>
 
     <string name="cta_button_title_create_group">그룹 만들기</string>
     <string name="cta_button_title_participate_with_code">초대 코드로 참여하기</string>
@@ -96,4 +98,9 @@
     <string name="info_progress">진행 현황</string>
 
     <string name="notice_share">카카오톡, 문자 등을 통해 공유해보세요 !</string>
+
+    <string name="chip_all">전체</string>
+    <string name="chip_review_pending">검사 대기</string>
+    <string name="chip_approve">인정</string>
+    <string name="chip_reject">노인정</string>
 </resources>

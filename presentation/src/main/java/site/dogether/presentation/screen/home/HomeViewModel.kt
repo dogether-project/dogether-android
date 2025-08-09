@@ -8,8 +8,11 @@ import site.dogether.common.HoursPerDay
 import site.dogether.common.MinutesPerHour
 import site.dogether.common.SecondsPerMinute
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
+import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
+import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
+import site.dogether.presentation.screen.home.state.Chip
 import site.dogether.presentation.utils.today
-import site.dogether.presentation.utils.tomorrow
 import site.dogether.presentation.utils.tomorrowMidnight
 import java.time.Duration.between
 
@@ -19,12 +22,26 @@ class HomeViewModel(
 
     override fun onEvent(event: HomeUiEvent) {
         when (event) {
-            else -> Unit
+            is HomeUiEvent.Click -> {
+                when (event) {
+                    is HomeUiEvent.Click.OnClickChip -> {
+                        updateState {
+                            it.copy(
+                                selectedChip = event.chip,
+                                filteredTodoList = it.todoList.filter { todo ->
+                                    when (event.chip) {
+                                        Chip.All -> true
+                                        Chip.Approve -> todo.status == STATUS_APPROVE
+                                        Chip.Reject -> todo.status == STATUS_REJECT
+                                        Chip.ReviewPending -> todo.status == STATUS_REVIEW_PENDING
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
         }
-    }
-
-    init {
-        launchTomorrowTimer()
     }
 
     private fun launchTomorrowTimer() {

@@ -35,7 +35,7 @@ val ColorIconElevated = Grey200
 val ColorIconSecondary = Grey400
 val ColorIconDisabled = Grey600
 val ColorIconPrimary = Blue300
-val colorIconError = Red400
+val ColorIconError = Red400
 
 val ColorBorderDefault = Grey0
 val ColorBorderElevated = Grey200
