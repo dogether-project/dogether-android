@@ -79,6 +79,7 @@ import site.dogether.presentation.theme.ColorIconError
 import site.dogether.presentation.theme.ColorIconPrimary
 import site.dogether.presentation.theme.ColorIconSecondary
 import site.dogether.presentation.theme.ColorTextDefault
+import site.dogether.presentation.theme.ColorTextDisabled
 import site.dogether.presentation.theme.ColorTextInverse
 import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.theme.ColorTextSecondary
@@ -88,6 +89,7 @@ import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Red400
 import site.dogether.presentation.theme.Small_R
 import site.dogether.presentation.theme.Yellow
+import site.dogether.presentation.utils.DATE_FORMAT_FULL_YEAR
 import site.dogether.presentation.utils.alphaByProgress
 import site.dogether.presentation.utils.bottomSheetSnappable
 import site.dogether.presentation.utils.clickableWithoutRipple
@@ -406,7 +408,7 @@ private fun HomeScreenContents(
                 }
 
                 Text(
-                    text = today.toFormattedString(),
+                    text = today.toFormattedString(DATE_FORMAT_FULL_YEAR),
                     style = Head2_B.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextDefault
                 )
@@ -431,10 +433,12 @@ private fun HomeScreenContents(
 //                onEvent = onEvent
 //            )
 
-            TodoContents(
-                uiState = uiState,
-                onEvent = onEvent
-            )
+//            TodoContents(
+//                uiState = uiState,
+//                onEvent = onEvent
+//            )
+
+            NoTodoContents()
         }
     }
 }
@@ -756,6 +760,35 @@ private fun TodoItem(todo: Todo) {
                 contentDescription = "icon_brace_right"
             )
         }
+    }
+}
+
+@Composable
+private fun NoTodoContents() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            modifier = Modifier.size(150.dp),
+            painter = painterResource(R.drawable.img_no_todo),
+            contentDescription = "image_no_todo"
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 16.dp),
+            text = stringResource(R.string.title_no_todo),
+            style = Head2_B,
+            color = ColorTextSubtle
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 4.dp),
+            text = stringResource(R.string.body_no_todo),
+            style = Body2_R,
+            color = ColorTextDisabled
+        )
     }
 }
 

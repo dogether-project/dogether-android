@@ -59,6 +59,7 @@ import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Small_S
+import site.dogether.presentation.utils.DATE_FORMAT_SHORT_YEAR
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.conditionedClickableWithoutRipple
 import site.dogether.presentation.utils.toFormattedString
@@ -319,12 +320,12 @@ fun GroupInfoColumn(
 
             InfoRow(
                 title = stringResource(R.string.info_launch_date),
-                body = if (isLaunchFromToday) today.toFormattedString() else tomorrow.toFormattedString()
+                body = if (isLaunchFromToday) today.toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.toFormattedString(DATE_FORMAT_SHORT_YEAR)
             )
 
             InfoRow(
                 title = stringResource(R.string.info_end_date),
-                body = if (isLaunchFromToday) today.plusDays(period.toLong()).toFormattedString() else tomorrow.plusDays(period.toLong()).toFormattedString()
+                body = if (isLaunchFromToday) today.plusDays(period.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.plusDays(period.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR)
             )
         }
     }
