@@ -107,4 +107,7 @@
     <string name="chip_review_pending">검사 대기</string>
     <string name="chip_approve">인정</string>
     <string name="chip_reject">노인정</string>
+
+    <string name="tooltip_last_day">마지막 인증일이에요!\n내일부터 인증이 불가능해요.</string>
+    <string name="tooltip_group_finished">그룹이 종료됐어요!</string>
 </resources>

@@ -21,8 +21,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -33,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -69,6 +74,7 @@ import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.Body2_S
 import site.dogether.presentation.theme.ColorBgDefault
 import site.dogether.presentation.theme.ColorBgElevated
+import site.dogether.presentation.theme.ColorBgInverse
 import site.dogether.presentation.theme.ColorBgPrimary
 import site.dogether.presentation.theme.ColorBgSurface
 import site.dogether.presentation.theme.ColorBorderSecondary
@@ -76,6 +82,7 @@ import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorIconDisabled
 import site.dogether.presentation.theme.ColorIconElevated
 import site.dogether.presentation.theme.ColorIconError
+import site.dogether.presentation.theme.ColorIconInverse
 import site.dogether.presentation.theme.ColorIconPrimary
 import site.dogether.presentation.theme.ColorIconSecondary
 import site.dogether.presentation.theme.ColorTextDefault
@@ -88,6 +95,7 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Red400
 import site.dogether.presentation.theme.Small_R
+import site.dogether.presentation.theme.Small_S
 import site.dogether.presentation.theme.Yellow
 import site.dogether.presentation.utils.DATE_FORMAT_FULL_YEAR
 import site.dogether.presentation.utils.alphaByProgress
@@ -97,6 +105,7 @@ import site.dogether.presentation.utils.toDp
 import site.dogether.presentation.utils.toFormattedString
 import site.dogether.presentation.utils.today
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
@@ -106,6 +115,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreenContents(
     uiState: HomeUiState,
@@ -273,13 +283,19 @@ private fun HomeScreenContents(
                     }
                 }
 
-                Image(
-                    modifier = Modifier
-                        .alphaByProgress(anchoredBottomSheetState.expandingProgress)
-                        .size(100.dp),
-                    painter = painterResource(R.drawable.img_dosik_main),
-                    contentDescription = "image_dosik_main"
-                )
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                    tooltip = { DosikTooltip(uiState) },
+                    state = rememberTooltipState(initialIsVisible = true)
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .alphaByProgress(anchoredBottomSheetState.expandingProgress)
+                            .size(100.dp),
+                        painter = painterResource(R.drawable.img_dosik_main),
+                        contentDescription = "image_dosik_main"
+                    )
+                }
             }
 
             Row(
@@ -441,6 +457,71 @@ private fun HomeScreenContents(
 //            NoTodoContents()
 
             FinishedContents()
+        }
+    }
+}
+
+@Composable
+private fun DosikTooltip(
+    uiState: HomeUiState
+) {
+    Column(horizontalAlignment = Alignment.End) {
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .background(ColorBgInverse)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.tooltip_group_finished),
+                style = Small_S.copy(
+                    lineHeightStyle = LineHeightStyle.Default.copy(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.None
+                    )
+                ),
+                color = ColorTextInverse
+            )
+
+            Icon(
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .size(12.dp),
+                painter = painterResource(R.drawable.ic_close),
+                tint = ColorIconInverse,
+                contentDescription = "icon_close"
+            )
+        }
+
+        Canvas(
+            modifier = Modifier
+                .size(10.dp)
+                .offset(x = (-36).dp)
+        ) {
+            val base = 10.dp.toPx()
+            val height = (base * sqrt(3f) / 2f)
+
+            val path = Path().apply {
+                moveTo(
+                    x = 0f,
+                    y = 0f
+                )
+                lineTo(
+                    x = base,
+                    y = 0f
+                )
+                lineTo(
+                    x = base / 2f,
+                    y = height
+                )
+                close()
+            }
+
+            drawPath(
+                path = path,
+                color = ColorBgInverse
+            )
         }
     }
 }
