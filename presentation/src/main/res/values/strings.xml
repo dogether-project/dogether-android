@@ -26,6 +26,7 @@
     <string name="title_create_todo_from_today">오늘의 투두를 작성해보세요</string>
     <string name="title_no_todo">해당 날짜에 작성된 투두가 없어요</string>
     <string name="title_group_finished">그룹 활동 기간이 모두 끝났어요</string>
+    <string name="title_choose_group">그룹 선택</string>
 
     <string name="body_force_update">두게더가 유저분들의 의견을 반영하여\n더 편하게 사용하도록 사용성을 개선했어요.\n지금 바로 업데이트하고 인증하러 가요!</string>
     <string name="body_on_boarding_0">목표만 세우면 끝?! 인증까지 해야 진짜 실천이에요</string>
@@ -69,6 +70,8 @@
     <string name="cta_button_create_todo">투두 작성하기</string>
     <string name="cta_button_certificate">인증하기</string>
     <string name="cta_button_add_todo">투두 추가하기</string>
+    <string name="cta_button_confirm">확인</string>
+    <string name="cta_button_add_group">그룹 추가하기</string>
 
     <string name="cta_button_title_create_group">그룹 만들기</string>
     <string name="cta_button_title_participate_with_code">초대 코드로 참여하기</string>

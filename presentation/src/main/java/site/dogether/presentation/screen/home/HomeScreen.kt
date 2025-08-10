@@ -23,9 +23,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -69,10 +72,12 @@ import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
 import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 import site.dogether.presentation.screen.home.state.Chip
+import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.Body2_S
 import site.dogether.presentation.theme.ColorBgDefault
+import site.dogether.presentation.theme.ColorBgDim
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgInverse
 import site.dogether.presentation.theme.ColorBgPrimary
@@ -124,7 +129,6 @@ private fun HomeScreenContents(
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
     val anchoredBottomSheetState = remember { AnchoredBottomSheetState() }
-
     val connection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
@@ -166,6 +170,7 @@ private fun HomeScreenContents(
             }
         }
     }
+    val selectGroupBottomSheetState = rememberModalBottomSheetState()
 
     WindowInsets.systemBars.getTop(density).takeIf { it != 0 }?.let {
         anchoredBottomSheetState.statusBarHeight = it
@@ -456,7 +461,119 @@ private fun HomeScreenContents(
 
 //            NoTodoContents()
 
-            FinishedContents()
+//            FinishedContents()
+        }
+
+        ChooseGroupBottomSheet(
+            sheetState = selectGroupBottomSheetState,
+            uiState = uiState,
+            onEvent = onEvent
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ChooseGroupBottomSheet(
+    sheetState: SheetState,
+    uiState: HomeUiState,
+    onEvent: (HomeUiEvent) -> Unit
+) {
+    ModalBottomSheet(
+        sheetState = sheetState,
+        shape = RoundedCornerShape(
+            topStart = 12.dp,
+            topEnd = 12.dp
+        ),
+        dragHandle = null,
+        containerColor = ColorBgSurface,
+        scrimColor = ColorBgDim,
+        onDismissRequest = { }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ColorBgSurface)
+                .padding(
+                    top = 24.dp,
+                    start = 24.dp,
+                    end = 24.dp
+                )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.title_choose_group),
+                    style = Head2_B,
+                    color = ColorTextDefault
+                )
+
+                Text(
+                    text = stringResource(R.string.cta_button_confirm),
+                    style = Body1_S,
+                    color = ColorTextDefault
+                )
+            }
+
+            uiState.groupList.forEach {
+                GroupItem(
+                    name = it,
+                    isSelected = it == uiState.currentGroup
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_add_todo),
+                    tint = ColorIconElevated,
+                    contentDescription = "icon_add_group"
+                )
+
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(R.string.cta_button_add_group),
+                    style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                    color = ColorTextSubtle
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun GroupItem(
+    name: String,
+    isSelected: Boolean
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = name,
+            style = Body1_B.copy(lineHeightStyle = LineHeightStyle.Default),
+            color = if (isSelected) ColorTextPrimary else ColorTextDisabled
+        )
+
+        if (isSelected) {
+            Icon(
+                painter = painterResource(R.drawable.ic_check),
+                tint = ColorIconPrimary,
+                contentDescription = "icon_check"
+            )
         }
     }
 }

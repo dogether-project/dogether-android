@@ -11,6 +11,7 @@ data class HomeUiState(
     val isLoading: Boolean = false,
     val timerProgress: Float = 0f,
     val timerText: String = "",
+    val currentGroup: String = "DND 작심삼일 탈출러",
     val todoList: List<Todo> = listOf(
         Todo(
             id = 1,
@@ -34,7 +35,9 @@ data class HomeUiState(
         ),
     ),
     val selectedChip: Chip = Chip.All,
-    val filteredTodoList: List<Todo> = listOf()
+    val filteredTodoList: List<Todo> = listOf(),
+    val isSelectGroupBottomSheetExpanded: Boolean = true,
+    val groupList: List<String> = listOf("DND 작심삼일 탈출러", "배고픈 민족들")
 )
 
 sealed interface HomeUiEvent {
