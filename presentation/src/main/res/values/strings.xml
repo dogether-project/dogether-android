@@ -22,6 +22,11 @@
     <string name="title_error_already_participated">이미 참여한 그룹이에요.</string>
     <string name="title_error_full_house">그룹 인원이 가득 찼어요.</string>
     <string name="title_error_invalid_group">참여할 수 없는 그룹이에요.</string>
+    <string name="title_launch_from_tomorrow">내일부터 투두를 시작할 수 있어요!</string>
+    <string name="title_create_todo_from_today">오늘의 투두를 작성해보세요</string>
+    <string name="title_no_todo">해당 날짜에 작성된 투두가 없어요</string>
+    <string name="title_group_finished">그룹 활동 기간이 모두 끝났어요</string>
+    <string name="title_choose_group">그룹 선택</string>
 
     <string name="body_force_update">두게더가 유저분들의 의견을 반영하여\n더 편하게 사용하도록 사용성을 개선했어요.\n지금 바로 업데이트하고 인증하러 가요!</string>
     <string name="body_on_boarding_0">목표만 세우면 끝?! 인증까지 해야 진짜 실천이에요</string>
@@ -35,6 +40,10 @@
     <string name="body_error_already_participated">해당 그룹은 다시 참여하실 수 없어요.</string>
     <string name="body_error_full_house">다른 그룹에 참여하거나 새로 만들어주세요.</string>
     <string name="body_error_invalid_group">종료되었거나 유효하지 않은 그룹이에요.</string>
+    <string name="body_launch_from_tomorrow">오늘은 계획을 세우고, 내일부터 실천해보세요!</string>
+    <string name="body_create_todo_from_today">매일 자정부터 새로운 투두를 입력해요</string>
+    <string name="body_no_todo">과거 날짜에서는 새로운 투두를 작성할 수 없어요</string>
+    <string name="body_group_finished">오늘이 지나면 이 페이지는 더 이상 열 수 없어요</string>
 
     <string name="dialog_title_permission">알림 권한이 꺼져 있어요.</string>
     <string name="dialog_title_duplicated_name">동일한 이름의 그룹이\n이미 존재합니다.</string>
@@ -57,6 +66,12 @@
     <string name="cta_button_retry">다시 시도</string>
     <string name="cta_button_go_back">뒤로 가기</string>
     <string name="cta_button_create_new_group">새로운 그룹 생성</string>
+    <string name="cta_button_group_navigate_to_activity_summary">그룹 활동 한눈에 보기 !</string>
+    <string name="cta_button_create_todo">투두 작성하기</string>
+    <string name="cta_button_certificate">인증하기</string>
+    <string name="cta_button_add_todo">투두 추가하기</string>
+    <string name="cta_button_confirm">확인</string>
+    <string name="cta_button_add_group">그룹 추가하기</string>
 
     <string name="cta_button_title_create_group">그룹 만들기</string>
     <string name="cta_button_title_participate_with_code">초대 코드로 참여하기</string>
@@ -80,11 +95,22 @@
     <string name="unit_member">명</string>
     <string name="unit_day">일</string>
     <string name="unit_week">주</string>
+    <string name="unit_day_passed">일차</string>
 
-    <string name="info_title_period">활동 기간</string>
-    <string name="info_title_group_member_limit">그룹원</string>
-    <string name="info_title_launch_date">시작일</string>
-    <string name="info_title_end_date">종료일</string>
+    <string name="info_period">활동 기간</string>
+    <string name="info_group_member_limit">그룹원</string>
+    <string name="info_launch_date">시작일</string>
+    <string name="info_end_date">종료일</string>
+    <string name="info_invite_code">초대코드</string>
+    <string name="info_progress">진행 현황</string>
 
     <string name="notice_share">카카오톡, 문자 등을 통해 공유해보세요 !</string>
+
+    <string name="chip_all">전체</string>
+    <string name="chip_review_pending">검사 대기</string>
+    <string name="chip_approve">인정</string>
+    <string name="chip_reject">노인정</string>
+
+    <string name="tooltip_last_day">마지막 인증일이에요!\n내일부터 인증이 불가능해요.</string>
+    <string name="tooltip_group_finished">그룹이 종료됐어요!</string>
 </resources>

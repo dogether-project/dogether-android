@@ -133,15 +133,18 @@ private fun CreateGroupScreenContents(
                 when (pageList[pageIndex]) {
                     CreateGroupPage.Purpose -> PurposePageContents(
                         uiState = uiState,
-                        onEvent = { uiEvent -> onEvent(uiEvent) }
+                        onEvent = onEvent
                     )
 
                     CreateGroupPage.Schedule -> SchedulePageContents(
                         uiState = uiState,
-                        onEvent = { uiEvent -> onEvent(uiEvent) }
+                        onEvent = onEvent
                     )
 
-                    CreateGroupPage.Check -> TODO()
+                    CreateGroupPage.Check -> CheckPageContents(
+                        uiState = uiState,
+                        onEvent = onEvent
+                    )
                 }
             }
         }

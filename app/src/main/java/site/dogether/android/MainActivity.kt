@@ -3,7 +3,6 @@ package site.dogether.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,7 +14,7 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.WindowCompat
 import site.dogether.presentation.AppNavGraph
 import site.dogether.presentation.theme.ColorBgDefault
 import site.dogether.presentation.theme.ColorIconPrimary
@@ -24,9 +23,8 @@ import site.dogether.presentation.theme.DogetherAndroidTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        val controller = WindowInsetsControllerCompat(window, window.decorView)
-        controller.isAppearanceLightStatusBars = false
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             DogetherAndroidTheme {
@@ -34,9 +32,9 @@ class MainActivity : ComponentActivity() {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(ColorBgDefault)
                             .statusBarsPadding()
                             .navigationBarsPadding()
+                            .background(ColorBgDefault)
                     ) {
                         AppNavGraph()
                     }

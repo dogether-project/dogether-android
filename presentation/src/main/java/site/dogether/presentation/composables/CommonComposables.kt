@@ -59,6 +59,7 @@ import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Small_S
+import site.dogether.presentation.utils.DATE_FORMAT_SHORT_YEAR
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.conditionedClickableWithoutRipple
 import site.dogether.presentation.utils.toFormattedString
@@ -304,7 +305,7 @@ fun GroupInfoColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             InfoRow(
-                title = stringResource(R.string.info_title_period),
+                title = stringResource(R.string.info_period),
                 body = if (period < 7) {
                     "$period" + stringResource(R.string.unit_day)
                 } else {
@@ -313,18 +314,18 @@ fun GroupInfoColumn(
             )
 
             InfoRow(
-                title = stringResource(R.string.info_title_group_member_limit),
+                title = stringResource(R.string.info_group_member_limit),
                 body = stringResource(R.string.unit_prefix_whole) + " $memberLimit" + stringResource(R.string.unit_member)
             )
 
             InfoRow(
-                title = stringResource(R.string.info_title_launch_date),
-                body = if (isLaunchFromToday) today.toFormattedString() else tomorrow.toFormattedString()
+                title = stringResource(R.string.info_launch_date),
+                body = if (isLaunchFromToday) today.toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.toFormattedString(DATE_FORMAT_SHORT_YEAR)
             )
 
             InfoRow(
-                title = stringResource(R.string.info_title_end_date),
-                body = if (isLaunchFromToday) today.plusDays(period.toLong()).toFormattedString() else tomorrow.plusDays(period.toLong()).toFormattedString()
+                title = stringResource(R.string.info_end_date),
+                body = if (isLaunchFromToday) today.plusDays(period.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.plusDays(period.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR)
             )
         }
     }

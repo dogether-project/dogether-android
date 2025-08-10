@@ -10,6 +10,7 @@ import site.dogether.presentation.screen.error.ErrorScreen
 import site.dogether.presentation.screen.force_update.ForceUpdateScreen
 import site.dogether.presentation.screen.group_created.GroupCreatedScreen
 import site.dogether.presentation.screen.group_participated.GroupParticipatedScreen
+import site.dogether.presentation.screen.home.HomeScreen
 import site.dogether.presentation.screen.on_boarding.OnBoardingScreen
 import site.dogether.presentation.screen.participate_group.ParticipateGroupScreen
 import site.dogether.presentation.screen.participation_method.ParticipationMethodScreen
@@ -17,7 +18,7 @@ import site.dogether.presentation.screen.splash.SplashScreen
 
 @Composable
 fun AppNavGraph(
-    startDestination: String = Screen.Error.route,
+    startDestination: String = Screen.Home.route,
     navController: NavHostController = rememberNavController(),
 ) {
     NavHost(
@@ -33,6 +34,7 @@ fun AppNavGraph(
         composable(Screen.ParticipateGroup.route) { ParticipateGroupScreen() }
         composable(Screen.GroupParticipated.route) { GroupParticipatedScreen() }
         composable(Screen.Error.route) { ErrorScreen() }
+        composable(Screen.Home.route) { HomeScreen() }
     }
 }
 
@@ -45,5 +47,6 @@ enum class Screen(val route: String) {
     GroupCreated("group_created"),
     ParticipateGroup("participate_group"),
     GroupParticipated("group_participated"),
-    Error("error")
+    Error("error"),
+    Home("home")
 }

@@ -1,11 +1,22 @@
 package site.dogether.presentation.utils
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.DraggableState
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -13,9 +24,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.util.lerp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 
 @Composable
 fun Dp.toSp(): TextUnit = with(LocalDensity.current) { this@toSp.toSp() }
@@ -72,9 +87,51 @@ fun LifecycleEvent(
 @Composable
 fun Modifier.hideKeyboardOnTap(): Modifier {
     val focusManager = LocalFocusManager.current
-    return this.pointerInput(Unit) {
-        detectTapGestures(onTap = {
-            focusManager.clearFocus()
-        })
-    }
+    return this.then(Modifier.pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) })
 }
+
+fun Modifier.bottomSheetSnappable(
+    sheetOffsetY: Animatable<Float, AnimationVector1D>,
+    upperLimit: Int,
+    lowerLimit: Int,
+    scope: CoroutineScope,
+): Modifier = this.then(
+    Modifier.pointerInput(
+        key1 = upperLimit,
+        key2 = lowerLimit,
+        block = {
+            detectVerticalDragGestures(
+                onVerticalDrag = { change, dragAmount ->
+                    change.consume()
+                    scope.launch {
+                        val newOffset = (sheetOffsetY.value + dragAmount).coerceIn(upperLimit.toFloat(), lowerLimit.toFloat())
+                        sheetOffsetY.snapTo(newOffset)
+                    }
+                },
+                onDragEnd = {
+                    val current = sheetOffsetY.value
+                    val nearest = if ((current - upperLimit) < (lowerLimit - current)) upperLimit.toFloat() else lowerLimit.toFloat()
+                    scope.launch {
+                        sheetOffsetY.animateTo(
+                            targetValue = nearest,
+                            animationSpec = tween(durationMillis = 200)
+                        )
+                    }
+                }
+            )
+        }
+    )
+)
+
+fun Modifier.alphaByProgress(progress: Float): Modifier = this.then(
+    Modifier.alpha(
+        lerp(
+            start = 0f,
+            stop = 1f,
+            fraction = progress.coerceIn(
+                minimumValue = 0f,
+                maximumValue = 1f
+            )
+        )
+    )
+)
