@@ -438,7 +438,9 @@ private fun HomeScreenContents(
 //                onEvent = onEvent
 //            )
 
-            NoTodoContents()
+//            NoTodoContents()
+
+            FinishedContents()
         }
     }
 }
@@ -707,7 +709,8 @@ private fun TodoItem(todo: Todo) {
 
         Row(
             modifier = Modifier.weight(1f),
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             if (todo.status != STATUS_CERTIFY_PENDING) {
                 icon?.let {
                     Icon(
@@ -788,6 +791,35 @@ private fun NoTodoContents() {
             text = stringResource(R.string.body_no_todo),
             style = Body2_R,
             color = ColorTextDisabled
+        )
+    }
+}
+
+@Composable
+private fun FinishedContents() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            modifier = Modifier.padding(horizontal = 25.dp),
+            painter = painterResource(R.drawable.img_finished),
+            contentDescription = "image_finished"
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 16.dp),
+            text = stringResource(R.string.title_group_finished),
+            style = Head2_B,
+            color = ColorTextDefault
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 4.dp),
+            text = stringResource(R.string.body_group_finished),
+            style = Body2_R,
+            color = ColorTextSecondary
         )
     }
 }
