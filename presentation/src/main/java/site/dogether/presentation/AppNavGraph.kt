@@ -18,7 +18,7 @@ import site.dogether.presentation.screen.splash.SplashScreen
 
 @Composable
 fun AppNavGraph(
-    startDestination: String = Screen.Home.route,
+    startDestination: String = Screen.OnBoarding.route,
     navController: NavHostController = rememberNavController(),
 ) {
     NavHost(

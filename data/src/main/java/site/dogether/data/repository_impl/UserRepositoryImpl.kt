@@ -1,0 +1,49 @@
+package site.dogether.data.repository_impl
+
+import io.ktor.client.HttpClient
+import kotlinx.serialization.json.Json
+import org.jetbrains.annotations.VisibleForTesting
+import site.dogether.data.model.JwtPayload
+import site.dogether.data.remote.ApiRoutes
+import site.dogether.data.remote.model.req.user.KakaoLoginReq
+import site.dogether.data.remote.model.res.user.UserInfoRes
+import site.dogether.data.remote.model.res.user.UserInfoResMapper
+import site.dogether.data.utils.safePost
+import site.dogether.domain.model.user.UserInfo
+import site.dogether.domain.repository.UserRepository
+import kotlin.io.encoding.Base64
+
+class UserRepositoryImpl(private val httpClient: HttpClient) : UserRepository {
+
+    override suspend fun loginWithKakao(
+        name: String,
+        idToken: String,
+    ): Result<UserInfo> {
+        return httpClient.safePost<KakaoLoginReq, UserInfoRes, UserInfo>(
+            apiRoute = ApiRoutes.KAKAO_LOGIN,
+            body = KakaoLoginReq(
+                loginType = "KAKAO",
+                name = name,
+                providerId = extractUserIdFromJwt(idToken)
+            ),
+            mapper = UserInfoResMapper
+        )
+    }
+
+    @VisibleForTesting
+    internal fun extractUserIdFromJwt(idToken: String): String {
+        val parts = idToken.split(".")
+        var payloadBase64 = parts[1]
+            .replace('-', '+')
+            .replace('_', '/')
+        val pad = (4 - payloadBase64.length % 4) % 4
+        payloadBase64 += "=".repeat(pad)
+
+        val payloadJson = Base64.decode(payloadBase64).decodeToString()
+
+        val json = Json { ignoreUnknownKeys = true }
+        val payload = json.decodeFromString<JwtPayload>(payloadJson)
+
+        return payload.sub
+    }
+}

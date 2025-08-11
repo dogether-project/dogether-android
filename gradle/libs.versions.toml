@@ -21,15 +21,21 @@ koin = "4.1.0"
 # Kotest
 kotest = "5.9.1"
 
+# Mockk
+mockk = "1.13.8"
+
 # Konsist
 konsist = "0.17.3"
 
 # Ktor
-ktor = "3.2.2"
+ktor = "3.2.3"
 
 # Coil
 coil = "2.7.0"
 jetbrainsKotlinJvm = "2.2.0"
+
+# Kakao
+kakao = "2.21.6"
 
 [libraries]
 # AndroidX / Compose
@@ -64,6 +70,15 @@ kotest-runner-junit5 = { group = "io.kotest", name = "kotest-runner-junit5", ver
 kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
 kotest-framework-engine = { group = "io.kotest", name = "kotest-framework-engine", version.ref = "kotest" }
 
+# Mockk
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk"}
+
+# Kotlin reflect
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
+
+# Ktor test
+ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
+
 # Konsist
 konsist = { group = "com.lemonappdev", name = "konsist", version.ref = "konsist" }
 
@@ -79,6 +94,9 @@ ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version
 coil-base = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
+# Kakao
+kakao = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -86,6 +104,7 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [bundles]
 compose-core = [
@@ -120,7 +139,8 @@ navigation = [
 kotest = [
     "kotest-runner-junit5",
     "kotest-assertions-core",
-    "kotest-framework-engine"
+    "kotest-framework-engine",
+    "kotlin-reflect"
 ]
 
 koin = [

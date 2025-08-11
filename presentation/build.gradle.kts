@@ -61,6 +61,9 @@ dependencies {
     // Coil
     implementation(libs.bundles.coil)
 
+    // Kakao
+    implementation(libs.kakao)
+
     // Compose debug
     implementation(libs.bundles.compose.debug)
 }
