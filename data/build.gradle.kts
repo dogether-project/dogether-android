@@ -51,4 +51,7 @@ dependencies {
 
     // Ktor test
     testImplementation(libs.ktor.client.mock)
+
+    // MockK
+    testImplementation(libs.mockk)
 }

@@ -2,6 +2,7 @@ package site.dogether.data.repository_impl
 
 import io.ktor.client.HttpClient
 import kotlinx.serialization.json.Json
+import org.jetbrains.annotations.VisibleForTesting
 import site.dogether.data.model.JwtPayload
 import site.dogether.data.remote.ApiRoutes
 import site.dogether.data.remote.model.req.user.KakaoLoginReq
@@ -29,7 +30,8 @@ class UserRepositoryImpl(private val httpClient: HttpClient) : UserRepository {
         )
     }
 
-    private fun extractUserIdFromJwt(idToken: String): String {
+    @VisibleForTesting
+    internal fun extractUserIdFromJwt(idToken: String): String {
         val parts = idToken.split(".")
         var payloadBase64 = parts[1]
             .replace('-', '+')
