@@ -39,6 +39,18 @@ class HomeViewModel(
                             )
                         }
                     }
+
+                    is HomeUiEvent.Click.OnClickChooseGroup -> {
+                        updateState { it.copy(isSelectGroupBottomSheetExpanded = true) }
+                    }
+                }
+            }
+
+            is HomeUiEvent.Callback -> {
+                when (event) {
+                    is HomeUiEvent.Callback.OnChooseGroupBottomSheetDismissRequested -> {
+                        updateState { it.copy(isSelectGroupBottomSheetExpanded = false) }
+                    }
                 }
             }
         }

@@ -170,7 +170,6 @@ private fun HomeScreenContents(
             }
         }
     }
-    val selectGroupBottomSheetState = rememberModalBottomSheetState()
 
     WindowInsets.systemBars.getTop(density).takeIf { it != 0 }?.let {
         anchoredBottomSheetState.statusBarHeight = it
@@ -223,7 +222,9 @@ private fun HomeScreenContents(
                         )
 
                         Icon(
-                            modifier = Modifier.padding(start = 4.dp),
+                            modifier = Modifier
+                                .padding(start = 4.dp)
+                                .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickChooseGroup) },
                             painter = painterResource(R.drawable.ic_arrow_down),
                             tint = ColorIconElevated,
                             contentDescription = "icon_arrow_down"
@@ -464,11 +465,14 @@ private fun HomeScreenContents(
 //            FinishedContents()
         }
 
-        ChooseGroupBottomSheet(
-            sheetState = selectGroupBottomSheetState,
-            uiState = uiState,
-            onEvent = onEvent
-        )
+        if (uiState.isSelectGroupBottomSheetExpanded) {
+            val selectGroupBottomSheetState = rememberModalBottomSheetState()
+            ChooseGroupBottomSheet(
+                sheetState = selectGroupBottomSheetState,
+                uiState = uiState,
+                onEvent = onEvent
+            )
+        }
     }
 }
 
@@ -488,7 +492,7 @@ private fun ChooseGroupBottomSheet(
         dragHandle = null,
         containerColor = ColorBgSurface,
         scrimColor = ColorBgDim,
-        onDismissRequest = { }
+        onDismissRequest = { onEvent(HomeUiEvent.Callback.OnChooseGroupBottomSheetDismissRequested) }
     ) {
         Column(
             modifier = Modifier
