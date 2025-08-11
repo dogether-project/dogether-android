@@ -15,31 +15,40 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import org.koin.androidx.compose.koinViewModel
+import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.screen.on_boarding.model.OnBoardingPageItem
 import site.dogether.presentation.theme.Body1_R
+import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorIconDisabled
+import site.dogether.presentation.theme.ColorKakaoLabel
+import site.dogether.presentation.theme.ColorKakaoLogo
+import site.dogether.presentation.theme.ColorKakaoYellow
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.clickableWithoutRipple
 
 private val pageList: List<OnBoardingPageItem> = listOf(
     OnBoardingPageItem(
@@ -100,6 +109,7 @@ private fun loginWithKakao(
             token?.let {
                 val idToken = token.idToken ?: ""
                 UserApiClient.instance.me { user, meError ->
+
                     meError?.let {
                         onError(meError)
                     } ?: run {
@@ -147,37 +157,65 @@ private fun OnBoardingScreenContents(
                 modifier = Modifier.align(Alignment.Center),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                HorizontalPager(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = pagerState
-                ) { pageIndex ->
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = stringResource(pageList[pageIndex].titleStringId),
-                            style = Head1_B,
-                            textAlign = TextAlign.Center,
-                            color = ColorTextDefault
-                        )
-
-                        Text(
-                            modifier = Modifier.padding(top = 8.dp),
-                            text = stringResource(pageList[pageIndex].bodyStringId),
-                            style = Body1_R,
-                            textAlign = TextAlign.Center,
-                            color = ColorTextSubtle
-                        )
-
-                        Image(
+                FixedHeightPager(
+                    pageCount = pageList.size,
+                    pager = { count, modifier ->
+                        HorizontalPager(
                             modifier = Modifier.fillMaxWidth(),
-                            painter = painterResource(pageList[pageIndex].imageId),
-                            contentScale = ContentScale.FillWidth,
-                            contentDescription = "image_on_boarding"
-                        )
+                            state = pagerState
+                        ) { pageIndex ->
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = stringResource(pageList[pageIndex].titleStringId),
+                                    style = Head1_B,
+                                    textAlign = TextAlign.Center,
+                                    color = ColorTextDefault
+                                )
+
+                                Text(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    text = stringResource(pageList[pageIndex].bodyStringId),
+                                    style = Body1_R,
+                                    textAlign = TextAlign.Center,
+                                    color = ColorTextSubtle
+                                )
+
+                                Image(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    painter = painterResource(pageList[pageIndex].imageId),
+                                    contentScale = ContentScale.FillWidth,
+                                    contentDescription = "image_on_boarding"
+                                )
+                            }
+                        }
+                    },
+                    page = { pageIndex ->
+                        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = stringResource(pageList[pageIndex].titleStringId),
+                                style = Head1_B,
+                                textAlign = TextAlign.Center,
+                                color = ColorTextDefault
+                            )
+                            Text(
+                                modifier = Modifier.padding(top = 8.dp),
+                                text = stringResource(pageList[pageIndex].bodyStringId),
+                                style = Body1_R,
+                                textAlign = TextAlign.Center,
+                                color = ColorTextSubtle
+                            )
+                            Image(
+                                modifier = Modifier.fillMaxWidth(),
+                                painter = painterResource(pageList[pageIndex].imageId),
+                                contentScale = ContentScale.FillWidth,
+                                contentDescription = "image_on_boarding"
+                            )
+                        }
                     }
-                }
+                )
 
                 PagerIndicator(
                     modifier = Modifier.padding(top = 20.dp),
@@ -194,7 +232,7 @@ private fun OnBoardingScreenContents(
                 .fillMaxWidth()
                 .height(50.dp)
                 .background(ColorKakaoYellow)
-                .clickableWithoutRipple { viewModel.onEvent(OnBoardingUiEvent.Click.OnClickKakaoLogin) },
+                .clickableWithoutRipple { onEvent(OnBoardingUiEvent.Click.OnClickKakaoLogin) },
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -207,9 +245,42 @@ private fun OnBoardingScreenContents(
             Text(
                 modifier = Modifier.padding(start = 8.dp),
                 text = stringResource(R.string.cta_button_kakao_login),
-                style = Body1_S,
+                style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
                 color = ColorKakaoLabel
             )
+        }
+    }
+}
+
+@Composable
+private fun FixedHeightPager(
+    pageCount: Int,
+    pager: @Composable (Int, Modifier) -> Unit,
+    page: @Composable (Int) -> Unit,
+) {
+    SubcomposeLayout { constraints ->
+        val placeables = (0 until pageCount).map { index ->
+            val measurables = subcompose("page-$index") { page(index) }
+            measurables.maxBy { it.maxIntrinsicHeight(constraints.maxWidth) }.measure(constraints.copy(minHeight = 0))
+        }
+        val maxHeight = placeables.maxOf { it.height }
+
+        val pagerPlaceables = subcompose("pager") {
+            pager(pageCount, Modifier.height(maxHeight.toDp()))
+        }.map {
+            it.measure(
+                constraints.copy(
+                    minHeight = maxHeight,
+                    maxHeight = maxHeight
+                )
+            )
+        }
+
+        layout(
+            width = constraints.maxWidth,
+            height = maxHeight
+        ) {
+            pagerPlaceables.forEach { it.place(0, 0) }
         }
     }
 }

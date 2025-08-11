@@ -13,7 +13,6 @@ import site.dogether.common.exception.NetworkErrorException
 import site.dogether.common.exception.NetworkFailureException
 import site.dogether.data.model.DataMapper
 import site.dogether.data.model.DataModel
-import site.dogether.data.remote.ApiRoutes
 import site.dogether.data.remote.model.res.user.BaseResponse
 import site.dogether.domain.model.DomainModel
 
@@ -21,8 +20,6 @@ val json = Json {
     ignoreUnknownKeys = true
     prettyPrint = true
 }
-
-fun createUrl(apiRoute: String): String = "${ApiRoutes.BASE_URL}/$apiRoute"
 
 fun <Res : DataModel, Domain : DomainModel> Result<Res>.mapToDomain(
     mapper: DataMapper<Res, Domain>,
@@ -64,7 +61,7 @@ suspend inline fun <reified Req, reified Res : DataModel, Domain : DomainModel> 
     mapper: DataMapper<Res, Domain>,
 ): Result<Domain> {
     return safeApiCall<Res> {
-        post(createUrl(apiRoute)) {
+        post(apiRoute) {
             setBody(body)
         }
     }.mapToDomain(mapper)
@@ -76,7 +73,7 @@ suspend inline fun <reified Res : DataModel, Domain : DomainModel> HttpClient.sa
     mapper: DataMapper<Res, Domain>,
 ): Result<Domain> {
     return safeApiCall<Res> {
-        get(createUrl(apiRoute)) {
+        get(apiRoute) {
             params.forEach { (key, value) -> parameter(key, value) }
         }
     }.mapToDomain(mapper)

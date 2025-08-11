@@ -5,7 +5,7 @@ object ApiRoutes {
 //    const val BASE_URL = "https://api-prod.dogether.site/api/v2/"
 
     /* dev */
-    const val BASE_URL = "https://api-dev.dogether.site/api/v2/"
+    const val BASE_URL = "https://api-dev.dogether.site/api/v1/"
 //    const val BASE_URL = "https://api-dev.dogether.site/api"
 
     /* Routes */

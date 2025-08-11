@@ -4,11 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class KakaoLoginReq(
-    val platform: String = PLATFORM_KAKAO,
+    val loginType: String = LOGIN_TYPE_KAKAO,
     val name: String,
-    val idToken: String,
+    val providerId: String,
 ) {
     companion object {
-        private const val PLATFORM_KAKAO = "kakao"
+        private const val LOGIN_TYPE_KAKAO = "KAKAO"
     }
 }
