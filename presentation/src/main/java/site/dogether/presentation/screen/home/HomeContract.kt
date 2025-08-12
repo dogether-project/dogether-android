@@ -1,11 +1,13 @@
 package site.dogether.presentation.screen.home
 
+import site.dogether.presentation.R
 import site.dogether.presentation.model.Todo
 import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
 import site.dogether.presentation.model.Todo.Companion.STATUS_CERTIFY_PENDING
 import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
 import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.screen.home.state.Chip
+import site.dogether.presentation.screen.home.state.TooltipUiState
 
 data class HomeUiState(
     val isLoading: Boolean = false,
@@ -37,7 +39,11 @@ data class HomeUiState(
     val selectedChip: Chip = Chip.All,
     val filteredTodoList: List<Todo> = listOf(),
     val isSelectGroupBottomSheetExpanded: Boolean = false,
-    val groupList: List<String> = listOf("DND 작심삼일 탈출러", "배고픈 민족들")
+    val groupList: List<String> = listOf("DND 작심삼일 탈출러", "배고픈 민족들"),
+    val tooltipUiState: TooltipUiState = TooltipUiState(
+        isShowing = true,
+        stringId = R.string.tooltip_group_finished
+    ),
 )
 
 sealed interface HomeUiEvent {
