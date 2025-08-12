@@ -156,4 +156,14 @@
     <string name="common_ascend_todo_completed">투두 완료일순</string>
 
     <string name="intent_title_share_join_code">참여 코드 공유</string>
+
+    <!-- CreateTodo Screen -->
+    <string name="create_todo_screen_title">투두 작성</string>
+    <string name="create_todo_add_count_prefix">추가 가능 투두 </string>
+    <string name="create_todo_input_hint">예) 30분 걷기, 책 20페이지 읽기</string>
+    <string name="create_todo_save_button">투두 저장</string>
+    <string name="create_todo_empty_message">아직 작성된 투두가 없어요</string>
+    <string name="create_todo_dialog_title">투두를 저장하시겠습니까?</string>
+    <string name="create_todo_dialog_body">한 번 저장한 투두는 수정과 삭제가 불가능합니다</string>
+    <string name="create_todo_dialog_save">저장하기</string>
 </resources>

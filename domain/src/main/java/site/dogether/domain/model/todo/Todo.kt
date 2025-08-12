@@ -3,9 +3,9 @@ package site.dogether.domain.model.todo
 import site.dogether.domain.model.DomainModel
 
 data class Todo(
-    val id: Long,
-    val content: String,
-    val status: String,
+    val id: Long = 0L,
+    val content: String = "",
+    val status: String = "",
     val certificationContent: String = "",
     val certificationMediaUrl: String = ""
 ) : DomainModel {

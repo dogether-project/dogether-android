@@ -17,5 +17,6 @@ object ApiRoutes {
     const val GET_JOINING_GROUPS = "groups/my"
     const val STORE_LAST_SELECTED_GROUP_ID = "groups/last-selected"
     fun getMyTodoSpecificDate(groupId: Int): String = "challenge-groups/$groupId/my-todos"
+    fun createMyTodos(groupId: Int): String = "challenge-groups/$groupId/todos"
 
 }

@@ -61,6 +61,8 @@ sealed interface HomeUiEvent : UiEvent {
         data object OnClickNextDay : Click
 
         data object OnClickDismissTooltip : Click
+
+        data object OnClickCreateTodo : Click
     }
 
     sealed interface Callback : HomeUiEvent {
@@ -76,4 +78,6 @@ sealed interface HomeUiEffect : UiEffect {
     data object CheckNotificationPermission : HomeUiEffect
 
     data object NavigateToNotificationSettings : HomeUiEffect
+
+    data object NavigateToCreateTodo : HomeUiEffect
 }

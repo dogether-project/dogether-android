@@ -8,6 +8,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,6 +61,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import java.time.LocalDate
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -73,6 +77,7 @@ import site.dogether.domain.model.todo.Todo.Companion.STATUS_CERTIFY_PENDING
 import site.dogether.domain.model.todo.Todo.Companion.STATUS_REJECT
 import site.dogether.domain.model.todo.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.R
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.CTAButton
@@ -112,6 +117,8 @@ import site.dogether.presentation.theme.Small_S
 import site.dogether.presentation.theme.Yellow
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.DATE_FORMAT_FULL_YEAR
+import site.dogether.presentation.utils.DATE_FORMAT_SHORT_YEAR
+import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.alphaByProgress
 import site.dogether.presentation.utils.bottomSheetSnappable
@@ -121,9 +128,6 @@ import site.dogether.presentation.utils.isPermissionGranted
 import site.dogether.presentation.utils.toDp
 import site.dogether.presentation.utils.toFormattedString
 import site.dogether.presentation.utils.today
-import java.time.LocalDate
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,6 +135,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
     val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
+    val navHostController = LocalNavHostController.current
 
     viewModel.CollectEffect<HomeUiEffect> { uiEffect ->
         when (uiEffect) {
@@ -140,6 +145,17 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             )
 
             is HomeUiEffect.NavigateToNotificationSettings -> navigateToNotificationSetting(context)
+
+            // 투두 생성 페이지로 이동
+            HomeUiEffect.NavigateToCreateTodo -> {
+                navHostController.navigate(
+                    "${Screen.CREATE_TODO}/${uiState.selectedGroup.id}/${
+                        uiState.selectedDate.toFormattedString(
+                            DATE_FORMAT_SHORT_YEAR
+                        )
+                    }"
+                )
+            }
         }
     }
 
@@ -210,7 +226,11 @@ private fun HomeScreenContents(
                 return Offset.Zero
             }
 
-            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
                 if (available.y > 0f && anchoredBottomSheetState.sheetOffsetY.value < anchoredBottomSheetState.lowerAnchorY) {
                     val before = anchoredBottomSheetState.sheetOffsetY.value
                     scope.launch {
@@ -311,7 +331,9 @@ private fun HomeScreenContents(
                         modifier = Modifier
                             .alphaByProgress(anchoredBottomSheetState.expandingProgress)
                             .padding(top = 12.dp)
-                            .onLayoutRectChanged { bounds -> anchoredBottomSheetState.upperAnchorY = bounds.positionInWindow.y },
+                            .onLayoutRectChanged { bounds ->
+                                anchoredBottomSheetState.upperAnchorY = bounds.positionInWindow.y
+                            },
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         GroupInfoColumn(
@@ -322,14 +344,22 @@ private fun HomeScreenContents(
                         Column(modifier = Modifier.padding(start = 16.dp)) {
                             Text(
                                 text = stringResource(R.string.info_join_code),
-                                style = Body2_R.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+                                style = Body2_R.copy(
+                                    lineHeightStyle = LineHeightStyle.Default.copy(
+                                        trim = LineHeightStyle.Trim.None
+                                    )
+                                ),
                                 color = ColorTextSecondary
                             )
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = uiState.selectedGroup.joinCode,
-                                    style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+                                    style = Body1_S.copy(
+                                        lineHeightStyle = LineHeightStyle.Default.copy(
+                                            trim = LineHeightStyle.Trim.None
+                                        )
+                                    ),
                                     color = ColorTextDefault
                                 )
 
@@ -353,7 +383,8 @@ private fun HomeScreenContents(
                     tooltip = {
                         DosikTooltip(
                             modifier = Modifier.alphaByProgress(anchoredBottomSheetState.expandingProgress),
-                            text = uiState.tooltipUiState.stringId?.let { stringResource(it) }.orEmpty(),
+                            text = uiState.tooltipUiState.stringId?.let { stringResource(it) }
+                                .orEmpty(),
                             onClickDismiss = { onEvent(HomeUiEvent.Click.OnClickDismissTooltip) }
                         )
                     },
@@ -447,7 +478,10 @@ private fun HomeScreenContents(
                     .onLayoutRectChanged(
                         throttleMillis = 50L,
                         debounceMillis = 0L
-                    ) { bounds -> anchoredBottomSheetState.lowerAnchorY = bounds.positionInWindow.y + bounds.height }
+                    ) { bounds ->
+                        anchoredBottomSheetState.lowerAnchorY =
+                            bounds.positionInWindow.y + bounds.height
+                    }
             )
         }
 
@@ -763,7 +797,7 @@ private fun TodoContents(
                 onEvent = onEvent
             )
         } else {
-            EmptyTodoListContents()
+            EmptyTodoListContents(onEvent = onEvent)
         }
     }
 }
@@ -818,7 +852,8 @@ private fun ColumnScope.TodoListContents(
     Column(
         modifier = Modifier
             .weight(1f)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .clickable { onEvent(HomeUiEvent.Click.OnClickCreateTodo) },
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         filteredTodoList.forEach { todo -> TodoItem(todo) }
@@ -848,7 +883,9 @@ private fun ColumnScope.TodoListContents(
 }
 
 @Composable
-private fun ColumnScope.EmptyTodoListContents() {
+private fun ColumnScope.EmptyTodoListContents(
+    onEvent: (UiEvent) -> Unit,
+) {
     Column(
         modifier = Modifier.weight(1f),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -882,7 +919,7 @@ private fun ColumnScope.EmptyTodoListContents() {
             .height(50.dp),
         radius = 8.dp,
         text = stringResource(R.string.cta_button_create_todo),
-        onClick = { }
+        onClick = { onEvent(HomeUiEvent.Click.OnClickCreateTodo) }
     )
 }
 

@@ -5,7 +5,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_JOIN_CODE
+import site.dogether.KEY_SELECTED_DATE
 import site.dogether.presentation.screen.create_group.CreateGroupScreen
 import site.dogether.presentation.screen.error.ErrorScreen
 import site.dogether.presentation.screen.force_update.ForceUpdateScreen
@@ -21,6 +23,7 @@ import site.dogether.presentation.screen.on_boarding.OnBoardingScreen
 import site.dogether.presentation.screen.participate_group.ParticipateGroupScreen
 import site.dogether.presentation.screen.participation_method.ParticipationMethodScreen
 import site.dogether.presentation.screen.splash.SplashScreen
+import site.dogether.presentation.screen.todo.CreateTodoScreen
 import site.dogether.presentation.utils.LocalNavHostController
 
 @Composable
@@ -50,5 +53,12 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
         composable(Screen.CERTIFICATION_LIST) { CertificationListScreen() }
         composable(Screen.SETTINGS) { SettingsScreen() }
         composable(Screen.GROUP_MANAGEMENT) { GroupManagementScreen() }
+        composable(
+            route = "${Screen.CREATE_TODO}/{${KEY_GROUP_ID}}/{${KEY_SELECTED_DATE}}",
+            arguments = listOf(
+                navArgument(KEY_GROUP_ID) { type = NavType.IntType },
+                navArgument(KEY_SELECTED_DATE) { type = NavType.StringType }
+            )
+        ) { CreateTodoScreen() }
     }
 }

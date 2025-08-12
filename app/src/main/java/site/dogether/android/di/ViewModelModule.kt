@@ -19,6 +19,7 @@ import site.dogether.presentation.screen.on_boarding.OnBoardingViewModel
 import site.dogether.presentation.screen.participate_group.ParticipateGroupViewModel
 import site.dogether.presentation.screen.participation_method.ParticipationMethodViewModel
 import site.dogether.presentation.screen.splash.SplashViewModel
+import site.dogether.presentation.screen.todo.CreateTodoViewModel
 
 val viewModelModule = module {
     viewModel {
@@ -57,4 +58,11 @@ val viewModelModule = module {
     viewModel { CertificationListViewModel() }
     viewModel { SettingsViewModel() }
     viewModel { GroupManagementViewModel() }
+    viewModel {
+        CreateTodoViewModel(
+            getMyTodoSpecificDateUseCase = get(),
+            createMyTodosUseCase = get(),
+            savedStateHandle = get()
+        )
+    }
 }

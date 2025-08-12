@@ -149,6 +149,10 @@ class HomeViewModel(
                     is HomeUiEvent.Click.OnClickDismissTooltip -> {
                         updateState { it.copy(tooltipUiState = it.tooltipUiState.copy(isShowing = false)) }
                     }
+
+                    HomeUiEvent.Click.OnClickCreateTodo -> {
+                        postEffect(HomeUiEffect.NavigateToCreateTodo)
+                    }
                 }
             }
 

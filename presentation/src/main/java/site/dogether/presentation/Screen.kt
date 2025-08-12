@@ -17,4 +17,5 @@ object Screen {
     const val CERTIFICATION_LIST = "certification_list"
     const val SETTINGS = "settings"
     const val GROUP_MANAGEMENT = "group_management"
+    const val CREATE_TODO = "create_todo"
 }
