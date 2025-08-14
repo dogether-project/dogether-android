@@ -71,14 +71,7 @@ private fun ErrorScreenContents(
             uiState.error?.let { error ->
                 Image(
                     modifier = Modifier.size(200.dp),
-                    painter = painterResource(
-                        when (error) {
-                            Error.Network -> R.drawable.img_error_network
-                            Error.Unknown -> R.drawable.img_error_unknown
-                            Error.LoadData -> R.drawable.img_error_load_data
-                            else -> R.drawable.img_error_common
-                        }
-                    ),
+                    painter = painterResource(error.imageId),
                     contentDescription = "image_error"
                 )
 

@@ -60,7 +60,7 @@ import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.hideKeyboardOnTap
 
-private val pageList: List<CreateGroupPage> = CreateGroupPage.entries
+private val PAGE_LIST: List<CreateGroupPage> = CreateGroupPage.entries
 
 @Composable
 fun CreateGroupScreen(viewModel: CreateGroupViewModel = koinViewModel()) {
@@ -80,7 +80,7 @@ private fun CreateGroupScreenContents(
     uiState: CreateGroupUiState,
     onEvent: (CreateGroupUiEvent) -> Unit,
 ) {
-    val pagerState = rememberPagerState { pageList.size }
+    val pagerState = rememberPagerState { PAGE_LIST.size }
 
     LaunchedEffect(uiState.currentPage) { pagerState.animateScrollToPage(uiState.currentPage) }
 
@@ -109,7 +109,7 @@ private fun CreateGroupScreenContents(
                 }
 
                 withStyle(SpanStyle(color = ColorTextDefault)) {
-                    append(" / ${pageList.size}")
+                    append(" / ${PAGE_LIST.size}")
                 }
             },
             style = Body1_S
@@ -123,14 +123,14 @@ private fun CreateGroupScreenContents(
         ) { pageIndex ->
             Column(modifier = Modifier.fillMaxSize()) {
                 Text(
-                    text = stringResource(pageList[pageIndex].titleStringId),
+                    text = stringResource(PAGE_LIST[pageIndex].titleStringId),
                     style = Head1_B,
                     color = ColorTextDefault
                 )
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                when (pageList[pageIndex]) {
+                when (PAGE_LIST[pageIndex]) {
                     CreateGroupPage.Purpose -> PurposePageContents(
                         uiState = uiState,
                         onEvent = onEvent

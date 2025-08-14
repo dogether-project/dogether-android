@@ -38,7 +38,7 @@ import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 
-private val MENU_LIST = Menu.entries
+private val MENU_LIST: List<Menu> = Menu.entries
 
 @Composable
 fun MyPageScreen(viewModel: MyPageViewModel = koinViewModel()) {

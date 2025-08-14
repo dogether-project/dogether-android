@@ -1,13 +1,15 @@
 package site.dogether.presentation.screen.error.model
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import site.dogether.presentation.R
 
 enum class Error(
-    val titleStringId: Int,
-    val bodyStringId: Int? = null,
-    val imageId: Int = R.drawable.img_error_common,
-    val negativeButtonStringId: Int? = null,
-    val positiveButtonStringId: Int
+    @field:StringRes val titleStringId: Int,
+    @field:StringRes val bodyStringId: Int? = null,
+    @field:DrawableRes val imageId: Int = R.drawable.img_error_common,
+    @field:StringRes val negativeButtonStringId: Int? = null,
+    @field:StringRes val positiveButtonStringId: Int,
 ) {
     Network(
         titleStringId = R.string.title_error_network,
