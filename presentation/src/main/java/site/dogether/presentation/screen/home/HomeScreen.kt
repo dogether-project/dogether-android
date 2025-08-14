@@ -29,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -72,6 +71,7 @@ import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
 import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 import site.dogether.presentation.screen.home.state.Chip
+import site.dogether.presentation.screen.home.state.PersistentTooltipStateImpl
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
@@ -127,6 +127,7 @@ private fun HomeScreenContents(
     onEvent: (HomeUiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
+    val tooltipState = remember { PersistentTooltipStateImpl() }
     val density = LocalDensity.current
     val anchoredBottomSheetState = remember { AnchoredBottomSheetState() }
     val connection = remember {
@@ -170,7 +171,6 @@ private fun HomeScreenContents(
             }
         }
     }
-    val selectGroupBottomSheetState = rememberModalBottomSheetState()
 
     WindowInsets.systemBars.getTop(density).takeIf { it != 0 }?.let {
         anchoredBottomSheetState.statusBarHeight = it
@@ -178,6 +178,14 @@ private fun HomeScreenContents(
 
     LaunchedEffect(anchoredBottomSheetState.lowerAnchorY) {
         anchoredBottomSheetState.snapToLowerAnchorIfNeeded()
+    }
+
+    LaunchedEffect(uiState.tooltipUiState.isShowing) {
+        if (uiState.tooltipUiState.isShowing) {
+            tooltipState.forceShow()
+        } else {
+            tooltipState.forceDismiss()
+        }
     }
 
     Box(
@@ -223,7 +231,9 @@ private fun HomeScreenContents(
                         )
 
                         Icon(
-                            modifier = Modifier.padding(start = 4.dp),
+                            modifier = Modifier
+                                .padding(start = 4.dp)
+                                .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickChooseGroup) },
                             painter = painterResource(R.drawable.ic_arrow_down),
                             tint = ColorIconElevated,
                             contentDescription = "icon_arrow_down"
@@ -290,8 +300,15 @@ private fun HomeScreenContents(
 
                 TooltipBox(
                     positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                    tooltip = { DosikTooltip(uiState) },
-                    state = rememberTooltipState(initialIsVisible = true)
+                    tooltip = {
+                        DosikTooltip(
+                            modifier = Modifier.alphaByProgress(anchoredBottomSheetState.expandingProgress),
+                            text = uiState.tooltipUiState.stringId?.let { stringResource(it) }.orEmpty(),
+                            onClickDismiss = { }
+                        )
+                    },
+                    state = tooltipState,
+                    focusable = false
                 ) {
                     Image(
                         modifier = Modifier
@@ -464,11 +481,14 @@ private fun HomeScreenContents(
 //            FinishedContents()
         }
 
-        ChooseGroupBottomSheet(
-            sheetState = selectGroupBottomSheetState,
-            uiState = uiState,
-            onEvent = onEvent
-        )
+        if (uiState.isSelectGroupBottomSheetExpanded) {
+            val selectGroupBottomSheetState = rememberModalBottomSheetState()
+            ChooseGroupBottomSheet(
+                sheetState = selectGroupBottomSheetState,
+                uiState = uiState,
+                onEvent = onEvent
+            )
+        }
     }
 }
 
@@ -488,7 +508,7 @@ private fun ChooseGroupBottomSheet(
         dragHandle = null,
         containerColor = ColorBgSurface,
         scrimColor = ColorBgDim,
-        onDismissRequest = { }
+        onDismissRequest = { onEvent(HomeUiEvent.Callback.OnChooseGroupBottomSheetDismissRequested) }
     ) {
         Column(
             modifier = Modifier
@@ -580,9 +600,14 @@ private fun GroupItem(
 
 @Composable
 private fun DosikTooltip(
-    uiState: HomeUiState
+    modifier: Modifier,
+    text: String,
+    onClickDismiss: () -> Unit
 ) {
-    Column(horizontalAlignment = Alignment.End) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.End
+    ) {
         Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
@@ -591,7 +616,7 @@ private fun DosikTooltip(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(R.string.tooltip_group_finished),
+                text = text,
                 style = Small_S.copy(
                     lineHeightStyle = LineHeightStyle.Default.copy(
                         alignment = LineHeightStyle.Alignment.Center,
@@ -604,7 +629,8 @@ private fun DosikTooltip(
             Icon(
                 modifier = Modifier
                     .padding(start = 4.dp)
-                    .size(12.dp),
+                    .size(12.dp)
+                    .clickableWithoutRipple { onClickDismiss() },
                 painter = painterResource(R.drawable.ic_close),
                 tint = ColorIconInverse,
                 contentDescription = "icon_close"
