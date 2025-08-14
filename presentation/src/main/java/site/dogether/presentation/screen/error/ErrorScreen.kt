@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -31,6 +30,7 @@ import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head2_B
+import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
@@ -44,7 +44,7 @@ fun ErrorScreen(viewModel: ErrorViewModel = koinViewModel()) {
 @Composable
 private fun ErrorScreenContents(
     uiState: ErrorUiState,
-    onEvent: (ErrorUiEvent) -> Unit
+    onEvent: (ErrorUiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -140,10 +140,7 @@ private fun ErrorScreenContents(
     }
 }
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFF101010
-)
+@ScreenPreview
 @Composable
 private fun ErrorScreenContentsPreview() {
     ErrorScreenContents(

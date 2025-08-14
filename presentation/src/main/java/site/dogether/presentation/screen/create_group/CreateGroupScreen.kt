@@ -31,7 +31,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -57,6 +56,7 @@ import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.hideKeyboardOnTap
 
@@ -498,10 +498,7 @@ private fun InitDialog(
     }
 }
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFF101010
-)
+@ScreenPreview
 @Composable
 private fun CreateGroupScreenContentsPreview() {
     CreateGroupScreenContents(
@@ -510,10 +507,7 @@ private fun CreateGroupScreenContentsPreview() {
     )
 }
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFF101010
-)
+@ScreenPreview
 @Composable
 private fun PurposePageContentsPreview() {
     PurposePageContents(
@@ -522,10 +516,7 @@ private fun PurposePageContentsPreview() {
     )
 }
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFF101010
-)
+@ScreenPreview
 @Composable
 private fun SchedulePageContentsPreview() {
     SchedulePageContents(
@@ -534,10 +525,7 @@ private fun SchedulePageContentsPreview() {
     )
 }
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFF101010
-)
+@ScreenPreview
 @Composable
 fun CheckPageContentsPreview() {
     CheckPageContents(
