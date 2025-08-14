@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -44,6 +43,7 @@ import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Yellow
+import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.isPermissionGranted
 
@@ -242,10 +242,7 @@ private fun InitDialog(viewModel: ParticipationMethodViewModel = koinViewModel()
     }
 }
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFF101010
-)
+@ScreenPreview
 @Composable
 private fun ParticipationMethodScreenContentsPreview() {
     ParticipationMethodScreenContents(

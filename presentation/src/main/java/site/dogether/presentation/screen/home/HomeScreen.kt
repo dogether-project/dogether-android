@@ -53,7 +53,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
@@ -103,6 +102,7 @@ import site.dogether.presentation.theme.Small_R
 import site.dogether.presentation.theme.Small_S
 import site.dogether.presentation.theme.Yellow
 import site.dogether.presentation.utils.DATE_FORMAT_FULL_YEAR
+import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.alphaByProgress
 import site.dogether.presentation.utils.bottomSheetSnappable
 import site.dogether.presentation.utils.clickableWithoutRipple
@@ -413,8 +413,8 @@ private fun HomeScreenContents(
                 .fillMaxWidth()
                 .height(
                     (anchoredBottomSheetState.frameHeight
-                      - anchoredBottomSheetState.sheetOffsetY.value
-                      + anchoredBottomSheetState.statusBarHeight).toDp()
+                            - anchoredBottomSheetState.sheetOffsetY.value
+                            + anchoredBottomSheetState.statusBarHeight).toDp()
                 )
                 .nestedScroll(connection)
                 .bottomSheetSnappable(
@@ -497,7 +497,7 @@ private fun HomeScreenContents(
 private fun ChooseGroupBottomSheet(
     sheetState: SheetState,
     uiState: HomeUiState,
-    onEvent: (HomeUiEvent) -> Unit
+    onEvent: (HomeUiEvent) -> Unit,
 ) {
     ModalBottomSheet(
         sheetState = sheetState,
@@ -573,7 +573,7 @@ private fun ChooseGroupBottomSheet(
 @Composable
 private fun GroupItem(
     name: String,
-    isSelected: Boolean
+    isSelected: Boolean,
 ) {
     Row(
         modifier = Modifier
@@ -602,7 +602,7 @@ private fun GroupItem(
 private fun DosikTooltip(
     modifier: Modifier,
     text: String,
-    onClickDismiss: () -> Unit
+    onClickDismiss: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -1048,10 +1048,7 @@ private fun FinishedContents() {
     }
 }
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFF101010
-)
+@ScreenPreview
 @Composable
 private fun HomeScreenContentsPreview() {
     HomeScreenContents(

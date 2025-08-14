@@ -7,11 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import org.koin.androidx.compose.koinViewModel
 import site.dogether.presentation.R
 import site.dogether.presentation.utils.LifecycleEvent
+import site.dogether.presentation.utils.ScreenPreview
 
 @Composable
 fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
@@ -33,10 +33,7 @@ private fun SplashScreenContents() {
     }
 }
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFF101010
-)
+@ScreenPreview
 @Composable
 private fun SplashScreenContentsPreview() {
     SplashScreenContents()
