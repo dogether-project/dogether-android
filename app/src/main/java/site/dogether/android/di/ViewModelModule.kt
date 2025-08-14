@@ -10,6 +10,7 @@ import site.dogether.presentation.screen.force_update.ForceUpdateViewModel
 import site.dogether.presentation.screen.group_created.GroupCreatedViewModel
 import site.dogether.presentation.screen.group_participated.GroupParticipatedViewModel
 import site.dogether.presentation.screen.home.HomeViewModel
+import site.dogether.presentation.screen.my_page.MyPageViewModel
 import site.dogether.presentation.screen.on_boarding.OnBoardingViewModel
 import site.dogether.presentation.screen.participate_group.ParticipateGroupViewModel
 import site.dogether.presentation.screen.participation_method.ParticipationMethodViewModel
@@ -30,4 +31,5 @@ val viewModelModule = module {
     viewModel {
         HomeViewModel(defaultDispatcher = get(named(DefaultDispatcher)))
     }
+    viewModel { MyPageViewModel() }
 }
