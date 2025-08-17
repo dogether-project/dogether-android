@@ -110,6 +110,9 @@
     <string name="info_end_date">종료일</string>
     <string name="info_invite_code">초대코드</string>
     <string name="info_progress">진행 현황</string>
+    <string name="info_certification_period">인증한 기간</string>
+    <string name="info_my_rank">내 순위</string>
+    <string name="info_summary">요약</string>
 
     <string name="notice_share">카카오톡, 문자 등을 통해 공유해보세요 !</string>
 

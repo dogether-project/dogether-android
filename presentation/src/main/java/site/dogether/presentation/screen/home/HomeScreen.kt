@@ -62,6 +62,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.CTAButton
+import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.model.Todo
 import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
@@ -244,26 +245,18 @@ private fun HomeScreenContents(
                         modifier = Modifier
                             .alphaByProgress(anchoredBottomSheetState.expandingProgress)
                             .padding(top = 12.dp)
-                            .onLayoutRectChanged { bounds -> anchoredBottomSheetState.upperAnchorY = bounds.positionInWindow.y }
+                            .onLayoutRectChanged { bounds -> anchoredBottomSheetState.upperAnchorY = bounds.positionInWindow.y },
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Column {
-                            Text(
-                                text = stringResource(R.string.info_group_member_limit),
-                                style = Body2_R,
-                                color = ColorTextSecondary
-                            )
-
-                            Text(
-                                text = "6/10",
-                                style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
-                                color = ColorTextDefault
-                            )
-                        }
+                        GroupInfoColumn(
+                            title = stringResource(R.string.info_group_member_limit),
+                            value = "6/10",
+                        )
 
                         Column(modifier = Modifier.padding(start = 16.dp)) {
                             Text(
                                 text = stringResource(R.string.info_invite_code),
-                                style = Body2_R,
+                                style = Body2_R.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
                                 color = ColorTextSecondary
                             )
 
@@ -282,19 +275,10 @@ private fun HomeScreenContents(
                             }
                         }
 
-                        Column(modifier = Modifier.padding(start = 16.dp)) {
-                            Text(
-                                text = stringResource(R.string.info_end_date),
-                                style = Body2_R,
-                                color = ColorTextSecondary
-                            )
-
-                            Text(
-                                text = "25.02.22",
-                                style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
-                                color = ColorTextDefault
-                            )
-                        }
+                        GroupInfoColumn(
+                            title = stringResource(R.string.info_end_date),
+                            value = "25.02.22"
+                        )
                     }
                 }
 
@@ -413,8 +397,8 @@ private fun HomeScreenContents(
                 .fillMaxWidth()
                 .height(
                     (anchoredBottomSheetState.frameHeight
-                            - anchoredBottomSheetState.sheetOffsetY.value
-                            + anchoredBottomSheetState.statusBarHeight).toDp()
+                      - anchoredBottomSheetState.sheetOffsetY.value
+                      + anchoredBottomSheetState.statusBarHeight).toDp()
                 )
                 .nestedScroll(connection)
                 .bottomSheetSnappable(

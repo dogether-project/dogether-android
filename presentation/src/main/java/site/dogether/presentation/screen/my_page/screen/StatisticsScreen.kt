@@ -5,10 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -16,24 +19,42 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import site.dogether.common.MaxDailyTodoCount
 import site.dogether.presentation.R
+import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
+import site.dogether.presentation.theme.Body2_S
+import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgPrimary
+import site.dogether.presentation.theme.ColorBorderSecondary
 import site.dogether.presentation.theme.ColorIconDefault
+import site.dogether.presentation.theme.ColorIconElevated
 import site.dogether.presentation.theme.ColorTextBlack
+import site.dogether.presentation.theme.ColorTextDefault
+import site.dogether.presentation.theme.ColorTextDisabled
+import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
+import site.dogether.presentation.theme.Grey500
+import site.dogether.presentation.theme.Grey600
+import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
+import kotlin.math.sqrt
 
 @Composable
 fun StatisticsScreen(viewModel: StatisticsViewModel = koinViewModel()) {
@@ -64,53 +85,253 @@ private fun StatisticsScreenContents(
             centerText = stringResource(R.string.title_statistics)
         )
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                modifier = Modifier.size(150.dp),
-                painter = painterResource(R.drawable.img_dosik_empty),
-                contentDescription = "image_dosik_empty"
-            )
+        if (uiState.groups.isNotEmpty()) {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Column {
+                    Row(
+                        modifier = Modifier.padding(top = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = uiState.currentGroup,
+                            style = Head1_B.copy(lineHeightStyle = LineHeightStyle.Default),
+                            color = ColorTextPrimary
+                        )
 
-            Text(
-                modifier = Modifier.padding(top = 32.dp),
-                text = stringResource(R.string.title_no_group),
-                style = Head2_B,
-                color = ColorTextSubtle
-            )
+                        Icon(
+                            modifier = Modifier.padding(start = 4.dp),
+                            painter = painterResource(R.drawable.ic_arrow_down),
+                            tint = ColorIconElevated,
+                            contentDescription = "icon_arrow_down"
+                        )
+                    }
 
-            Text(
-                text = stringResource(R.string.body_no_group),
-                style = Body2_R,
-                color = ColorTextSecondary
-            )
+                    Row(
+                        modifier = Modifier.padding(top = 12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        GroupInfoColumn(
+                            title = stringResource(R.string.info_group_member_limit),
+                            value = "6/10",
+                        )
 
-            Box(
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(ColorBgPrimary)
-                    .padding(
-                        vertical = 12.dp,
-                        horizontal = 40.dp
-                    )
-                    .clickableWithoutRipple {},
-            ) {
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = stringResource(R.string.cta_button_create_group_2),
-                    style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
-                    color = ColorTextBlack
+                        Column(modifier = Modifier.padding(start = 16.dp)) {
+                            Text(
+                                text = stringResource(R.string.info_invite_code),
+                                style = Body2_R.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+                                color = ColorTextSecondary
+                            )
+
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = "12345678",
+                                    style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+                                    color = ColorTextDefault
+                                )
+
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_copy),
+                                    tint = ColorIconDefault,
+                                    contentDescription = "icon_copy"
+                                )
+                            }
+                        }
+
+                        GroupInfoColumn(
+                            title = stringResource(R.string.info_end_date),
+                            value = "25.02.22"
+                        )
+                    }
+                }
+
+                Image(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(top = 36.dp)
+                        .width(100.dp)
+                        .height(126.dp),
+                    painter = painterResource(R.drawable.img_dosik_behind),
+                    contentDescription = "image_dosik_behind_surface"
                 )
+
+                Column(
+                    modifier = Modifier
+                        .padding(top = 117.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .fillMaxWidth()
+                        .background(ColorBgElevated)
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 20.dp
+                        )
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_certification_period),
+                            tint = ColorIconDefault,
+                            contentDescription = "icon_certification_period"
+                        )
+
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = stringResource(R.string.info_certification_period),
+                            style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                            color = ColorTextDefault
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 40.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .width(35.dp),
+                            verticalArrangement = Arrangement.spacedBy(15.dp)
+                        ) {
+                            (MaxDailyTodoCount downTo 0 step 2).forEach { todoCount ->
+                                Text(
+                                    text = "$todoCount",
+                                    style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                                    color = ColorTextDisabled
+                                )
+                            }
+                        }
+
+                        Row(modifier = Modifier.padding(top = 6.dp)) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(
+                                            RoundedCornerShape(
+                                                topStart = 10.dp,
+                                                topEnd = 10.dp
+                                            )
+                                        )
+                                        .width(50.dp)
+                                        .height(180.dp)
+                                        .background(Grey600)
+                                        .hatch(Grey500)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .align(Alignment.BottomCenter)
+                                            .clip(
+                                                RoundedCornerShape(
+                                                    topStart = 10.dp,
+                                                    topEnd = 10.dp
+                                                )
+                                            )
+                                            .width(50.dp)
+                                            .height(60.dp)
+                                            .background(ColorBgPrimary)
+                                    )
+                                }
+
+                                Text(
+                                    modifier = Modifier.padding(top = 10.dp),
+                                    text = "1${stringResource(R.string.unit_day_passed)}",
+                                    style = Body2_S,
+                                    color = ColorTextDefault
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Image(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(
+                            top = 107.dp,
+                            end = (4.47).dp
+                        )
+                        .width((91.53).dp)
+                        .height((28.45).dp),
+                    painter = painterResource(R.drawable.img_dosik_arms),
+                    contentDescription = "image_dosik_arms"
+                )
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier.size(150.dp),
+                    painter = painterResource(R.drawable.img_dosik_empty),
+                    contentDescription = "image_dosik_empty"
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 32.dp),
+                    text = stringResource(R.string.title_no_group),
+                    style = Head2_B,
+                    color = ColorTextSubtle
+                )
+
+                Text(
+                    text = stringResource(R.string.body_no_group),
+                    style = Body2_R,
+                    color = ColorTextSecondary
+                )
+
+                Box(
+                    modifier = Modifier
+                        .padding(top = 20.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(ColorBgPrimary)
+                        .padding(
+                            vertical = 12.dp,
+                            horizontal = 40.dp
+                        )
+                        .clickableWithoutRipple {},
+                ) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = stringResource(R.string.cta_button_create_group_2),
+                        style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+                        color = ColorTextBlack
+                    )
+                }
             }
         }
     }
 }
+
+fun Modifier.hatch(color: Color = ColorBorderSecondary) = this.then(
+    Modifier.drawWithCache {
+        val step = 10.dp.toPx()
+        val stroke = 2.dp.toPx()
+
+        val w = size.width
+        val h = size.height
+        val diagonal = sqrt(w * w + h * h)
+
+        fun DrawScope.drawStripeLines() {
+            var x = -diagonal
+            while (x <= diagonal) {
+                drawLine(
+                    color = color,
+                    start = Offset(x, -diagonal),
+                    end = Offset(x, diagonal),
+                    strokeWidth = stroke
+                )
+                x += step
+            }
+        }
+
+        onDrawWithContent {
+            withTransform({ rotate(24f, pivot = center) }) { drawStripeLines() }
+            drawContent()
+        }
+    }
+)
 
 @ScreenPreview
 @Composable

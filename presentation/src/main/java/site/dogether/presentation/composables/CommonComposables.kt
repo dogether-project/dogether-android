@@ -43,6 +43,7 @@ import site.dogether.presentation.R
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
+import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBgDisabled
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgPrimary
@@ -351,6 +352,26 @@ private fun InfoRow(
             text = body,
             style = Body1_R.copy(lineHeightStyle = LineHeightStyle.Default),
             color = ColorTextSubtle
+        )
+    }
+}
+
+@Composable
+fun GroupInfoColumn(
+    title: String,
+    value: String
+) {
+    Column {
+        Text(
+            text = title,
+            style = Body2_R.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+            color = ColorTextSecondary
+        )
+
+        Text(
+            text = value,
+            style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+            color = ColorTextDefault
         )
     }
 }
