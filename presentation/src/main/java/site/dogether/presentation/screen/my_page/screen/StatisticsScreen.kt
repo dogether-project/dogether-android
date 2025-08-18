@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,8 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +27,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
@@ -32,6 +36,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
 import site.dogether.presentation.R
+import site.dogether.presentation.composables.ChooseGroupBottomSheet
 import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body1_S
@@ -42,12 +47,15 @@ import site.dogether.presentation.theme.ColorBgPrimary
 import site.dogether.presentation.theme.ColorBorderSecondary
 import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorIconElevated
+import site.dogether.presentation.theme.ColorIconError
+import site.dogether.presentation.theme.ColorIconPrimary
 import site.dogether.presentation.theme.ColorTextBlack
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextDisabled
 import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
+import site.dogether.presentation.theme.Emphasis2_B
 import site.dogether.presentation.theme.Grey500
 import site.dogether.presentation.theme.Grey600
 import site.dogether.presentation.theme.Head1_B
@@ -64,10 +72,11 @@ fun StatisticsScreen(viewModel: StatisticsViewModel = koinViewModel()) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StatisticsScreenContents(
     uiState: StatisticsUiState,
-    onEvent: (StatisticsUiEvent) -> Unit
+    onEvent: (StatisticsUiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -99,7 +108,9 @@ private fun StatisticsScreenContents(
                         )
 
                         Icon(
-                            modifier = Modifier.padding(start = 4.dp),
+                            modifier = Modifier
+                                .padding(start = 4.dp)
+                                .clickableWithoutRipple { onEvent(StatisticsUiEvent.Click.OnClickChooseGroup) },
                             painter = painterResource(R.drawable.ic_arrow_down),
                             tint = ColorIconElevated,
                             contentDescription = "icon_arrow_down"
@@ -115,27 +126,10 @@ private fun StatisticsScreenContents(
                             value = "6/10",
                         )
 
-                        Column(modifier = Modifier.padding(start = 16.dp)) {
-                            Text(
-                                text = stringResource(R.string.info_invite_code),
-                                style = Body2_R.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
-                                color = ColorTextSecondary
-                            )
-
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = "12345678",
-                                    style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
-                                    color = ColorTextDefault
-                                )
-
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_copy),
-                                    tint = ColorIconDefault,
-                                    contentDescription = "icon_copy"
-                                )
-                            }
-                        }
+                        GroupInfoColumn(
+                            title = stringResource(R.string.info_invite_code),
+                            value = "12345678"
+                        )
 
                         GroupInfoColumn(
                             title = stringResource(R.string.info_end_date),
@@ -254,6 +248,118 @@ private fun StatisticsScreenContents(
                     contentDescription = "image_dosik_arms"
                 )
             }
+
+            Row(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth()
+                    .height(180.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(ColorBgElevated)
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 20.dp
+                        )
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_rank),
+                            tint = ColorIconDefault,
+                            contentDescription = "icon_rank"
+                        )
+
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = stringResource(R.string.info_my_rank),
+                            style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                            color = ColorTextDefault
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                            .fillMaxWidth()
+                            .weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "10" + stringResource(R.string.unit_member) + " " + stringResource(R.string.unit_postfix_total),
+                            style = Body1_S,
+                            color = ColorTextSubtle
+                        )
+
+                        Text(
+                            text = "2" + stringResource(R.string.unit_rank),
+                            style = Emphasis2_B,
+                            color = ColorTextPrimary
+                        )
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(ColorBgElevated)
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 20.dp
+                        )
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_summary),
+                            tint = ColorIconDefault,
+                            contentDescription = "icon_summary"
+                        )
+
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = stringResource(R.string.info_summary),
+                            style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                            color = ColorTextDefault
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .padding(top = 24.dp)
+                            .fillMaxWidth()
+                            .weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        SummaryItem(
+                            icon = painterResource(R.drawable.ic_achieved),
+                            tint = ColorIconElevated,
+                            title = stringResource(R.string.common_achieved),
+                            value = 100
+                        )
+
+                        SummaryItem(
+                            icon = painterResource(R.drawable.ic_approve_summary),
+                            tint = ColorIconPrimary,
+                            title = stringResource(R.string.common_approve),
+                            value = 100
+                        )
+
+                        SummaryItem(
+                            icon = painterResource(R.drawable.ic_reject_summary),
+                            tint = ColorIconError,
+                            title = stringResource(R.string.common_reject),
+                            value = 100
+                        )
+                    }
+                }
+            }
         } else {
             Column(
                 modifier = Modifier
@@ -262,6 +368,7 @@ private fun StatisticsScreenContents(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                5
                 Image(
                     modifier = Modifier.size(150.dp),
                     painter = painterResource(R.drawable.img_dosik_empty),
@@ -301,6 +408,18 @@ private fun StatisticsScreenContents(
                 }
             }
         }
+
+        if (uiState.isChooseGroupBottomSheetExpanded) {
+            val selectGroupBottomSheetState = rememberModalBottomSheetState()
+            ChooseGroupBottomSheet(
+                sheetState = selectGroupBottomSheetState,
+                currentGroup = uiState.currentGroup,
+                groupList = uiState.groupList,
+                isAddButtonShowing = false,
+                onDismissRequest = { onEvent(StatisticsUiEvent.Callback.OnChooseGroupBottomSheetDismissRequested) },
+                onClickGroupItem = { }
+            )
+        }
     }
 }
 
@@ -332,6 +451,36 @@ fun Modifier.hatch(color: Color = ColorBorderSecondary) = this.then(
         }
     }
 )
+
+@Composable
+private fun SummaryItem(
+    icon: Painter,
+    tint: Color,
+    title: String,
+    value: Int,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            painter = icon,
+            tint = tint,
+            contentDescription = "icon_summary_item"
+        )
+
+        Text(
+            modifier = Modifier.padding(start = 4.dp),
+            text = title,
+            style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
+            color = ColorTextSubtle
+        )
+
+        Text(
+            modifier = Modifier.padding(start = 8.dp),
+            text = "$value" + stringResource(R.string.unit_each),
+            style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
+            color = ColorTextDefault
+        )
+    }
+}
 
 @ScreenPreview
 @Composable

@@ -23,8 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -62,6 +60,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.CTAButton
+import site.dogether.presentation.composables.ChooseGroupBottomSheet
 import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.model.Todo
@@ -72,12 +71,10 @@ import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 import site.dogether.presentation.screen.home.state.Chip
 import site.dogether.presentation.screen.home.state.PersistentTooltipStateImpl
-import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.Body2_S
 import site.dogether.presentation.theme.ColorBgDefault
-import site.dogether.presentation.theme.ColorBgDim
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgInverse
 import site.dogether.presentation.theme.ColorBgPrimary
@@ -465,118 +462,15 @@ private fun HomeScreenContents(
 //            FinishedContents()
         }
 
-        if (uiState.isSelectGroupBottomSheetExpanded) {
+        if (uiState.isChooseGroupBottomSheetExpanded) {
             val selectGroupBottomSheetState = rememberModalBottomSheetState()
             ChooseGroupBottomSheet(
                 sheetState = selectGroupBottomSheetState,
-                uiState = uiState,
-                onEvent = onEvent
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ChooseGroupBottomSheet(
-    sheetState: SheetState,
-    uiState: HomeUiState,
-    onEvent: (HomeUiEvent) -> Unit,
-) {
-    ModalBottomSheet(
-        sheetState = sheetState,
-        shape = RoundedCornerShape(
-            topStart = 12.dp,
-            topEnd = 12.dp
-        ),
-        dragHandle = null,
-        containerColor = ColorBgSurface,
-        scrimColor = ColorBgDim,
-        onDismissRequest = { onEvent(HomeUiEvent.Callback.OnChooseGroupBottomSheetDismissRequested) }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(ColorBgSurface)
-                .padding(
-                    top = 24.dp,
-                    start = 24.dp,
-                    end = 24.dp
-                )
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 20.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.title_choose_group),
-                    style = Head2_B,
-                    color = ColorTextDefault
-                )
-
-                Text(
-                    text = stringResource(R.string.cta_button_confirm),
-                    style = Body1_S,
-                    color = ColorTextDefault
-                )
-            }
-
-            uiState.groupList.forEach {
-                GroupItem(
-                    name = it,
-                    isSelected = it == uiState.currentGroup
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_add_todo),
-                    tint = ColorIconElevated,
-                    contentDescription = "icon_add_group"
-                )
-
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(R.string.cta_button_add_group),
-                    style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
-                    color = ColorTextSubtle
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun GroupItem(
-    name: String,
-    isSelected: Boolean,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = name,
-            style = Body1_B.copy(lineHeightStyle = LineHeightStyle.Default),
-            color = if (isSelected) ColorTextPrimary else ColorTextDisabled
-        )
-
-        if (isSelected) {
-            Icon(
-                painter = painterResource(R.drawable.ic_check),
-                tint = ColorIconPrimary,
-                contentDescription = "icon_check"
+                currentGroup = uiState.currentGroup,
+                groupList = uiState.groupList,
+                isAddButtonShowing = true,
+                onDismissRequest = { onEvent(HomeUiEvent.Callback.OnChooseGroupBottomSheetDismissRequested) },
+                onClickGroupItem = { }
             )
         }
     }

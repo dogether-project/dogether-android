@@ -6,7 +6,21 @@ class StatisticsViewModel : BaseViewModel<StatisticsUiState, StatisticsUiEvent, 
 
     override fun onEvent(event: StatisticsUiEvent) {
         when (event) {
-            else -> Unit
+            is StatisticsUiEvent.Click -> {
+                when (event) {
+                    is StatisticsUiEvent.Click.OnClickChooseGroup -> {
+                        updateState { it.copy(isChooseGroupBottomSheetExpanded = true) }
+                    }
+                }
+            }
+
+            is StatisticsUiEvent.Callback -> {
+                when (event) {
+                    is StatisticsUiEvent.Callback.OnChooseGroupBottomSheetDismissRequested -> {
+                        updateState { it.copy(isChooseGroupBottomSheetExpanded = false) }
+                    }
+                }
+            }
         }
     }
 }
