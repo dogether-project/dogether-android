@@ -1,4 +1,4 @@
-package site.dogether.presentation.screen.my_page.screen
+package site.dogether.presentation.screen.my_page.screen.statistics
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

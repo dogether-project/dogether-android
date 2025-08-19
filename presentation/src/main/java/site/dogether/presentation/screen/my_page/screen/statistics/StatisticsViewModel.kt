@@ -1,4 +1,4 @@
-package site.dogether.presentation.screen.my_page.screen
+package site.dogether.presentation.screen.my_page.screen.statistics
 
 import site.dogether.presentation.base.BaseViewModel
 
