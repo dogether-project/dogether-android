@@ -1,4 +1,4 @@
-package site.dogether.presentation.screen.home.state
+package site.dogether.presentation.screen.home.model
 
 import androidx.annotation.StringRes
 import site.dogether.presentation.R

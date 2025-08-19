@@ -410,9 +410,9 @@ private fun StatisticsScreenContents(
         }
 
         if (uiState.isChooseGroupBottomSheetExpanded) {
-            val selectGroupBottomSheetState = rememberModalBottomSheetState()
+            val chooseGroupBottomSheetState = rememberModalBottomSheetState()
             ChooseGroupBottomSheet(
-                sheetState = selectGroupBottomSheetState,
+                sheetState = chooseGroupBottomSheetState,
                 currentGroup = uiState.currentGroup,
                 groupList = uiState.groupList,
                 isAddButtonShowing = false,

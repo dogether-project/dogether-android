@@ -68,8 +68,8 @@ import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
 import site.dogether.presentation.model.Todo.Companion.STATUS_CERTIFY_PENDING
 import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
 import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
+import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
-import site.dogether.presentation.screen.home.state.Chip
 import site.dogether.presentation.screen.home.state.PersistentTooltipStateImpl
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
@@ -394,8 +394,8 @@ private fun HomeScreenContents(
                 .fillMaxWidth()
                 .height(
                     (anchoredBottomSheetState.frameHeight
-                      - anchoredBottomSheetState.sheetOffsetY.value
-                      + anchoredBottomSheetState.statusBarHeight).toDp()
+                            - anchoredBottomSheetState.sheetOffsetY.value
+                            + anchoredBottomSheetState.statusBarHeight).toDp()
                 )
                 .nestedScroll(connection)
                 .bottomSheetSnappable(
@@ -463,9 +463,9 @@ private fun HomeScreenContents(
         }
 
         if (uiState.isChooseGroupBottomSheetExpanded) {
-            val selectGroupBottomSheetState = rememberModalBottomSheetState()
+            val chooseGroupBottomSheetState = rememberModalBottomSheetState()
             ChooseGroupBottomSheet(
-                sheetState = selectGroupBottomSheetState,
+                sheetState = chooseGroupBottomSheetState,
                 currentGroup = uiState.currentGroup,
                 groupList = uiState.groupList,
                 isAddButtonShowing = true,
@@ -635,14 +635,14 @@ private fun TodoContents(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Chip(
+                ChipItem(
                     chip = Chip.All,
                     isSelected = Chip.All == uiState.selectedChip,
                     color = ColorBgPrimary,
                     onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.All)) }
                 )
 
-                Chip(
+                ChipItem(
                     chip = Chip.ReviewPending,
                     icon = painterResource(R.drawable.ic_review_pending),
                     isSelected = Chip.ReviewPending == uiState.selectedChip,
@@ -650,7 +650,7 @@ private fun TodoContents(
                     onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.ReviewPending)) }
                 )
 
-                Chip(
+                ChipItem(
                     chip = Chip.Approve,
                     icon = painterResource(R.drawable.ic_approve),
                     isSelected = Chip.Approve == uiState.selectedChip,
@@ -658,7 +658,7 @@ private fun TodoContents(
                     onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.Approve)) }
                 )
 
-                Chip(
+                ChipItem(
                     chip = Chip.Reject,
                     icon = painterResource(R.drawable.ic_reject),
                     isSelected = Chip.Reject == uiState.selectedChip,
@@ -740,7 +740,7 @@ private fun TodoContents(
 }
 
 @Composable
-private fun Chip(
+private fun ChipItem(
     chip: Chip,
     icon: Painter? = null,
     isSelected: Boolean,
