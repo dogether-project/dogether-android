@@ -48,11 +48,11 @@ import site.dogether.presentation.screen.my_page.screen.certification_list.model
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.SortingMethod
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_S
+import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.Body2_S
 import site.dogether.presentation.theme.ColorBgDefault
 import site.dogether.presentation.theme.ColorBgDim
 import site.dogether.presentation.theme.ColorBgElevated
-import site.dogether.presentation.theme.ColorBgPrimary
 import site.dogether.presentation.theme.ColorBgSurface
 import site.dogether.presentation.theme.ColorBorderSecondary
 import site.dogether.presentation.theme.ColorIconDefault
@@ -68,8 +68,6 @@ import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
-import site.dogether.presentation.theme.Red400
-import site.dogether.presentation.theme.Yellow
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 
@@ -217,7 +215,32 @@ private fun CertificationListScreenContents(
                 )
             }
         } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    modifier = Modifier.size(150.dp),
+                    painter = painterResource(R.drawable.img_dosik_empty),
+                    contentDescription = "image_dosik_empty"
+                )
 
+                Text(
+                    modifier = Modifier.padding(top = 32.dp),
+                    text = stringResource(R.string.title_certification_list_not_exist),
+                    style = Head2_B,
+                    color = ColorTextSubtle
+                )
+
+                Text(
+                    text = stringResource(R.string.body_certification_list_not_exist),
+                    style = Body2_R,
+                    color = ColorTextSecondary
+                )
+            }
         }
     }
 }

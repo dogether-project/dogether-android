@@ -5,7 +5,7 @@ import site.dogether.presentation.screen.my_page.screen.certification_list.model
 
 data class CertificationListUiState(
     val isLoading: Boolean = false,
-    val certificationList: List<String> = listOf("안녕"),
+    val certificationList: List<String> = listOf(),
     val selectedSortingMethod: SortingMethod = SortingMethod.AscendGroupCreated,
     val chips: List<Chip> = listOf(Chip.ReviewPending, Chip.Approve, Chip.Reject),
     val selectedChip: Chip? = null,
