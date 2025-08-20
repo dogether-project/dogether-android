@@ -1,0 +1,210 @@
+package site.dogether.presentation.screen.my_page.screen.group_management
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.unit.dp
+import org.koin.androidx.compose.koinViewModel
+import org.orbitmvi.orbit.compose.collectAsState
+import site.dogether.presentation.R
+import site.dogether.presentation.composables.ActionDialog
+import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.theme.Body2_S
+import site.dogether.presentation.theme.ColorBgElevated
+import site.dogether.presentation.theme.ColorBgSurface
+import site.dogether.presentation.theme.ColorIconDefault
+import site.dogether.presentation.theme.ColorTextDefault
+import site.dogether.presentation.theme.ColorTextSecondary
+import site.dogether.presentation.theme.Head2_B
+import site.dogether.presentation.theme.Red400
+import site.dogether.presentation.theme.Small_R
+import site.dogether.presentation.utils.ScreenPreview
+import site.dogether.presentation.utils.clickableWithoutRipple
+
+@Composable
+fun GroupManagementScreen(viewModel: GroupManagementViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
+
+    GroupManagementScreenContents(
+        uiState = uiState,
+        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+    )
+
+    InitDialog(
+        uiState = uiState,
+        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+    )
+}
+
+@Composable
+private fun GroupManagementScreenContents(
+    uiState: GroupManagementUiState,
+    onEvent: (GroupManagementUiEvent) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxSize()
+    ) {
+        TopBar(
+            start = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_arrow_back),
+                    tint = ColorIconDefault,
+                    contentDescription = "icon_arrow_back"
+                )
+            },
+            centerText = stringResource(R.string.title_group_management)
+        )
+
+        LazyColumn(
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            item {
+                GroupItem(
+                    group = "DND 작심삼일 탈출러",
+                    onClickWithdraw = { group -> onEvent(GroupManagementUiEvent.Click.OnClickWithdraw(group)) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun InitDialog(
+    uiState: GroupManagementUiState,
+    onEvent: (GroupManagementUiEvent) -> Unit,
+) {
+    if (uiState.withdrawDialogState.isShowing) {
+        ActionDialog(
+            title = stringResource(R.string.dialog_title_withdraw_group),
+            body = stringResource(R.string.dialog_body_withdraw_group),
+            positiveButtonColor = Red400,
+            negativeText = stringResource(R.string.dialog_button_back),
+            positiveText = stringResource(R.string.dialog_button_withdraw),
+            onClickNegative = { onEvent(GroupManagementUiEvent.Click.OnClickWithdrawDialogNegative) },
+            onClickPositive = { onEvent(GroupManagementUiEvent.Click.OnClickWithdrawDialogPositive) },
+            onDismissRequest = { onEvent(GroupManagementUiEvent.Callback.OnWithdrawDialogDismissRequested) }
+        )
+    }
+}
+
+@Composable
+private fun GroupItem(
+    group: String,
+    onClickWithdraw: (String) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .fillMaxWidth()
+            .background(ColorBgElevated)
+            .padding(
+                horizontal = 16.dp,
+                vertical = 14.dp
+            )
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = group,
+                style = Head2_B.copy(lineHeightStyle = LineHeightStyle.Default),
+                color = ColorTextDefault
+            )
+
+            Text(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(ColorBgSurface)
+                    .padding(
+                        horizontal = 12.dp,
+                        vertical = 4.dp
+                    )
+                    .clickableWithoutRipple { onClickWithdraw(group) },
+                text = stringResource(R.string.cta_button_withdraw),
+                style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+                color = ColorTextDefault
+            )
+        }
+
+        Row(
+            modifier = Modifier.padding(top = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.info_group_member_limit),
+                style = Small_R,
+                color = ColorTextSecondary
+            )
+
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+                text = "6/10",
+                style = Small_R,
+                color = ColorTextDefault
+            )
+
+            Text(
+                modifier = Modifier.padding(start = 18.dp),
+                text = stringResource(R.string.info_end_date),
+                style = Small_R,
+                color = ColorTextSecondary
+            )
+
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+                text = "25.08.20",
+                style = Small_R,
+                color = ColorTextDefault
+            )
+        }
+
+        Row(
+            modifier = Modifier.padding(top = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.info_invite_code),
+                style = Small_R,
+                color = ColorTextSecondary
+            )
+
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+                text = "12345678",
+                style = Small_R,
+                color = ColorTextDefault
+            )
+        }
+    }
+}
+
+@ScreenPreview
+@Composable
+private fun GroupManagementScreenContentsPreview() {
+    GroupManagementScreenContents(
+        uiState = GroupManagementUiState(),
+        onEvent = {}
+    )
+}

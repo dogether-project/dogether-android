@@ -12,6 +12,7 @@ import site.dogether.presentation.screen.group_participated.GroupParticipatedVie
 import site.dogether.presentation.screen.home.HomeViewModel
 import site.dogether.presentation.screen.my_page.MyPageViewModel
 import site.dogether.presentation.screen.my_page.screen.certification_list.CertificationListViewModel
+import site.dogether.presentation.screen.my_page.screen.group_management.GroupManagementViewModel
 import site.dogether.presentation.screen.my_page.screen.settings.SettingsViewModel
 import site.dogether.presentation.screen.my_page.screen.statistics.StatisticsViewModel
 import site.dogether.presentation.screen.on_boarding.OnBoardingViewModel
@@ -38,4 +39,5 @@ val viewModelModule = module {
     viewModel { StatisticsViewModel() }
     viewModel { CertificationListViewModel() }
     viewModel { SettingsViewModel() }
+    viewModel { GroupManagementViewModel() }
 }

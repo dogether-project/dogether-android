@@ -13,6 +13,7 @@ import site.dogether.presentation.screen.group_participated.GroupParticipatedScr
 import site.dogether.presentation.screen.home.HomeScreen
 import site.dogether.presentation.screen.my_page.MyPageScreen
 import site.dogether.presentation.screen.my_page.screen.certification_list.CertificationListScreen
+import site.dogether.presentation.screen.my_page.screen.group_management.GroupManagementScreen
 import site.dogether.presentation.screen.my_page.screen.settings.SettingsScreen
 import site.dogether.presentation.screen.my_page.screen.statistics.StatisticsScreen
 import site.dogether.presentation.screen.on_boarding.OnBoardingScreen
@@ -43,6 +44,7 @@ fun AppNavGraph(
         composable(Screen.Statistics.route) { StatisticsScreen() }
         composable(Screen.CertificationList.route) { CertificationListScreen() }
         composable(Screen.Settings.route) { SettingsScreen() }
+        composable(Screen.GroupManagement.route) { GroupManagementScreen() }
     }
 }
 
@@ -60,5 +62,6 @@ enum class Screen(val route: String) {
     MyPage("my_page"),
     Statistics("statistics"),
     CertificationList("certification_list"),
-    Settings("settings")
+    Settings("settings"),
+    GroupManagement("group_management"),
 }
