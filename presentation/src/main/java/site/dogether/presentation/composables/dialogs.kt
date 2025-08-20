@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -28,6 +29,7 @@ import androidx.compose.ui.window.DialogProperties
 import site.dogether.presentation.R
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.ColorBgDim
+import site.dogether.presentation.theme.ColorBgPrimary
 import site.dogether.presentation.theme.ColorBgSurface
 import site.dogether.presentation.theme.ColorIconPrimary
 import site.dogether.presentation.theme.ColorTextDefault
@@ -39,9 +41,10 @@ import site.dogether.presentation.theme.Head1_B
 fun ActionDialog(
     title: String,
     body: String,
-    icon: Painter,
+    icon: Painter? = null,
     negativeText: String,
     positiveText: String,
+    positiveButtonColor: Color = ColorBgPrimary,
     onClickNegative: () -> Unit,
     onClickPositive: () -> Unit,
     onDismissRequest: () -> Unit
@@ -70,11 +73,13 @@ fun ActionDialog(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    painter = icon,
-                    tint = ColorIconPrimary,
-                    contentDescription = "icon"
-                )
+                icon?.let {
+                    Icon(
+                        painter = icon,
+                        tint = ColorIconPrimary,
+                        contentDescription = "icon"
+                    )
+                }
 
                 Text(
                     modifier = Modifier.padding(top = 12.dp),
@@ -84,13 +89,15 @@ fun ActionDialog(
                     color = ColorTextDefault
                 )
 
-                Text(
-                    modifier = Modifier.padding(top = 8.dp),
-                    text = body,
-                    style = Body1_R,
-                    color = ColorTextSubtle,
-                    textAlign = TextAlign.Center
-                )
+                if (body.isNotEmpty()) {
+                    Text(
+                        modifier = Modifier.padding(top = 8.dp),
+                        text = body,
+                        style = Body1_R,
+                        color = ColorTextSubtle,
+                        textAlign = TextAlign.Center
+                    )
+                }
 
                 Row(
                     modifier = Modifier
@@ -115,6 +122,7 @@ fun ActionDialog(
                         text = positiveText,
                         isEnabled = true,
                         radius = 8.dp,
+                        color = positiveButtonColor,
                         onClick = { onClickPositive() }
                     )
                 }

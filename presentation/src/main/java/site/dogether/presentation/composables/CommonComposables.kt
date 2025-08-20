@@ -79,13 +79,14 @@ fun CTAButton(
     isEnabled: Boolean = true,
     radius: Dp = 12.dp,
     text: String,
+    color: Color = ColorBgPrimary,
     onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier.then(
             Modifier
                 .clip(RoundedCornerShape(radius))
-                .background(if (isEnabled) ColorBgPrimary else ColorBgDisabled)
+                .background(if (isEnabled) color else ColorBgDisabled)
                 .conditionedClickableWithoutRipple(isEnabled) { onClick() })
     ) {
         Text(

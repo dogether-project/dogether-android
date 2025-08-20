@@ -33,6 +33,7 @@
     <string name="title_certification_list">인증 목록</string>
     <string name="title_certification_list_not_exist">아직 작성된 투두가 없어요</string>
     <string name="title_sorting_method">정렬</string>
+    <string name="title_settings">설정</string>
 
     <string name="body_force_update">두게더가 유저분들의 의견을 반영하여\n더 편하게 사용하도록 사용성을 개선했어요.\n지금 바로 업데이트하고 인증하러 가요!</string>
     <string name="body_on_boarding_0">목표만 세우면 끝?! 인증까지 해야 진짜 실천이에요</string>
@@ -58,14 +59,19 @@
 
     <string name="dialog_title_permission">알림 권한이 꺼져 있어요.</string>
     <string name="dialog_title_duplicated_name">동일한 이름의 그룹이\n이미 존재합니다.</string>
+    <string name="dialog_title_logout">로그아웃 하시겠어요?</string>
+    <string name="dialog_title_withdraw">정말 회원탈퇴를 하시겠어요?</string>
 
     <string name="dialog_body_permission">팀원들의 인증을 놓칠 수도 있어요!\n검사를 위해 설정에서 알림 권한을 켜주세요.</string>
     <string name="dialog_body_duplicated_name">같은 이름으로도 그룹을 생성할 수 있어요.</string>
+    <string name="dialog_body_withdraw">탈퇴하면 모든 데이터가 삭제되며\n복구할 수 없어요.</string>
 
     <string name="dialog_button_later">나중에</string>
     <string name="dialog_button_settings">설정 열기</string>
     <string name="dialog_button_back">뒤로 가기</string>
     <string name="dialog_button_create_group">그룹 생성</string>
+    <string name="dialog_button_logout">로그아웃</string>
+    <string name="dialog_button_withdraw">탈퇴하기</string>
 
     <string name="cta_button_update">업데이트 하러가기</string>
     <string name="cta_button_kakao_login">카카오 로그인</string>
@@ -131,6 +137,10 @@
     <string name="my_page_menu_certification_list">인증 목록</string>
     <string name="my_page_menu_group_management">그룹 관리</string>
     <string name="my_page_menu_settings">설정</string>
+
+    <string name="settings_menu_logout">로그아웃</string>
+    <string name="settings_menu_withdraw">회원 탈퇴</string>
+    <string name="settings_menu_app_version">앱 버전</string>
 
     <string name="common_all">전체</string>
     <string name="common_review_pending">검사 대기</string>
