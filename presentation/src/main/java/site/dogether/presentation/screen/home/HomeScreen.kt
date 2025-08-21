@@ -1,5 +1,9 @@
 package site.dogether.presentation.screen.home
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,6 +51,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onLayoutRectChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,8 +63,10 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.common.MaxDailyTodoCount
 import site.dogether.presentation.R
+import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.SelectGroupBottomSheet
@@ -105,6 +112,7 @@ import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.alphaByProgress
 import site.dogether.presentation.utils.bottomSheetSnappable
 import site.dogether.presentation.utils.clickableWithoutRipple
+import site.dogether.presentation.utils.isPermissionGranted
 import site.dogether.presentation.utils.toDp
 import site.dogether.presentation.utils.toFormattedString
 import site.dogether.presentation.utils.today
@@ -116,6 +124,18 @@ import kotlin.math.sqrt
 fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
     val onEvent: (HomeUiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
+    val context = LocalContext.current
+
+    viewModel.collectSideEffect { uiEffect ->
+        when (uiEffect) {
+            is HomeUiEffect.CheckNotificationPermission -> checkNotificationPermission(
+                context = context,
+                onDenied = { onEvent(HomeUiEvent.Callback.OnNotificationPermissionDenied) }
+            )
+
+            is HomeUiEffect.NavigateToNotificationSettings -> navigateToNotificationSetting(context)
+        }
+    }
 
     HomeScreenContents(
         uiState = uiState,
@@ -133,6 +153,31 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             onClickGroupItem = { }
         )
     }
+
+    InitDialog(
+        uiState = uiState,
+        onEvent = onEvent
+    )
+
+    LaunchedEffect(Unit) {
+        onEvent(HomeUiEvent.Lifecycle.OnFirstComposition)
+    }
+}
+
+private fun checkNotificationPermission(
+    context: Context,
+    onDenied: () -> Unit,
+) {
+    if (!context.isPermissionGranted(Manifest.permission.POST_NOTIFICATIONS)) onDenied()
+}
+
+private fun navigateToNotificationSetting(context: Context) {
+    context.startActivity(
+        Intent().apply {
+            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -402,6 +447,25 @@ private fun HomeScreenContents(
         AnchoredBottomSheet(
             sheetState = anchoredBottomSheetState,
             connection = connection
+        )
+    }
+}
+
+@Composable
+private fun InitDialog(
+    uiState: HomeUiState,
+    onEvent: (HomeUiEvent) -> Unit,
+) {
+    if (uiState.permissionDialogState.isShowing) {
+        ActionDialog(
+            title = stringResource(R.string.dialog_title_permission),
+            body = stringResource(R.string.dialog_body_permission),
+            icon = painterResource(R.drawable.ic_notice),
+            negativeText = stringResource(R.string.dialog_button_later),
+            positiveText = stringResource(R.string.dialog_button_settings),
+            onClickNegative = { onEvent(HomeUiEvent.Click.OnClickPermissionDialogNegative) },
+            onClickPositive = { onEvent(HomeUiEvent.Click.OnClickPermissionDialogPositive) },
+            onDismissRequest = { onEvent(HomeUiEvent.Callback.OnPermissionDialogDismissRequested) }
         )
     }
 }
