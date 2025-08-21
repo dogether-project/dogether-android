@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.my_page.screen.certification_list.model
 
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
@@ -11,7 +12,7 @@ import site.dogether.presentation.theme.Yellow
 enum class Chip(
     @field:StringRes val stringId: Int,
     @field:DrawableRes val iconId: Int,
-    val color: Color,
+    @field:ColorRes val color: Color,
 ) {
     Approve(
         stringId = R.string.common_approve,
