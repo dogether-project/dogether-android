@@ -20,10 +20,10 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.ActionDialog
+import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
-import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorIconElevated
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.Red400
@@ -56,13 +56,7 @@ private fun SettingsScreenContents(
             .fillMaxSize()
     ) {
         TopBar(
-            start = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_arrow_back),
-                    tint = ColorIconDefault,
-                    contentDescription = "icon_arrow_back"
-                )
-            },
+            start = { BackButton {} },
             centerText = stringResource(R.string.title_settings)
         )
 

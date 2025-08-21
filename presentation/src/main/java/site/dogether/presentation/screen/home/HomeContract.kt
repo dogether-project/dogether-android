@@ -13,7 +13,7 @@ data class HomeUiState(
     val isLoading: Boolean = false,
     val timerProgress: Float = 0f,
     val timerText: String = "",
-    val currentGroup: String = "DND 작심삼일 탈출러",
+    val selectedGroup: String = "DND 작심삼일 탈출러",
     val todoList: List<Todo> = listOf(
         Todo(
             id = 1,
@@ -38,7 +38,7 @@ data class HomeUiState(
     ),
     val selectedChip: Chip = Chip.All,
     val filteredTodoList: List<Todo> = listOf(),
-    val isChooseGroupBottomSheetExpanded: Boolean = false,
+    val isSelectGroupBottomSheetShowing: Boolean = false,
     val groupList: List<String> = listOf("DND 작심삼일 탈출러", "배고픈 민족들"),
     val tooltipUiState: TooltipUiState = TooltipUiState(
         isShowing = true,
@@ -50,11 +50,11 @@ sealed interface HomeUiEvent {
     sealed interface Click : HomeUiEvent {
         data class OnClickChip(val chip: Chip) : Click
 
-        data object OnClickChooseGroup : Click
+        data object OnClickSelectGroup : Click
     }
 
     sealed interface Callback : HomeUiEvent {
-        data object OnChooseGroupBottomSheetDismissRequested : Callback
+        data object OnSelectGroupBottomSheetDismissRequested : Callback
     }
 }
 

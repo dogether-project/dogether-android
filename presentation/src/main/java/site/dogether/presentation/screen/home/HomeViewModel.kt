@@ -40,16 +40,16 @@ class HomeViewModel(
                         }
                     }
 
-                    is HomeUiEvent.Click.OnClickChooseGroup -> {
-                        updateState { it.copy(isChooseGroupBottomSheetExpanded = true) }
+                    is HomeUiEvent.Click.OnClickSelectGroup -> {
+                        updateState { it.copy(isSelectGroupBottomSheetShowing = true) }
                     }
                 }
             }
 
             is HomeUiEvent.Callback -> {
                 when (event) {
-                    is HomeUiEvent.Callback.OnChooseGroupBottomSheetDismissRequested -> {
-                        updateState { it.copy(isChooseGroupBottomSheetExpanded = false) }
+                    is HomeUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested -> {
+                        updateState { it.copy(isSelectGroupBottomSheetShowing = false) }
                     }
                 }
             }

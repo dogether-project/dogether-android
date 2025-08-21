@@ -9,13 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
@@ -23,11 +21,11 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.ActionDialog
+import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body2_S
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgSurface
-import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.Head2_B
@@ -62,13 +60,7 @@ private fun GroupManagementScreenContents(
             .fillMaxSize()
     ) {
         TopBar(
-            start = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_arrow_back),
-                    tint = ColorIconDefault,
-                    contentDescription = "icon_arrow_back"
-                )
-            },
+            start = { BackButton {} },
             centerText = stringResource(R.string.title_group_management)
         )
 

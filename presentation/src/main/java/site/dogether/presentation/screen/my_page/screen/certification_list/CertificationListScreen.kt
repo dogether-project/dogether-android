@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
+import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.Chip
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.SortingMethod
@@ -55,7 +57,6 @@ import site.dogether.presentation.theme.ColorBgDim
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgSurface
 import site.dogether.presentation.theme.ColorBorderSecondary
-import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorIconElevated
 import site.dogether.presentation.theme.ColorIconError
 import site.dogether.presentation.theme.ColorIconPrimary
@@ -71,15 +72,29 @@ import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CertificationListScreen(viewModel: CertificationListViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
+    val onEvent: (CertificationListUiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
+
     CertificationListScreenContents(
-        uiState = viewModel.collectAsState().value,
-        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+        uiState = uiState,
+        onEvent = onEvent
     )
+
+    val selectSortingMethodBottomSheetState = rememberModalBottomSheetState()
+    if (uiState.isSelectSortingMethodBottomSheetShowing) {
+        SelectSortingMethodBottomSheet(
+            sheetState = selectSortingMethodBottomSheetState,
+            sortingMethods = SortingMethod.entries,
+            currentSortingMethod = uiState.selectedSortingMethod,
+            onDismissRequest = { onEvent(CertificationListUiEvent.Callback.OnSelectSortingMethodBottomSheetDismissRequested) },
+            onClickSortingMethod = { sortingMethod -> onEvent(CertificationListUiEvent.Click.OnClickSortingMethod(sortingMethod)) }
+        )
+    }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CertificationListScreenContents(
     uiState: CertificationListUiState,
@@ -88,160 +103,158 @@ private fun CertificationListScreenContents(
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
             modifier = Modifier.padding(horizontal = 16.dp),
-            start = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_arrow_back),
-                    tint = ColorIconDefault,
-                    contentDescription = "icon_arrow_back"
-                )
-            },
+            start = { BackButton {} },
             centerText = stringResource(R.string.title_certification_list)
         )
 
         if (uiState.certificationList.isNotEmpty()) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text(
-                    modifier = Modifier.padding(top = 16.dp),
-                    text = buildAnnotatedString {
-                        withStyle(SpanStyle(color = ColorTextDefault)) {
-                            append(stringResource(R.string.body_certification_list_exist_0))
-                            append("\n")
-                            append(stringResource(R.string.unit_prefix_whole))
-                            append(" ")
-                        }
-
-                        withStyle(SpanStyle(color = ColorTextPrimary)) {
-                            append("100")
-                            append(stringResource(R.string.unit_each))
-                        }
-
-                        withStyle(SpanStyle(color = ColorTextDefault)) {
-                            append(stringResource(R.string.body_certification_list_exist_1))
-                        }
-                    },
-                    style = Head1_B
-                )
-
-                Row(
-                    modifier = Modifier.padding(top = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    CertificationCountItem(
-                        icon = painterResource(R.drawable.ic_achieved),
-                        tint = ColorIconElevated,
-                        title = stringResource(R.string.common_achieved),
-                        value = 5
-                    )
-
-                    CertificationCountItem(
-                        icon = painterResource(R.drawable.ic_approve_summary),
-                        tint = ColorIconPrimary,
-                        title = stringResource(R.string.common_approve),
-                        value = 5
-                    )
-
-                    CertificationCountItem(
-                        icon = painterResource(R.drawable.ic_reject_summary),
-                        tint = ColorIconError,
-                        title = stringResource(R.string.common_reject),
-                        value = 5
-                    )
-                }
-            }
-
-            LazyRow(
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                item {
-                    SortingMethodChipItem(
-                        sortingMethod = uiState.selectedSortingMethod,
-                        onClick = { onEvent(CertificationListUiEvent.Click.OnClickSelectSortingMethod) }
-                    )
-                }
-
-                items(uiState.chips) { chip ->
-                    when (chip) {
-                        else -> ChipItem(
-                            chip = chip,
-                            isSelected = uiState.selectedChip == chip,
-                            onClick = { onEvent(CertificationListUiEvent.Click.OnClickChip(chip)) }
-                        )
-                    }
-                }
-            }
-
-            LazyColumn(
-                modifier = Modifier
-                    .padding(
-                        top = 8.dp,
-                        start = 16.dp,
-                        end = 16.dp
-                    )
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                // group / dtae forEach
-
-                item {
-                    Text(
-                        text = "Group or Date",
-                        style = Body1_S,
-                        color = ColorTextSubtle
-                    )
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                item {
-                    CertificationRow()
-                }
-            }
-
-            if (uiState.isChooseSortingMethodBottomSheetExpanded) {
-                val chooseSortingMethodBottomSheetState = rememberModalBottomSheetState()
-
-                ChooseSortingMethodBottomSheet(
-                    sheetState = chooseSortingMethodBottomSheetState,
-                    sortingMethods = SortingMethod.entries,
-                    currentSortingMethod = uiState.selectedSortingMethod,
-                    onDismissRequest = { onEvent(CertificationListUiEvent.Callback.OnChooseSortingMethodBottomSheetDismissRequested) },
-                    onClickSortingMethod = { sortingMethod -> onEvent(CertificationListUiEvent.Click.OnClickSortingMethod(sortingMethod)) }
-                )
-            }
+            CertificationListContents(
+                uiState = uiState,
+                onEvent = onEvent
+            )
         } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    modifier = Modifier.size(150.dp),
-                    painter = painterResource(R.drawable.img_dosik_empty),
-                    contentDescription = "image_dosik_empty"
-                )
+            EmptyCertificationListContents()
+        }
+    }
+}
 
-                Text(
-                    modifier = Modifier.padding(top = 32.dp),
-                    text = stringResource(R.string.title_certification_list_not_exist),
-                    style = Head2_B,
-                    color = ColorTextSubtle
-                )
+@Composable
+private fun ColumnScope.CertificationListContents(
+    uiState: CertificationListUiState,
+    onEvent: (CertificationListUiEvent) -> Unit,
+) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Text(
+            modifier = Modifier.padding(top = 16.dp),
+            text = buildAnnotatedString {
+                withStyle(SpanStyle(color = ColorTextDefault)) {
+                    append(stringResource(R.string.body_certification_list_exist_0))
+                    append("\n")
+                    append(stringResource(R.string.unit_prefix_whole))
+                    append(" ")
+                }
 
-                Text(
-                    text = stringResource(R.string.body_certification_list_not_exist),
-                    style = Body2_R,
-                    color = ColorTextSecondary
+                withStyle(SpanStyle(color = ColorTextPrimary)) {
+                    append("100")
+                    append(stringResource(R.string.unit_each))
+                }
+
+                withStyle(SpanStyle(color = ColorTextDefault)) {
+                    append(stringResource(R.string.body_certification_list_exist_1))
+                }
+            },
+            style = Head1_B
+        )
+
+        Row(
+            modifier = Modifier.padding(top = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            CertificationCountItem(
+                icon = painterResource(R.drawable.ic_achieved),
+                tint = ColorIconElevated,
+                title = stringResource(R.string.common_achieved),
+                value = 5
+            )
+
+            CertificationCountItem(
+                icon = painterResource(R.drawable.ic_approve_summary),
+                tint = ColorIconPrimary,
+                title = stringResource(R.string.common_approve),
+                value = 5
+            )
+
+            CertificationCountItem(
+                icon = painterResource(R.drawable.ic_reject_summary),
+                tint = ColorIconError,
+                title = stringResource(R.string.common_reject),
+                value = 5
+            )
+        }
+    }
+
+    LazyRow(
+        modifier = Modifier
+            .padding(top = 24.dp)
+            .fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        item {
+            SortingMethodChipItem(
+                sortingMethod = uiState.selectedSortingMethod,
+                onClick = { onEvent(CertificationListUiEvent.Click.OnClickSelectSortingMethod) }
+            )
+        }
+
+        items(uiState.chips) { chip ->
+            when (chip) {
+                else -> ChipItem(
+                    chip = chip,
+                    isSelected = uiState.selectedChip == chip,
+                    onClick = { onEvent(CertificationListUiEvent.Click.OnClickChip(chip)) }
                 )
             }
         }
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .padding(
+                top = 8.dp,
+                start = 16.dp,
+                end = 16.dp
+            )
+            .fillMaxWidth()
+            .weight(1f)
+    ) {
+        // group / dtae forEach
+
+        item {
+            Text(
+                text = "Group or Date",
+                style = Body1_S,
+                color = ColorTextSubtle
+            )
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        item {
+            CertificationRow()
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.EmptyCertificationListContents() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            modifier = Modifier.size(150.dp),
+            painter = painterResource(R.drawable.img_dosik_empty),
+            contentDescription = "image_dosik_empty"
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 32.dp),
+            text = stringResource(R.string.title_certification_list_not_exist),
+            style = Head2_B,
+            color = ColorTextSubtle
+        )
+
+        Text(
+            text = stringResource(R.string.body_certification_list_not_exist),
+            style = Body2_R,
+            color = ColorTextSecondary
+        )
     }
 }
 
@@ -345,6 +358,7 @@ private fun ChipItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
+            modifier = Modifier.size(16.dp),
             painter = painterResource(chip.iconId),
             tint = if (isSelected) ColorBgDefault else ColorIconSecondary,
             contentDescription = "icon_chip"
@@ -362,7 +376,7 @@ private fun ChipItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ChooseSortingMethodBottomSheet(
+private fun SelectSortingMethodBottomSheet(
     sheetState: SheetState,
     sortingMethods: List<SortingMethod>,
     currentSortingMethod: SortingMethod,

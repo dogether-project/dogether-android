@@ -265,6 +265,19 @@ fun DogetherTextField(
     }
 }
 
+@Preview
+@Composable
+private fun DogetherTextFieldPreview() {
+    DogetherTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        value = "",
+        onValueChanged = {},
+        hintText = "힌트"
+    )
+}
+
 @Composable
 fun BackButton(onClick: () -> Unit) {
     Icon(
@@ -275,8 +288,14 @@ fun BackButton(onClick: () -> Unit) {
     )
 }
 
+@Preview
 @Composable
-fun GroupInfoColumn(
+private fun BackButtonPreview() {
+    BackButton {}
+}
+
+@Composable
+fun GroupInfoBoard(
     modifier: Modifier,
     name: String,
     period: Int,
@@ -314,7 +333,7 @@ fun GroupInfoColumn(
         ) {
             InfoRow(
                 title = stringResource(R.string.info_period),
-                body = if (period < 7) {
+                value = if (period < 7) {
                     "$period" + stringResource(R.string.unit_day)
                 } else {
                     "${period / 7}" + stringResource(R.string.unit_week)
@@ -323,26 +342,40 @@ fun GroupInfoColumn(
 
             InfoRow(
                 title = stringResource(R.string.info_group_member_limit),
-                body = stringResource(R.string.unit_prefix_whole) + " $memberLimit" + stringResource(R.string.unit_member)
+                value = stringResource(R.string.unit_prefix_whole) + " $memberLimit" + stringResource(R.string.unit_member)
             )
 
             InfoRow(
                 title = stringResource(R.string.info_launch_date),
-                body = if (isLaunchFromToday) today.toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.toFormattedString(DATE_FORMAT_SHORT_YEAR)
+                value = if (isLaunchFromToday) today.toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.toFormattedString(DATE_FORMAT_SHORT_YEAR)
             )
 
             InfoRow(
                 title = stringResource(R.string.info_end_date),
-                body = if (isLaunchFromToday) today.plusDays(period.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.plusDays(period.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR)
+                value = if (isLaunchFromToday) today.plusDays(period.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.plusDays(period.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR)
             )
         }
     }
 }
 
+@Preview
+@Composable
+private fun GroupInfoBoardPreview() {
+    GroupInfoBoard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(240.dp),
+        name = "Name",
+        period = 21,
+        memberLimit = 10,
+        isLaunchFromToday = true
+    )
+}
+
 @Composable
 private fun InfoRow(
     title: String,
-    body: String,
+    value: String,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -356,11 +389,20 @@ private fun InfoRow(
         )
 
         Text(
-            text = body,
+            text = value,
             style = Body1_R.copy(lineHeightStyle = LineHeightStyle.Default),
             color = ColorTextSubtle
         )
     }
+}
+
+@Preview
+@Composable
+private fun InfoRowPreview() {
+    InfoRow(
+        title = "Title",
+        value = "Value"
+    )
 }
 
 @Composable
@@ -383,11 +425,20 @@ fun GroupInfoColumn(
     }
 }
 
+@Preview
+@Composable
+private fun GroupInfoColumnPreview() {
+    GroupInfoColumn(
+        title = "Title",
+        value = "value"
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChooseGroupBottomSheet(
+fun SelectGroupBottomSheet(
     sheetState: SheetState,
-    currentGroup: String,
+    selectedGroup: String,
     groupList: List<String>,
     isAddButtonShowing: Boolean,
     onDismissRequest: () -> Unit,
@@ -422,7 +473,7 @@ fun ChooseGroupBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.title_choose_group),
+                    text = stringResource(R.string.title_select_group),
                     style = Head2_B,
                     color = ColorTextDefault
                 )
@@ -437,7 +488,7 @@ fun ChooseGroupBottomSheet(
             groupList.forEach {
                 GroupItem(
                     group = it,
-                    isSelected = it == currentGroup,
+                    isSelected = it == selectedGroup,
                     onClick = { onClickGroupItem(it) }
                 )
             }
@@ -495,4 +546,14 @@ private fun GroupItem(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun GroupItemPreview() {
+    GroupItem(
+        group = "Group",
+        isSelected = true,
+        onClick = {}
+    )
 }

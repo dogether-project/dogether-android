@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -60,8 +61,8 @@ import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.CTAButton
-import site.dogether.presentation.composables.ChooseGroupBottomSheet
 import site.dogether.presentation.composables.GroupInfoColumn
+import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.model.Todo
 import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
@@ -110,12 +111,28 @@ import site.dogether.presentation.utils.today
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
+    val onEvent: (HomeUiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
+
     HomeScreenContents(
-        uiState = viewModel.collectAsState().value,
-        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+        uiState = uiState,
+        onEvent = onEvent
     )
+
+    val selectGroupBottomSheetState = rememberModalBottomSheetState()
+    if (uiState.isSelectGroupBottomSheetShowing) {
+        SelectGroupBottomSheet(
+            sheetState = selectGroupBottomSheetState,
+            selectedGroup = uiState.selectedGroup,
+            groupList = uiState.groupList,
+            isAddButtonShowing = true,
+            onDismissRequest = { onEvent(HomeUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
+            onClickGroupItem = { }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -231,7 +248,7 @@ private fun HomeScreenContents(
                         Icon(
                             modifier = Modifier
                                 .padding(start = 4.dp)
-                                .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickChooseGroup) },
+                                .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickSelectGroup) },
                             painter = painterResource(R.drawable.ic_arrow_down),
                             tint = ColorIconElevated,
                             contentDescription = "icon_arrow_down"
@@ -382,97 +399,10 @@ private fun HomeScreenContents(
             )
         }
 
-        Column(
-            modifier = Modifier
-                .offset {
-                    IntOffset(
-                        x = 0,
-                        y = anchoredBottomSheetState.sheetOffsetY.value.roundToInt() - anchoredBottomSheetState.statusBarHeight
-                    )
-                }
-                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                .fillMaxWidth()
-                .height(
-                    (anchoredBottomSheetState.frameHeight
-                            - anchoredBottomSheetState.sheetOffsetY.value
-                            + anchoredBottomSheetState.statusBarHeight).toDp()
-                )
-                .nestedScroll(connection)
-                .bottomSheetSnappable(
-                    sheetOffsetY = anchoredBottomSheetState.sheetOffsetY,
-                    upperLimit = anchoredBottomSheetState.upperAnchorY,
-                    lowerLimit = anchoredBottomSheetState.lowerAnchorY,
-                    scope = scope
-                )
-                .background(ColorBgElevated)
-                .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .size(24.dp)
-                        .background(ColorBgSurface)
-                ) {
-                    Icon(
-                        modifier = Modifier.align(Alignment.Center),
-                        painter = painterResource(R.drawable.ic_brace_left),
-                        tint = ColorIconDisabled,
-                        contentDescription = "icon_brace_left"
-                    )
-                }
-
-                Text(
-                    text = today.toFormattedString(DATE_FORMAT_FULL_YEAR),
-                    style = Head2_B.copy(lineHeightStyle = LineHeightStyle.Default),
-                    color = ColorTextDefault
-                )
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .size(24.dp)
-                        .background(ColorBgSurface)
-                ) {
-                    Icon(
-                        modifier = Modifier.align(Alignment.Center),
-                        painter = painterResource(R.drawable.ic_brace_right),
-                        tint = ColorIconDisabled,
-                        contentDescription = "icon_brace_right"
-                    )
-                }
-            }
-
-//            LaunchFromTomorrowContents(
-//                uiState = uiState,
-//                onEvent = onEvent
-//            )
-
-//            TodoContents(
-//                uiState = uiState,
-//                onEvent = onEvent
-//            )
-
-//            NoTodoContents()
-
-//            FinishedContents()
-        }
-
-        if (uiState.isChooseGroupBottomSheetExpanded) {
-            val chooseGroupBottomSheetState = rememberModalBottomSheetState()
-            ChooseGroupBottomSheet(
-                sheetState = chooseGroupBottomSheetState,
-                currentGroup = uiState.currentGroup,
-                groupList = uiState.groupList,
-                isAddButtonShowing = true,
-                onDismissRequest = { onEvent(HomeUiEvent.Callback.OnChooseGroupBottomSheetDismissRequested) },
-                onClickGroupItem = { }
-            )
-        }
+        AnchoredBottomSheet(
+            sheetState = anchoredBottomSheetState,
+            connection = connection
+        )
     }
 }
 
@@ -544,6 +474,94 @@ private fun DosikTooltip(
                 color = ColorBgInverse
             )
         }
+    }
+}
+
+@Composable
+private fun AnchoredBottomSheet(
+    sheetState: AnchoredBottomSheetState,
+    connection: NestedScrollConnection,
+) {
+    val scope = rememberCoroutineScope()
+
+    Column(
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    x = 0,
+                    y = sheetState.sheetOffsetY.value.roundToInt() - sheetState.statusBarHeight
+                )
+            }
+            .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+            .fillMaxWidth()
+            .height(
+                (sheetState.frameHeight
+                        - sheetState.sheetOffsetY.value
+                        + sheetState.statusBarHeight).toDp()
+            )
+            .nestedScroll(connection)
+            .bottomSheetSnappable(
+                sheetOffsetY = sheetState.sheetOffsetY,
+                upperLimit = sheetState.upperAnchorY,
+                lowerLimit = sheetState.lowerAnchorY,
+                scope = scope
+            )
+            .background(ColorBgElevated)
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .size(24.dp)
+                    .background(ColorBgSurface)
+            ) {
+                Icon(
+                    modifier = Modifier.align(Alignment.Center),
+                    painter = painterResource(R.drawable.ic_brace_left),
+                    tint = ColorIconDisabled,
+                    contentDescription = "icon_brace_left"
+                )
+            }
+
+            Text(
+                text = today.toFormattedString(DATE_FORMAT_FULL_YEAR),
+                style = Head2_B.copy(lineHeightStyle = LineHeightStyle.Default),
+                color = ColorTextDefault
+            )
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .size(24.dp)
+                    .background(ColorBgSurface)
+            ) {
+                Icon(
+                    modifier = Modifier.align(Alignment.Center),
+                    painter = painterResource(R.drawable.ic_brace_right),
+                    tint = ColorIconDisabled,
+                    contentDescription = "icon_brace_right"
+                )
+            }
+        }
+
+//            LaunchFromTomorrowContents(
+//                uiState = uiState,
+//                onEvent = onEvent
+//            )
+
+//            TodoContents(
+//                uiState = uiState,
+//                onEvent = onEvent
+//            )
+
+//            NoTodoContents()
+
+//            FinishedContents()
     }
 }
 
@@ -629,114 +647,130 @@ private fun TodoContents(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (uiState.todoList.isNotEmpty()) {
-            Row(
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                ChipItem(
-                    chip = Chip.All,
-                    isSelected = Chip.All == uiState.selectedChip,
-                    color = ColorBgPrimary,
-                    onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.All)) }
-                )
-
-                ChipItem(
-                    chip = Chip.ReviewPending,
-                    icon = painterResource(R.drawable.ic_review_pending),
-                    isSelected = Chip.ReviewPending == uiState.selectedChip,
-                    color = Yellow,
-                    onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.ReviewPending)) }
-                )
-
-                ChipItem(
-                    chip = Chip.Approve,
-                    icon = painterResource(R.drawable.ic_approve),
-                    isSelected = Chip.Approve == uiState.selectedChip,
-                    color = ColorBgPrimary,
-                    onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.Approve)) }
-                )
-
-                ChipItem(
-                    chip = Chip.Reject,
-                    icon = painterResource(R.drawable.ic_reject),
-                    isSelected = Chip.Reject == uiState.selectedChip,
-                    color = Red400,
-                    onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.Reject)) }
-                )
-            }
-
-            Spacer(modifier = Modifier.padding(top = 20.dp))
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                uiState.filteredTodoList.forEach { todo -> TodoItem(todo) }
-
-                Row(
-                    modifier = Modifier
-                        .padding(vertical = 16.dp)
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_add_todo),
-                        tint = ColorIconElevated,
-                        contentDescription = "icon_add_todo"
-                    )
-
-                    Text(
-                        modifier = Modifier.padding(start = 8.dp),
-                        text = stringResource(R.string.cta_button_add_todo) + " (${uiState.todoList.size}/$MaxDailyTodoCount)",
-                        style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
-                        color = ColorTextSubtle
-                    )
-                }
-            }
+            TodoListContents(
+                uiState = uiState,
+                onEvent = onEvent
+            )
         } else {
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    modifier = Modifier.padding(horizontal = 64.dp),
-                    painter = painterResource(R.drawable.img_first_day_contents),
-                    contentDescription = "image_first_day_contents"
-                )
+            EmptyTodoListContents()
+        }
+    }
+}
 
-                Text(
-                    modifier = Modifier.padding(top = 10.dp),
-                    text = stringResource(R.string.title_create_todo_from_today),
-                    style = Head2_B,
-                    color = ColorTextDefault
-                )
+@Composable
+private fun ColumnScope.TodoListContents(
+    uiState: HomeUiState,
+    onEvent: (HomeUiEvent) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .padding(top = 20.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        ChipItem(
+            chip = Chip.All,
+            isSelected = Chip.All == uiState.selectedChip,
+            color = ColorBgPrimary,
+            onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.All)) }
+        )
 
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = stringResource(R.string.body_create_todo_from_today),
-                    style = Body2_R,
-                    color = ColorTextSecondary
-                )
-            }
+        ChipItem(
+            chip = Chip.ReviewPending,
+            icon = painterResource(R.drawable.ic_review_pending),
+            isSelected = Chip.ReviewPending == uiState.selectedChip,
+            color = Yellow,
+            onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.ReviewPending)) }
+        )
 
-            CTAButton(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth()
-                    .height(50.dp),
-                radius = 8.dp,
-                text = stringResource(R.string.cta_button_create_todo),
-                onClick = {}
+        ChipItem(
+            chip = Chip.Approve,
+            icon = painterResource(R.drawable.ic_approve),
+            isSelected = Chip.Approve == uiState.selectedChip,
+            color = ColorBgPrimary,
+            onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.Approve)) }
+        )
+
+        ChipItem(
+            chip = Chip.Reject,
+            icon = painterResource(R.drawable.ic_reject),
+            isSelected = Chip.Reject == uiState.selectedChip,
+            color = Red400,
+            onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.Reject)) }
+        )
+    }
+
+    Spacer(modifier = Modifier.padding(top = 20.dp))
+
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        uiState.filteredTodoList.forEach { todo -> TodoItem(todo) }
+
+        Row(
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .fillMaxWidth()
+                .height(50.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_add_todo),
+                tint = ColorIconElevated,
+                contentDescription = "icon_add_todo"
+            )
+
+            Text(
+                modifier = Modifier.padding(start = 8.dp),
+                text = stringResource(R.string.cta_button_add_todo) + " (${uiState.todoList.size}/$MaxDailyTodoCount)",
+                style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                color = ColorTextSubtle
             )
         }
     }
+}
+
+@Composable
+private fun ColumnScope.EmptyTodoListContents() {
+    Column(
+        modifier = Modifier.weight(1f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            modifier = Modifier.padding(horizontal = 64.dp),
+            painter = painterResource(R.drawable.img_first_day_contents),
+            contentDescription = "image_first_day_contents"
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 10.dp),
+            text = stringResource(R.string.title_create_todo_from_today),
+            style = Head2_B,
+            color = ColorTextDefault
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 4.dp),
+            text = stringResource(R.string.body_create_todo_from_today),
+            style = Body2_R,
+            color = ColorTextSecondary
+        )
+    }
+
+    CTAButton(
+        modifier = Modifier
+            .padding(bottom = 16.dp)
+            .fillMaxWidth()
+            .height(50.dp),
+        radius = 8.dp,
+        text = stringResource(R.string.cta_button_create_todo),
+        onClick = {}
+    )
 }
 
 @Composable

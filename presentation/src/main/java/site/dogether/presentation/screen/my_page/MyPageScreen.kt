@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
+import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.screen.my_page.model.Menu
@@ -59,13 +60,7 @@ private fun MyPageScreenContents(
             .fillMaxSize()
     ) {
         TopBar(
-            start = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_arrow_back),
-                    tint = ColorIconDefault,
-                    contentDescription = "icon_arrow_back"
-                )
-            },
+            start = { BackButton {} },
             centerText = stringResource(R.string.title_my_page)
         )
 

@@ -36,9 +36,10 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.ActionDialog
+import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
-import site.dogether.presentation.composables.GroupInfoColumn
+import site.dogether.presentation.composables.GroupInfoBoard
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.screen.create_group.model.CreateGroupPage
 import site.dogether.presentation.theme.Body1_B
@@ -90,14 +91,7 @@ private fun CreateGroupScreenContents(
             .fillMaxSize()
     ) {
         TopBar(
-            start = {
-                Icon(
-                    modifier = Modifier.clickableWithoutRipple { onEvent(CreateGroupUiEvent.Click.OnClickBack) },
-                    painter = painterResource(R.drawable.ic_arrow_back),
-                    tint = ColorIconDefault,
-                    contentDescription = "icon_arrow_back"
-                )
-            },
+            start = { BackButton { onEvent(CreateGroupUiEvent.Click.OnClickBack) } },
             centerText = stringResource(R.string.title_create_group)
         )
 
@@ -458,7 +452,7 @@ private fun CheckPageContents(
         Spacer(modifier = Modifier.height(40.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-            GroupInfoColumn(
+            GroupInfoBoard(
                 modifier = Modifier.padding(horizontal = 32.dp),
                 name = uiState.name,
                 period = uiState.period,
