@@ -32,6 +32,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.ActionDialog
+import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBgElevated
@@ -110,13 +111,7 @@ private fun ParticipationMethodScreenContents(
     ) {
         if (uiState.isParticipatingGroupExist) {
             TopBar(
-                start = {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_back),
-                        tint = ColorIconDefault,
-                        contentDescription = "icon_arrow_back"
-                    )
-                },
+                start = { BackButton {} },
                 centerText = stringResource(R.string.title_add_new_group),
             )
         } else {

@@ -36,6 +36,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
 import site.dogether.presentation.R
+import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.TopBar
@@ -98,13 +99,7 @@ private fun StatisticsScreenContents(
             .fillMaxSize()
     ) {
         TopBar(
-            start = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_arrow_back),
-                    tint = ColorIconDefault,
-                    contentDescription = "icon_arrow_back"
-                )
-            },
+            start = { BackButton {} },
             centerText = stringResource(R.string.title_statistics)
         )
 
