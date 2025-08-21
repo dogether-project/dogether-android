@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -56,7 +57,6 @@ import site.dogether.presentation.theme.ColorBgDim
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgSurface
 import site.dogether.presentation.theme.ColorBorderSecondary
-import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorIconElevated
 import site.dogether.presentation.theme.ColorIconError
 import site.dogether.presentation.theme.ColorIconPrimary
@@ -108,137 +108,153 @@ private fun CertificationListScreenContents(
         )
 
         if (uiState.certificationList.isNotEmpty()) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text(
-                    modifier = Modifier.padding(top = 16.dp),
-                    text = buildAnnotatedString {
-                        withStyle(SpanStyle(color = ColorTextDefault)) {
-                            append(stringResource(R.string.body_certification_list_exist_0))
-                            append("\n")
-                            append(stringResource(R.string.unit_prefix_whole))
-                            append(" ")
-                        }
-
-                        withStyle(SpanStyle(color = ColorTextPrimary)) {
-                            append("100")
-                            append(stringResource(R.string.unit_each))
-                        }
-
-                        withStyle(SpanStyle(color = ColorTextDefault)) {
-                            append(stringResource(R.string.body_certification_list_exist_1))
-                        }
-                    },
-                    style = Head1_B
-                )
-
-                Row(
-                    modifier = Modifier.padding(top = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    CertificationCountItem(
-                        icon = painterResource(R.drawable.ic_achieved),
-                        tint = ColorIconElevated,
-                        title = stringResource(R.string.common_achieved),
-                        value = 5
-                    )
-
-                    CertificationCountItem(
-                        icon = painterResource(R.drawable.ic_approve_summary),
-                        tint = ColorIconPrimary,
-                        title = stringResource(R.string.common_approve),
-                        value = 5
-                    )
-
-                    CertificationCountItem(
-                        icon = painterResource(R.drawable.ic_reject_summary),
-                        tint = ColorIconError,
-                        title = stringResource(R.string.common_reject),
-                        value = 5
-                    )
-                }
-            }
-
-            LazyRow(
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                item {
-                    SortingMethodChipItem(
-                        sortingMethod = uiState.selectedSortingMethod,
-                        onClick = { onEvent(CertificationListUiEvent.Click.OnClickSelectSortingMethod) }
-                    )
-                }
-
-                items(uiState.chips) { chip ->
-                    when (chip) {
-                        else -> ChipItem(
-                            chip = chip,
-                            isSelected = uiState.selectedChip == chip,
-                            onClick = { onEvent(CertificationListUiEvent.Click.OnClickChip(chip)) }
-                        )
-                    }
-                }
-            }
-
-            LazyColumn(
-                modifier = Modifier
-                    .padding(
-                        top = 8.dp,
-                        start = 16.dp,
-                        end = 16.dp
-                    )
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                // group / dtae forEach
-
-                item {
-                    Text(
-                        text = "Group or Date",
-                        style = Body1_S,
-                        color = ColorTextSubtle
-                    )
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                item {
-                    CertificationRow()
-                }
-            }
+            CertificationListContents(
+                uiState = uiState,
+                onEvent = onEvent
+            )
         } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    modifier = Modifier.size(150.dp),
-                    painter = painterResource(R.drawable.img_dosik_empty),
-                    contentDescription = "image_dosik_empty"
-                )
+            EmptyCertificationListContents()
+        }
+    }
+}
 
-                Text(
-                    modifier = Modifier.padding(top = 32.dp),
-                    text = stringResource(R.string.title_certification_list_not_exist),
-                    style = Head2_B,
-                    color = ColorTextSubtle
-                )
+@Composable
+private fun ColumnScope.CertificationListContents(
+    uiState: CertificationListUiState,
+    onEvent: (CertificationListUiEvent) -> Unit,
+) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Text(
+            modifier = Modifier.padding(top = 16.dp),
+            text = buildAnnotatedString {
+                withStyle(SpanStyle(color = ColorTextDefault)) {
+                    append(stringResource(R.string.body_certification_list_exist_0))
+                    append("\n")
+                    append(stringResource(R.string.unit_prefix_whole))
+                    append(" ")
+                }
 
-                Text(
-                    text = stringResource(R.string.body_certification_list_not_exist),
-                    style = Body2_R,
-                    color = ColorTextSecondary
+                withStyle(SpanStyle(color = ColorTextPrimary)) {
+                    append("100")
+                    append(stringResource(R.string.unit_each))
+                }
+
+                withStyle(SpanStyle(color = ColorTextDefault)) {
+                    append(stringResource(R.string.body_certification_list_exist_1))
+                }
+            },
+            style = Head1_B
+        )
+
+        Row(
+            modifier = Modifier.padding(top = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            CertificationCountItem(
+                icon = painterResource(R.drawable.ic_achieved),
+                tint = ColorIconElevated,
+                title = stringResource(R.string.common_achieved),
+                value = 5
+            )
+
+            CertificationCountItem(
+                icon = painterResource(R.drawable.ic_approve_summary),
+                tint = ColorIconPrimary,
+                title = stringResource(R.string.common_approve),
+                value = 5
+            )
+
+            CertificationCountItem(
+                icon = painterResource(R.drawable.ic_reject_summary),
+                tint = ColorIconError,
+                title = stringResource(R.string.common_reject),
+                value = 5
+            )
+        }
+    }
+
+    LazyRow(
+        modifier = Modifier
+            .padding(top = 24.dp)
+            .fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        item {
+            SortingMethodChipItem(
+                sortingMethod = uiState.selectedSortingMethod,
+                onClick = { onEvent(CertificationListUiEvent.Click.OnClickSelectSortingMethod) }
+            )
+        }
+
+        items(uiState.chips) { chip ->
+            when (chip) {
+                else -> ChipItem(
+                    chip = chip,
+                    isSelected = uiState.selectedChip == chip,
+                    onClick = { onEvent(CertificationListUiEvent.Click.OnClickChip(chip)) }
                 )
             }
         }
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .padding(
+                top = 8.dp,
+                start = 16.dp,
+                end = 16.dp
+            )
+            .fillMaxWidth()
+            .weight(1f)
+    ) {
+        // group / dtae forEach
+
+        item {
+            Text(
+                text = "Group or Date",
+                style = Body1_S,
+                color = ColorTextSubtle
+            )
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        item {
+            CertificationRow()
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.EmptyCertificationListContents() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            modifier = Modifier.size(150.dp),
+            painter = painterResource(R.drawable.img_dosik_empty),
+            contentDescription = "image_dosik_empty"
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 32.dp),
+            text = stringResource(R.string.title_certification_list_not_exist),
+            style = Head2_B,
+            color = ColorTextSubtle
+        )
+
+        Text(
+            text = stringResource(R.string.body_certification_list_not_exist),
+            style = Body2_R,
+            color = ColorTextSecondary
+        )
     }
 }
 
