@@ -36,7 +36,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
-import site.dogether.presentation.screen.on_boarding.model.OnBoardingPageItem
+import site.dogether.presentation.screen.on_boarding.model.OnBoardingPage
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.ColorIconDefault
@@ -50,23 +50,7 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 
-private val pageList: List<OnBoardingPageItem> = listOf(
-    OnBoardingPageItem(
-        titleStringId = R.string.title_on_boarding_0,
-        bodyStringId = R.string.body_on_boarding_0,
-        imageId = R.drawable.img_on_boarding_0
-    ),
-    OnBoardingPageItem(
-        titleStringId = R.string.title_on_boarding_1,
-        bodyStringId = R.string.body_on_boarding_1,
-        imageId = R.drawable.img_on_boarding_1
-    ),
-    OnBoardingPageItem(
-        titleStringId = R.string.title_on_boarding_2,
-        bodyStringId = R.string.body_on_boarding_2,
-        imageId = R.drawable.img_on_boarding_2
-    )
-)
+private val PAGE_LIST: List<OnBoardingPage> = OnBoardingPage.entries
 
 @Composable
 fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
@@ -151,14 +135,14 @@ private fun OnBoardingScreenContents(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            val pagerState = rememberPagerState { pageList.size }
+            val pagerState = rememberPagerState { PAGE_LIST.size }
 
             Column(
                 modifier = Modifier.align(Alignment.Center),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 FixedHeightPager(
-                    pageCount = pageList.size,
+                    pageCount = PAGE_LIST.size,
                     pager = { count, modifier ->
                         HorizontalPager(
                             modifier = Modifier.fillMaxWidth(),
@@ -169,7 +153,7 @@ private fun OnBoardingScreenContents(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = stringResource(pageList[pageIndex].titleStringId),
+                                    text = stringResource(PAGE_LIST[pageIndex].titleStringId),
                                     style = Head1_B,
                                     textAlign = TextAlign.Center,
                                     color = ColorTextDefault
@@ -177,7 +161,7 @@ private fun OnBoardingScreenContents(
 
                                 Text(
                                     modifier = Modifier.padding(top = 8.dp),
-                                    text = stringResource(pageList[pageIndex].bodyStringId),
+                                    text = stringResource(PAGE_LIST[pageIndex].bodyStringId),
                                     style = Body1_R,
                                     textAlign = TextAlign.Center,
                                     color = ColorTextSubtle
@@ -185,7 +169,7 @@ private fun OnBoardingScreenContents(
 
                                 Image(
                                     modifier = Modifier.fillMaxWidth(),
-                                    painter = painterResource(pageList[pageIndex].imageId),
+                                    painter = painterResource(PAGE_LIST[pageIndex].imageId),
                                     contentScale = ContentScale.FillWidth,
                                     contentDescription = "image_on_boarding"
                                 )
@@ -195,21 +179,21 @@ private fun OnBoardingScreenContents(
                     page = { pageIndex ->
                         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = stringResource(pageList[pageIndex].titleStringId),
+                                text = stringResource(PAGE_LIST[pageIndex].titleStringId),
                                 style = Head1_B,
                                 textAlign = TextAlign.Center,
                                 color = ColorTextDefault
                             )
                             Text(
                                 modifier = Modifier.padding(top = 8.dp),
-                                text = stringResource(pageList[pageIndex].bodyStringId),
+                                text = stringResource(PAGE_LIST[pageIndex].bodyStringId),
                                 style = Body1_R,
                                 textAlign = TextAlign.Center,
                                 color = ColorTextSubtle
                             )
                             Image(
                                 modifier = Modifier.fillMaxWidth(),
-                                painter = painterResource(pageList[pageIndex].imageId),
+                                painter = painterResource(PAGE_LIST[pageIndex].imageId),
                                 contentScale = ContentScale.FillWidth,
                                 contentDescription = "image_on_boarding"
                             )

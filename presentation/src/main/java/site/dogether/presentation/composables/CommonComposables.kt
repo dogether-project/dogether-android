@@ -13,8 +13,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,6 +46,8 @@ import site.dogether.presentation.R
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
+import site.dogether.presentation.theme.Body2_R
+import site.dogether.presentation.theme.ColorBgDim
 import site.dogether.presentation.theme.ColorBgDisabled
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgPrimary
@@ -50,6 +55,8 @@ import site.dogether.presentation.theme.ColorBgSurface
 import site.dogether.presentation.theme.ColorBorderDisabled
 import site.dogether.presentation.theme.ColorBorderPrimary
 import site.dogether.presentation.theme.ColorIconDefault
+import site.dogether.presentation.theme.ColorIconElevated
+import site.dogether.presentation.theme.ColorIconPrimary
 import site.dogether.presentation.theme.ColorTextBlack
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextDisabled
@@ -72,13 +79,14 @@ fun CTAButton(
     isEnabled: Boolean = true,
     radius: Dp = 12.dp,
     text: String,
+    color: Color = ColorBgPrimary,
     onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier.then(
             Modifier
                 .clip(RoundedCornerShape(radius))
-                .background(if (isEnabled) ColorBgPrimary else ColorBgDisabled)
+                .background(if (isEnabled) color else ColorBgDisabled)
                 .conditionedClickableWithoutRipple(isEnabled) { onClick() })
     ) {
         Text(
@@ -334,7 +342,7 @@ fun GroupInfoColumn(
 @Composable
 private fun InfoRow(
     title: String,
-    body: String
+    body: String,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -352,5 +360,139 @@ private fun InfoRow(
             style = Body1_R.copy(lineHeightStyle = LineHeightStyle.Default),
             color = ColorTextSubtle
         )
+    }
+}
+
+@Composable
+fun GroupInfoColumn(
+    title: String,
+    value: String,
+) {
+    Column {
+        Text(
+            text = title,
+            style = Body2_R.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+            color = ColorTextSecondary
+        )
+
+        Text(
+            text = value,
+            style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+            color = ColorTextDefault
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChooseGroupBottomSheet(
+    sheetState: SheetState,
+    currentGroup: String,
+    groupList: List<String>,
+    isAddButtonShowing: Boolean,
+    onDismissRequest: () -> Unit,
+    onClickGroupItem: (String) -> Unit,
+) {
+    ModalBottomSheet(
+        sheetState = sheetState,
+        shape = RoundedCornerShape(
+            topStart = 12.dp,
+            topEnd = 12.dp
+        ),
+        dragHandle = null,
+        containerColor = ColorBgSurface,
+        scrimColor = ColorBgDim,
+        onDismissRequest = { onDismissRequest() }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ColorBgSurface)
+                .padding(
+                    top = 24.dp,
+                    start = 24.dp,
+                    end = 24.dp
+                )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.title_choose_group),
+                    style = Head2_B,
+                    color = ColorTextDefault
+                )
+
+                Text(
+                    text = stringResource(R.string.cta_button_confirm),
+                    style = Body1_S,
+                    color = ColorTextDefault
+                )
+            }
+
+            groupList.forEach {
+                GroupItem(
+                    group = it,
+                    isSelected = it == currentGroup,
+                    onClick = { onClickGroupItem(it) }
+                )
+            }
+
+            if (isAddButtonShowing) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_add_todo),
+                        tint = ColorIconElevated,
+                        contentDescription = "icon_add_group"
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = stringResource(R.string.cta_button_add_group),
+                        style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                        color = ColorTextSubtle
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GroupItem(
+    group: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .clickableWithoutRipple { onClick() },
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = group,
+            style = Body1_B.copy(lineHeightStyle = LineHeightStyle.Default),
+            color = if (isSelected) ColorTextPrimary else ColorTextDisabled
+        )
+
+        if (isSelected) {
+            Icon(
+                painter = painterResource(R.drawable.ic_check),
+                tint = ColorIconPrimary,
+                contentDescription = "icon_check"
+            )
+        }
     }
 }

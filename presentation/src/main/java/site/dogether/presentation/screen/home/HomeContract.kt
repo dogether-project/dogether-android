@@ -6,7 +6,7 @@ import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
 import site.dogether.presentation.model.Todo.Companion.STATUS_CERTIFY_PENDING
 import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
 import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
-import site.dogether.presentation.screen.home.state.Chip
+import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.TooltipUiState
 
 data class HomeUiState(
@@ -38,7 +38,7 @@ data class HomeUiState(
     ),
     val selectedChip: Chip = Chip.All,
     val filteredTodoList: List<Todo> = listOf(),
-    val isSelectGroupBottomSheetExpanded: Boolean = false,
+    val isChooseGroupBottomSheetExpanded: Boolean = false,
     val groupList: List<String> = listOf("DND 작심삼일 탈출러", "배고픈 민족들"),
     val tooltipUiState: TooltipUiState = TooltipUiState(
         isShowing = true,
