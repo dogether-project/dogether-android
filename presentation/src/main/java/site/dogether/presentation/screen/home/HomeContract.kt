@@ -38,7 +38,7 @@ data class HomeUiState(
     ),
     val selectedChip: Chip = Chip.All,
     val filteredTodoList: List<Todo> = listOf(),
-    val isSelectGroupBottomSheetExpanded: Boolean = false,
+    val isSelectGroupBottomSheetShowing: Boolean = false,
     val groupList: List<String> = listOf("DND 작심삼일 탈출러", "배고픈 민족들"),
     val tooltipUiState: TooltipUiState = TooltipUiState(
         isShowing = true,

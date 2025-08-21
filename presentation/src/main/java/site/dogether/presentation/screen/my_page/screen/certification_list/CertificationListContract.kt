@@ -9,7 +9,7 @@ data class CertificationListUiState(
     val selectedSortingMethod: SortingMethod = SortingMethod.AscendGroupCreated,
     val chips: List<Chip> = listOf(Chip.ReviewPending, Chip.Approve, Chip.Reject),
     val selectedChip: Chip? = null,
-    val isSelectSortingMethodBottomSheetExpanded: Boolean = false,
+    val isSelectSortingMethodBottomSheetShowing: Boolean = false,
 )
 
 sealed interface CertificationListUiEvent {

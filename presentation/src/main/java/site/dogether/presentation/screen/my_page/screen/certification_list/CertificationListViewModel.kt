@@ -9,14 +9,14 @@ class CertificationListViewModel : BaseViewModel<CertificationListUiState, Certi
             is CertificationListUiEvent.Click -> {
                 when (event) {
                     is CertificationListUiEvent.Click.OnClickSelectSortingMethod -> {
-                        updateState { it.copy(isSelectSortingMethodBottomSheetExpanded = true) }
+                        updateState { it.copy(isSelectSortingMethodBottomSheetShowing = true) }
                     }
 
                     is CertificationListUiEvent.Click.OnClickSortingMethod -> {
                         updateState {
                             it.copy(
                                 selectedSortingMethod = event.sortingMethod,
-                                isSelectSortingMethodBottomSheetExpanded = false
+                                isSelectSortingMethodBottomSheetShowing = false
                             )
                         }
                     }
@@ -30,7 +30,7 @@ class CertificationListViewModel : BaseViewModel<CertificationListUiState, Certi
             is CertificationListUiEvent.Callback -> {
                 when (event) {
                     is CertificationListUiEvent.Callback.OnSelectSortingMethodBottomSheetDismissRequested -> {
-                        updateState { it.copy(isSelectSortingMethodBottomSheetExpanded = false) }
+                        updateState { it.copy(isSelectSortingMethodBottomSheetShowing = false) }
                     }
                 }
             }

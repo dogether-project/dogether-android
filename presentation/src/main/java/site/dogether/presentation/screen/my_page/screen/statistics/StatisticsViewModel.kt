@@ -9,7 +9,7 @@ class StatisticsViewModel : BaseViewModel<StatisticsUiState, StatisticsUiEvent, 
             is StatisticsUiEvent.Click -> {
                 when (event) {
                     is StatisticsUiEvent.Click.OnClickSelectGroup -> {
-                        updateState { it.copy(isSelectGroupBottomSheetExpanded = true) }
+                        updateState { it.copy(isSelectGroupBottomSheetShowing = true) }
                     }
                 }
             }
@@ -17,7 +17,7 @@ class StatisticsViewModel : BaseViewModel<StatisticsUiState, StatisticsUiEvent, 
             is StatisticsUiEvent.Callback -> {
                 when (event) {
                     is StatisticsUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested -> {
-                        updateState { it.copy(isSelectGroupBottomSheetExpanded = false) }
+                        updateState { it.copy(isSelectGroupBottomSheetShowing = false) }
                     }
                 }
             }

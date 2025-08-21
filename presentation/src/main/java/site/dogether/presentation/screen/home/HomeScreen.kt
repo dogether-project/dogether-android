@@ -60,8 +60,8 @@ import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.CTAButton
-import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.GroupInfoColumn
+import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.model.Todo
 import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
@@ -110,12 +110,28 @@ import site.dogether.presentation.utils.today
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
+    val onEvent: (HomeUiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
+
     HomeScreenContents(
-        uiState = viewModel.collectAsState().value,
-        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+        uiState = uiState,
+        onEvent = onEvent
     )
+
+    val selectGroupBottomSheetState = rememberModalBottomSheetState()
+    if (uiState.isSelectGroupBottomSheetShowing) {
+        SelectGroupBottomSheet(
+            sheetState = selectGroupBottomSheetState,
+            selectedGroup = uiState.selectedGroup,
+            groupList = uiState.groupList,
+            isAddButtonShowing = true,
+            onDismissRequest = { onEvent(HomeUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
+            onClickGroupItem = { }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -460,17 +476,6 @@ private fun HomeScreenContents(
 //            NoTodoContents()
 
 //            FinishedContents()
-        }
-
-        if (uiState.isSelectGroupBottomSheetExpanded) {
-            SelectGroupBottomSheet(
-                sheetState = rememberModalBottomSheetState(),
-                selectedGroup = uiState.selectedGroup,
-                groupList = uiState.groupList,
-                isAddButtonShowing = true,
-                onDismissRequest = { onEvent(HomeUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
-                onClickGroupItem = { }
-            )
         }
     }
 }

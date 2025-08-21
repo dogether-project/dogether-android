@@ -71,15 +71,29 @@ import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CertificationListScreen(viewModel: CertificationListViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
+    val onEvent: (CertificationListUiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
+
     CertificationListScreenContents(
-        uiState = viewModel.collectAsState().value,
-        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+        uiState = uiState,
+        onEvent = onEvent
     )
+
+    val selectSortingMethodBottomSheetState = rememberModalBottomSheetState()
+    if (uiState.isSelectSortingMethodBottomSheetShowing) {
+        SelectSortingMethodBottomSheet(
+            sheetState = selectSortingMethodBottomSheetState,
+            sortingMethods = SortingMethod.entries,
+            currentSortingMethod = uiState.selectedSortingMethod,
+            onDismissRequest = { onEvent(CertificationListUiEvent.Callback.OnSelectSortingMethodBottomSheetDismissRequested) },
+            onClickSortingMethod = { sortingMethod -> onEvent(CertificationListUiEvent.Click.OnClickSortingMethod(sortingMethod)) }
+        )
+    }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CertificationListScreenContents(
     uiState: CertificationListUiState,
@@ -201,16 +215,6 @@ private fun CertificationListScreenContents(
                 item {
                     CertificationRow()
                 }
-            }
-
-            if (uiState.isSelectSortingMethodBottomSheetExpanded) {
-                SelectSortingMethodBottomSheet(
-                    sheetState = rememberModalBottomSheetState(),
-                    sortingMethods = SortingMethod.entries,
-                    currentSortingMethod = uiState.selectedSortingMethod,
-                    onDismissRequest = { onEvent(CertificationListUiEvent.Callback.OnSelectSortingMethodBottomSheetDismissRequested) },
-                    onClickSortingMethod = { sortingMethod -> onEvent(CertificationListUiEvent.Click.OnClickSortingMethod(sortingMethod)) }
-                )
             }
         } else {
             Column(
@@ -343,6 +347,7 @@ private fun ChipItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
+            modifier = Modifier.size(16.dp),
             painter = painterResource(chip.iconId),
             tint = if (isSelected) ColorBgDefault else ColorIconSecondary,
             contentDescription = "icon_chip"
