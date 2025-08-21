@@ -36,7 +36,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
 import site.dogether.presentation.R
-import site.dogether.presentation.composables.ChooseGroupBottomSheet
+import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body1_S
@@ -110,7 +110,7 @@ private fun StatisticsScreenContents(
                         Icon(
                             modifier = Modifier
                                 .padding(start = 4.dp)
-                                .clickableWithoutRipple { onEvent(StatisticsUiEvent.Click.OnClickChooseGroup) },
+                                .clickableWithoutRipple { onEvent(StatisticsUiEvent.Click.OnClickSelectGroup) },
                             painter = painterResource(R.drawable.ic_arrow_down),
                             tint = ColorIconElevated,
                             contentDescription = "icon_arrow_down"
@@ -409,14 +409,13 @@ private fun StatisticsScreenContents(
             }
         }
 
-        if (uiState.isChooseGroupBottomSheetExpanded) {
-            val chooseGroupBottomSheetState = rememberModalBottomSheetState()
-            ChooseGroupBottomSheet(
-                sheetState = chooseGroupBottomSheetState,
+        if (uiState.isSelectGroupBottomSheetExpanded) {
+            SelectGroupBottomSheet(
+                sheetState = rememberModalBottomSheetState(),
                 currentGroup = uiState.currentGroup,
                 groupList = uiState.groupList,
                 isAddButtonShowing = false,
-                onDismissRequest = { onEvent(StatisticsUiEvent.Callback.OnChooseGroupBottomSheetDismissRequested) },
+                onDismissRequest = { onEvent(StatisticsUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
                 onClickGroupItem = { }
             )
         }

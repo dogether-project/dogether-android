@@ -385,7 +385,7 @@ fun GroupInfoColumn(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChooseGroupBottomSheet(
+fun SelectGroupBottomSheet(
     sheetState: SheetState,
     currentGroup: String,
     groupList: List<String>,
@@ -422,7 +422,7 @@ fun ChooseGroupBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.title_choose_group),
+                    text = stringResource(R.string.title_select_group),
                     style = Head2_B,
                     color = ColorTextDefault
                 )

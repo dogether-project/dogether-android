@@ -60,7 +60,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.CTAButton
-import site.dogether.presentation.composables.ChooseGroupBottomSheet
+import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.model.Todo
@@ -231,7 +231,7 @@ private fun HomeScreenContents(
                         Icon(
                             modifier = Modifier
                                 .padding(start = 4.dp)
-                                .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickChooseGroup) },
+                                .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickSelectGroup) },
                             painter = painterResource(R.drawable.ic_arrow_down),
                             tint = ColorIconElevated,
                             contentDescription = "icon_arrow_down"
@@ -462,14 +462,13 @@ private fun HomeScreenContents(
 //            FinishedContents()
         }
 
-        if (uiState.isChooseGroupBottomSheetExpanded) {
-            val chooseGroupBottomSheetState = rememberModalBottomSheetState()
-            ChooseGroupBottomSheet(
-                sheetState = chooseGroupBottomSheetState,
+        if (uiState.isSelectGroupBottomSheetExpanded) {
+            SelectGroupBottomSheet(
+                sheetState = rememberModalBottomSheetState(),
                 currentGroup = uiState.currentGroup,
                 groupList = uiState.groupList,
                 isAddButtonShowing = true,
-                onDismissRequest = { onEvent(HomeUiEvent.Callback.OnChooseGroupBottomSheetDismissRequested) },
+                onDismissRequest = { onEvent(HomeUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
                 onClickGroupItem = { }
             )
         }

@@ -38,7 +38,7 @@ data class HomeUiState(
     ),
     val selectedChip: Chip = Chip.All,
     val filteredTodoList: List<Todo> = listOf(),
-    val isChooseGroupBottomSheetExpanded: Boolean = false,
+    val isSelectGroupBottomSheetExpanded: Boolean = false,
     val groupList: List<String> = listOf("DND 작심삼일 탈출러", "배고픈 민족들"),
     val tooltipUiState: TooltipUiState = TooltipUiState(
         isShowing = true,
@@ -50,11 +50,11 @@ sealed interface HomeUiEvent {
     sealed interface Click : HomeUiEvent {
         data class OnClickChip(val chip: Chip) : Click
 
-        data object OnClickChooseGroup : Click
+        data object OnClickSelectGroup : Click
     }
 
     sealed interface Callback : HomeUiEvent {
-        data object OnChooseGroupBottomSheetDismissRequested : Callback
+        data object OnSelectGroupBottomSheetDismissRequested : Callback
     }
 }
 

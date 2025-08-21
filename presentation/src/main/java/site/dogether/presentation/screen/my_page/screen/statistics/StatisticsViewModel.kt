@@ -8,16 +8,16 @@ class StatisticsViewModel : BaseViewModel<StatisticsUiState, StatisticsUiEvent, 
         when (event) {
             is StatisticsUiEvent.Click -> {
                 when (event) {
-                    is StatisticsUiEvent.Click.OnClickChooseGroup -> {
-                        updateState { it.copy(isChooseGroupBottomSheetExpanded = true) }
+                    is StatisticsUiEvent.Click.OnClickSelectGroup -> {
+                        updateState { it.copy(isSelectGroupBottomSheetExpanded = true) }
                     }
                 }
             }
 
             is StatisticsUiEvent.Callback -> {
                 when (event) {
-                    is StatisticsUiEvent.Callback.OnChooseGroupBottomSheetDismissRequested -> {
-                        updateState { it.copy(isChooseGroupBottomSheetExpanded = false) }
+                    is StatisticsUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested -> {
+                        updateState { it.copy(isSelectGroupBottomSheetExpanded = false) }
                     }
                 }
             }

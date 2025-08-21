@@ -26,7 +26,7 @@
     <string name="title_create_todo_from_today">오늘의 투두를 작성해보세요</string>
     <string name="title_no_todo">해당 날짜에 작성된 투두가 없어요</string>
     <string name="title_group_finished">그룹 활동 기간이 모두 끝났어요</string>
-    <string name="title_choose_group">그룹 선택</string>
+    <string name="title_select_group">그룹 선택</string>
     <string name="title_my_page">마이페이지</string>
     <string name="title_statistics">통계</string>
     <string name="title_no_group">소속된 그룹이 없어요</string>

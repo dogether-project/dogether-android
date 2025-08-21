@@ -203,14 +203,12 @@ private fun CertificationListScreenContents(
                 }
             }
 
-            if (uiState.isChooseSortingMethodBottomSheetExpanded) {
-                val chooseSortingMethodBottomSheetState = rememberModalBottomSheetState()
-
-                ChooseSortingMethodBottomSheet(
-                    sheetState = chooseSortingMethodBottomSheetState,
+            if (uiState.isSelectSortingMethodBottomSheetExpanded) {
+                SelectSortingMethodBottomSheet(
+                    sheetState = rememberModalBottomSheetState(),
                     sortingMethods = SortingMethod.entries,
                     currentSortingMethod = uiState.selectedSortingMethod,
-                    onDismissRequest = { onEvent(CertificationListUiEvent.Callback.OnChooseSortingMethodBottomSheetDismissRequested) },
+                    onDismissRequest = { onEvent(CertificationListUiEvent.Callback.OnSelectSortingMethodBottomSheetDismissRequested) },
                     onClickSortingMethod = { sortingMethod -> onEvent(CertificationListUiEvent.Click.OnClickSortingMethod(sortingMethod)) }
                 )
             }
@@ -362,7 +360,7 @@ private fun ChipItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ChooseSortingMethodBottomSheet(
+private fun SelectSortingMethodBottomSheet(
     sheetState: SheetState,
     sortingMethods: List<SortingMethod>,
     currentSortingMethod: SortingMethod,
