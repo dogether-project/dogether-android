@@ -18,7 +18,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.CTAButton
-import site.dogether.presentation.composables.GroupInfoColumn
+import site.dogether.presentation.composables.GroupInfoBoard
 import site.dogether.presentation.theme.ColorIconPrimary
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.Head1_B
@@ -59,7 +59,7 @@ private fun GroupParticipatedScreenContents(
                 color = ColorTextDefault
             )
 
-            GroupInfoColumn(
+            GroupInfoBoard(
                 modifier = Modifier.padding(
                     top = 40.dp,
                     start = 32.dp,
