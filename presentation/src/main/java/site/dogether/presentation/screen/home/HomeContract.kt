@@ -1,6 +1,7 @@
 package site.dogether.presentation.screen.home
 
 import site.dogether.presentation.R
+import site.dogether.presentation.model.DialogState
 import site.dogether.presentation.model.Todo
 import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
 import site.dogether.presentation.model.Todo.Companion.STATUS_CERTIFY_PENDING
@@ -39,6 +40,7 @@ data class HomeUiState(
     val selectedChip: Chip = Chip.All,
     val filteredTodoList: List<Todo> = listOf(),
     val isSelectGroupBottomSheetShowing: Boolean = false,
+    val permissionDialogState: DialogState = DialogState(),
     val groupList: List<String> = listOf("DND 작심삼일 탈출러", "배고픈 민족들"),
     val tooltipUiState: TooltipUiState = TooltipUiState(
         isShowing = true,
@@ -47,17 +49,31 @@ data class HomeUiState(
 )
 
 sealed interface HomeUiEvent {
+    sealed interface Lifecycle : HomeUiEvent {
+        data object OnFirstComposition : Lifecycle
+    }
+
     sealed interface Click : HomeUiEvent {
         data class OnClickChip(val chip: Chip) : Click
 
         data object OnClickSelectGroup : Click
+
+        data object OnClickPermissionDialogNegative : Click
+
+        data object OnClickPermissionDialogPositive : Click
     }
 
     sealed interface Callback : HomeUiEvent {
+        data object OnPermissionDialogDismissRequested : Callback
+
         data object OnSelectGroupBottomSheetDismissRequested : Callback
+
+        data object OnNotificationPermissionDenied : Callback
     }
 }
 
 sealed interface HomeUiEffect {
+    data object CheckNotificationPermission : HomeUiEffect
 
+    data object NavigateToNotificationSettings : HomeUiEffect
 }

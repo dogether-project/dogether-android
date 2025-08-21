@@ -22,6 +22,14 @@ class HomeViewModel(
 
     override fun onEvent(event: HomeUiEvent) {
         when (event) {
+            is HomeUiEvent.Lifecycle -> {
+                when (event) {
+                    is HomeUiEvent.Lifecycle.OnFirstComposition -> {
+                        postEffect(HomeUiEffect.CheckNotificationPermission)
+                    }
+                }
+            }
+
             is HomeUiEvent.Click -> {
                 when (event) {
                     is HomeUiEvent.Click.OnClickChip -> {
@@ -43,11 +51,28 @@ class HomeViewModel(
                     is HomeUiEvent.Click.OnClickSelectGroup -> {
                         updateState { it.copy(isSelectGroupBottomSheetShowing = true) }
                     }
+
+                    is HomeUiEvent.Click.OnClickPermissionDialogNegative -> {
+                        updateState { it.copy(permissionDialogState = it.permissionDialogState.copy(isShowing = false)) }
+                    }
+
+                    is HomeUiEvent.Click.OnClickPermissionDialogPositive -> {
+                        updateState { it.copy(permissionDialogState = it.permissionDialogState.copy(isShowing = false)) }
+                        postEffect(HomeUiEffect.NavigateToNotificationSettings)
+                    }
                 }
             }
 
             is HomeUiEvent.Callback -> {
                 when (event) {
+                    is HomeUiEvent.Callback.OnNotificationPermissionDenied -> {
+                        updateState { it.copy(permissionDialogState = it.permissionDialogState.copy(isShowing = true)) }
+                    }
+
+                    is HomeUiEvent.Callback.OnPermissionDialogDismissRequested -> {
+                        updateState { it.copy(permissionDialogState = it.permissionDialogState.copy(isShowing = false)) }
+                    }
+
                     is HomeUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested -> {
                         updateState { it.copy(isSelectGroupBottomSheetShowing = false) }
                     }

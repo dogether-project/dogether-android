@@ -6,14 +6,6 @@ class ParticipationMethodViewModel : BaseViewModel<ParticipationMethodUiState, P
 
     override fun onEvent(event: ParticipationMethodUiEvent) {
         when (event) {
-            is ParticipationMethodUiEvent.Lifecycle -> {
-                when (event) {
-                    is ParticipationMethodUiEvent.Lifecycle.OnFirstComposition -> {
-                        postEffect(ParticipationMethodUiEffect.CheckNotificationPermission)
-                    }
-                }
-            }
-
             is ParticipationMethodUiEvent.Click -> {
                 when (event) {
                     is ParticipationMethodUiEvent.Click.OnClickCreateGroup -> {
@@ -23,33 +15,8 @@ class ParticipationMethodViewModel : BaseViewModel<ParticipationMethodUiState, P
                     is ParticipationMethodUiEvent.Click.OnClickParticipateWithCode -> {
                         postEffect(ParticipationMethodUiEffect.NavigateToParticipateWithCode)
                     }
-
-                    is ParticipationMethodUiEvent.Click.OnClickPermissionDialogNegative -> {
-                        dismissPermissionDialog()
-                    }
-
-                    is ParticipationMethodUiEvent.Click.OnClickPermissionDialogPositive -> {
-                        dismissPermissionDialog()
-                        postEffect(ParticipationMethodUiEffect.NavigateToNotificationSetting)
-                    }
-                }
-            }
-
-            is ParticipationMethodUiEvent.Callback -> {
-                when (event) {
-                    is ParticipationMethodUiEvent.Callback.OnPermissionDenied -> {
-                        updateState { it.copy(permissionDialogState = it.permissionDialogState.copy(isShowing = true)) }
-                    }
-
-                    is ParticipationMethodUiEvent.Callback.OnPermissionDialogDismissRequested -> {
-                        dismissPermissionDialog()
-                    }
                 }
             }
         }
-    }
-
-    private fun dismissPermissionDialog() {
-        updateState { it.copy(permissionDialogState = it.permissionDialogState.copy(isShowing = false)) }
     }
 }

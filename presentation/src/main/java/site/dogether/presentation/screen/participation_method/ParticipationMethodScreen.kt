@@ -1,9 +1,5 @@
 package site.dogether.presentation.screen.participation_method
 
-import android.Manifest
-import android.content.Context
-import android.content.Intent
-import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,7 +26,6 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
-import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body2_R
@@ -46,7 +40,6 @@ import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Yellow
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
-import site.dogether.presentation.utils.isPermissionGranted
 
 @Composable
 fun ParticipationMethodScreen(viewModel: ParticipationMethodViewModel = koinViewModel()) {
@@ -57,47 +50,18 @@ fun ParticipationMethodScreen(viewModel: ParticipationMethodViewModel = koinView
             is ParticipationMethodUiEffect.NavigateToCreateGroup -> navigateToCreateGroup()
 
             is ParticipationMethodUiEffect.NavigateToParticipateWithCode -> navigateToParticipateWithCode()
-
-            is ParticipationMethodUiEffect.CheckNotificationPermission -> checkNotificationPermission(
-                context = context,
-                onDenied = { viewModel.onEvent(ParticipationMethodUiEvent.Callback.OnPermissionDenied) }
-            )
-
-            is ParticipationMethodUiEffect.NavigateToNotificationSetting -> navigateToNotificationSetting(context)
         }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.onEvent(ParticipationMethodUiEvent.Lifecycle.OnFirstComposition)
     }
 
     ParticipationMethodScreenContents(
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
-
-    InitDialog()
 }
 
 private fun navigateToCreateGroup() = Unit
 
 private fun navigateToParticipateWithCode() = Unit
-
-private fun checkNotificationPermission(
-    context: Context,
-    onDenied: () -> Unit,
-) {
-    if (!context.isPermissionGranted(Manifest.permission.POST_NOTIFICATIONS)) onDenied()
-}
-
-private fun navigateToNotificationSetting(context: Context) {
-    context.startActivity(
-        Intent().apply {
-            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
-            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-        }
-    )
-}
 
 @Composable
 private fun ParticipationMethodScreenContents(
@@ -215,24 +179,6 @@ private fun ParticipationMethod(
             painter = painterResource(R.drawable.ic_brace_right),
             tint = ColorIconElevated,
             contentDescription = "icon_brace_right"
-        )
-    }
-}
-
-@Composable
-private fun InitDialog(viewModel: ParticipationMethodViewModel = koinViewModel()) {
-    val uiState = viewModel.collectAsState().value
-
-    if (uiState.permissionDialogState.isShowing) {
-        ActionDialog(
-            title = stringResource(R.string.dialog_title_permission),
-            body = stringResource(R.string.dialog_body_permission),
-            icon = painterResource(R.drawable.ic_notice),
-            negativeText = stringResource(R.string.dialog_button_later),
-            positiveText = stringResource(R.string.dialog_button_settings),
-            onClickNegative = { viewModel.onEvent(ParticipationMethodUiEvent.Click.OnClickPermissionDialogNegative) },
-            onClickPositive = { viewModel.onEvent(ParticipationMethodUiEvent.Click.OnClickPermissionDialogPositive) },
-            onDismissRequest = { viewModel.onEvent(ParticipationMethodUiEvent.Callback.OnPermissionDialogDismissRequested) }
         )
     }
 }
