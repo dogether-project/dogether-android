@@ -465,7 +465,7 @@ private fun HomeScreenContents(
         if (uiState.isSelectGroupBottomSheetExpanded) {
             SelectGroupBottomSheet(
                 sheetState = rememberModalBottomSheetState(),
-                currentGroup = uiState.currentGroup,
+                selectedGroup = uiState.selectedGroup,
                 groupList = uiState.groupList,
                 isAddButtonShowing = true,
                 onDismissRequest = { onEvent(HomeUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },

@@ -387,7 +387,7 @@ fun GroupInfoColumn(
 @Composable
 fun SelectGroupBottomSheet(
     sheetState: SheetState,
-    currentGroup: String,
+    selectedGroup: String,
     groupList: List<String>,
     isAddButtonShowing: Boolean,
     onDismissRequest: () -> Unit,
@@ -437,7 +437,7 @@ fun SelectGroupBottomSheet(
             groupList.forEach {
                 GroupItem(
                     group = it,
-                    isSelected = it == currentGroup,
+                    isSelected = it == selectedGroup,
                     onClick = { onClickGroupItem(it) }
                 )
             }

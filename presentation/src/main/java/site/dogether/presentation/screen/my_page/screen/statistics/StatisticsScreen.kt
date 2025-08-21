@@ -102,7 +102,7 @@ private fun StatisticsScreenContents(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = uiState.currentGroup,
+                            text = uiState.selectedGroup,
                             style = Head1_B.copy(lineHeightStyle = LineHeightStyle.Default),
                             color = ColorTextPrimary
                         )
@@ -412,7 +412,7 @@ private fun StatisticsScreenContents(
         if (uiState.isSelectGroupBottomSheetExpanded) {
             SelectGroupBottomSheet(
                 sheetState = rememberModalBottomSheetState(),
-                currentGroup = uiState.currentGroup,
+                selectedGroup = uiState.selectedGroup,
                 groupList = uiState.groupList,
                 isAddButtonShowing = false,
                 onDismissRequest = { onEvent(StatisticsUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
