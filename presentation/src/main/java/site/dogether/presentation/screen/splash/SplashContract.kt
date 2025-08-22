@@ -16,4 +16,8 @@ sealed interface SplashUiEvent {
 
 sealed interface SplashUiEffect {
     data object GetAppVersion : SplashUiEffect
+
+    data object NavigateToOnBoarding : SplashUiEffect
+
+    data object NavigateToHome : SplashUiEffect
 }

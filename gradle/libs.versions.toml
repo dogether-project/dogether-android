@@ -37,6 +37,9 @@ jetbrainsKotlinJvm = "2.2.0"
 # Kakao
 kakao = "2.21.6"
 
+# Datastore
+datastore = "1.1.7"
+
 [libraries]
 # AndroidX / Compose
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -96,6 +99,9 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 
 # Kakao
 kakao = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
+
+# Datastore
+datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

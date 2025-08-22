@@ -7,6 +7,11 @@ import site.dogether.domain.repository.AppInfoRepository
 import site.dogether.domain.repository.UserRepository
 
 val repositoryModule = module {
-    single<UserRepository> { UserRepositoryImpl(httpClient = get()) }
+    single<UserRepository> {
+        UserRepositoryImpl(
+            dataStoreManager = get(),
+            httpClient = get()
+        )
+    }
     single<AppInfoRepository> { AppInfoRepositoryImpl(httpClient = get()) }
 }

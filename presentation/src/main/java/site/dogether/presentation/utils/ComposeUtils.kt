@@ -9,6 +9,7 @@ import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -23,6 +24,7 @@ import androidx.compose.ui.util.lerp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -31,6 +33,10 @@ import kotlinx.coroutines.launch
     backgroundColor = 0xFF101010
 )
 annotation class ScreenPreview
+
+val LocalNavHostController = staticCompositionLocalOf<NavHostController> {
+    error("NavHostController not provided")
+}
 
 @Composable
 fun Dp.toSp(): TextUnit = with(LocalDensity.current) { this@toSp.toSp() }

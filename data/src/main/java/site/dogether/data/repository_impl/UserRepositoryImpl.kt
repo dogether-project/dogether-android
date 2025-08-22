@@ -3,6 +3,8 @@ package site.dogether.data.repository_impl
 import io.ktor.client.HttpClient
 import kotlinx.serialization.json.Json
 import org.jetbrains.annotations.VisibleForTesting
+import site.dogether.data.local.DataStoreManager
+import site.dogether.data.local.PreferenceKey
 import site.dogether.data.model.JwtPayload
 import site.dogether.data.remote.ApiRoutes
 import site.dogether.data.remote.model.req.user.KakaoLoginReq
@@ -13,7 +15,12 @@ import site.dogether.domain.model.user.UserInfo
 import site.dogether.domain.repository.UserRepository
 import kotlin.io.encoding.Base64
 
-class UserRepositoryImpl(private val httpClient: HttpClient) : UserRepository {
+class UserRepositoryImpl(
+    private val dataStoreManager: DataStoreManager,
+    private val httpClient: HttpClient,
+) : UserRepository {
+
+    override suspend fun getUserToken(): Result<String> = dataStoreManager.loadString(PreferenceKey.USER_TOKEN)
 
     override suspend fun loginWithKakao(
         name: String,

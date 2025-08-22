@@ -1,7 +1,6 @@
 package site.dogether.presentation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -20,14 +19,14 @@ import site.dogether.presentation.screen.on_boarding.OnBoardingScreen
 import site.dogether.presentation.screen.participate_group.ParticipateGroupScreen
 import site.dogether.presentation.screen.participation_method.ParticipationMethodScreen
 import site.dogether.presentation.screen.splash.SplashScreen
+import site.dogether.presentation.utils.LocalNavHostController
 
 @Composable
-fun AppNavGraph(
-    startDestination: String = Screen.Splash.route,
-    navController: NavHostController = rememberNavController(),
-) {
+fun AppNavGraph(startDestination: String = Screen.Splash.route) {
+    val navHostController = LocalNavHostController.current
+
     NavHost(
-        navController = navController,
+        navController = navHostController,
         startDestination = startDestination
     ) {
         composable(Screen.Splash.route) { SplashScreen() }

@@ -10,11 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavHostController
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
+import site.dogether.presentation.Screen
 import site.dogether.presentation.utils.LifecycleEvent
+import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 
 @Composable
@@ -22,6 +25,8 @@ fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
     val onEvent: (SplashUiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
+    val navHostController = LocalNavHostController.current
+
     viewModel.collectSideEffect { uiEffect ->
         when (uiEffect) {
             is SplashUiEffect.GetAppVersion -> {
@@ -31,6 +36,10 @@ fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
                     onFailure = {}
                 )
             }
+
+            is SplashUiEffect.NavigateToOnBoarding -> navigateToOnBoarding(navHostController)
+
+            is SplashUiEffect.NavigateToHome -> navigateToHome(navHostController)
         }
     }
 
@@ -49,6 +58,14 @@ private fun getAppVersion(
     context.packageManager.getPackageInfo(context.packageName, 0).versionName?.let { appVersion ->
         onSuccess(appVersion)
     } ?: onFailure()
+}
+
+private fun navigateToOnBoarding(navHostController: NavHostController) {
+    navHostController.navigate(Screen.OnBoarding.route)
+}
+
+private fun navigateToHome(navHostController: NavHostController) {
+    navHostController.navigate(Screen.Home.route)
 }
 
 @Composable

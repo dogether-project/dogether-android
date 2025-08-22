@@ -60,6 +60,9 @@ dependencies {
     // Compose core
     implementation(libs.bundles.compose.core)
 
+    // Navigation
+    implementation(libs.bundles.navigation)
+
     // Orbit
     implementation(libs.bundles.orbit)
 
@@ -71,4 +74,7 @@ dependencies {
 
     // Ktor
     implementation(libs.bundles.ktor)
+
+    // Datastore
+    implementation(libs.datastore)
 }

@@ -22,7 +22,10 @@ import site.dogether.presentation.screen.splash.SplashViewModel
 
 val viewModelModule = module {
     viewModel {
-        SplashViewModel(checkUpdateRequiredUseCase = get())
+        SplashViewModel(
+            checkUpdateRequiredUseCase = get(),
+            getUserTokenUseCase = get()
+        )
     }
     viewModel { ForceUpdateViewModel() }
     viewModel {
