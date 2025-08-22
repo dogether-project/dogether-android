@@ -9,11 +9,10 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
-import site.dogether.common.exception.NetworkErrorException
 import site.dogether.common.exception.NetworkFailureException
 import site.dogether.data.model.DataMapper
 import site.dogether.data.model.DataModel
-import site.dogether.data.remote.model.res.user.BaseResponse
+import site.dogether.data.remote.model.res.BaseResponse
 import site.dogether.domain.model.DomainModel
 
 val json = Json {
@@ -51,7 +50,7 @@ suspend inline fun <reified T> safeApiCall(
             )
         }
     } catch (e: Throwable) {
-        Result.failure(NetworkErrorException(e))
+        Result.failure(e)
     }
 }
 

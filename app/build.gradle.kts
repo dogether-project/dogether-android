@@ -23,7 +23,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoNativeAppKey\"")
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = kakaoNativeAppKey
@@ -60,6 +60,9 @@ dependencies {
     // Compose core
     implementation(libs.bundles.compose.core)
 
+    // Navigation
+    implementation(libs.bundles.navigation)
+
     // Orbit
     implementation(libs.bundles.orbit)
 
@@ -71,4 +74,7 @@ dependencies {
 
     // Ktor
     implementation(libs.bundles.ktor)
+
+    // Datastore
+    implementation(libs.datastore)
 }

@@ -46,6 +46,9 @@ dependencies {
     // Ktor
     implementation(libs.bundles.ktor)
 
+    // Datastore
+    implementation(libs.datastore)
+
     // Kotest
     testImplementation(libs.bundles.kotest)
 

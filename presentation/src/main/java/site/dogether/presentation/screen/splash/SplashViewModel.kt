@@ -1,23 +1,66 @@
 package site.dogether.presentation.screen.splash
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
+import site.dogether.domain.use_case.app_info.CheckUpdateRequiredUseCase
+import site.dogether.domain.use_case.user.CheckParticipatingUseCase
+import site.dogether.domain.use_case.user.GetUserTokenUseCase
 import site.dogether.presentation.base.BaseViewModel
 
-class SplashViewModel : BaseViewModel<SplashUiState, SplashUiEvent, SplashUiEffect>(SplashUiState()) {
+class SplashViewModel(
+    private val checkUpdateRequiredUseCase: CheckUpdateRequiredUseCase,
+    private val getUserTokenUseCase: GetUserTokenUseCase,
+    private val checkParticipatingUseCase: CheckParticipatingUseCase
+) : BaseViewModel<SplashUiState, SplashUiEvent, SplashUiEffect>(SplashUiState()) {
 
     override val container: Container<SplashUiState, SplashUiEffect> = container(SplashUiState())
 
     override fun onEvent(event: SplashUiEvent) {
         when (event) {
             is SplashUiEvent.Lifecycle -> {
-                when(event) {
+                when (event) {
                     is SplashUiEvent.Lifecycle.OnStart -> {
-                        viewModelScope.launch {
+                        postEffect(SplashUiEffect.GetAppVersion)
+                    }
+                }
+            }
 
+            is SplashUiEvent.Callback -> {
+                when (event) {
+                    is SplashUiEvent.Callback.OnGetAppVersion -> {
+                        viewModelScope.launch {
+                            val checkUpdateRequiredResult = checkUpdateRequiredUseCase(event.appVersion).getOrElse { e ->
+                                // handle exception
+                                return@launch
+                            }
+
+                            if (checkUpdateRequiredResult.isForceUpdateRequired) {
+                                // force update
+                                return@launch
+                            }
+
+                            val userToken = getUserTokenUseCase().getOrElse { e ->
+                                // handle exception
+                                return@launch
+                            }
+
+                            if (userToken.isEmpty()) {
+                                postEffect(SplashUiEffect.NavigateToOnBoarding)
+                                return@launch
+                            }
+
+                            val checkParticipatingResult = checkParticipatingUseCase().getOrElse {
+                                // handle exception
+                                return@launch
+                            }
+
+                            if (checkParticipatingResult.shouldParticipating) {
+                                postEffect(SplashUiEffect.NavigateToParticipationMethod)
+                            } else {
+                                postEffect(SplashUiEffect.NavigateToHome)
+                            }
                         }
                     }
                 }

@@ -15,10 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import androidx.navigation.compose.rememberNavController
 import site.dogether.presentation.AppNavGraph
 import site.dogether.presentation.theme.ColorBgDefault
 import site.dogether.presentation.theme.ColorIconPrimary
 import site.dogether.presentation.theme.DogetherAndroidTheme
+import site.dogether.presentation.utils.LocalNavHostController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +52,8 @@ class MainActivity : ComponentActivity() {
             LocalTextSelectionColors provides TextSelectionColors(
                 handleColor = ColorIconPrimary,
                 backgroundColor = ColorIconPrimary.copy(alpha = 0.4f)
-            )
+            ),
+            LocalNavHostController provides rememberNavController()
         ) {
             block()
         }
