@@ -5,12 +5,14 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import site.dogether.domain.use_case.app_info.CheckUpdateRequiredUseCase
+import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.GetUserTokenUseCase
 import site.dogether.presentation.base.BaseViewModel
 
 class SplashViewModel(
     private val checkUpdateRequiredUseCase: CheckUpdateRequiredUseCase,
     private val getUserTokenUseCase: GetUserTokenUseCase,
+    private val checkParticipatingUseCase: CheckParticipatingUseCase
 ) : BaseViewModel<SplashUiState, SplashUiEvent, SplashUiEffect>(SplashUiState()) {
 
     override val container: Container<SplashUiState, SplashUiEffect> = container(SplashUiState())
@@ -49,7 +51,16 @@ class SplashViewModel(
                                 return@launch
                             }
 
-//                            val isParticipatedGroupExist
+                            val checkParticipatingResult = checkParticipatingUseCase().getOrElse {
+                                // handle exception
+                                return@launch
+                            }
+
+                            if (checkParticipatingResult.shouldParticipating) {
+                                postEffect(SplashUiEffect.NavigateToParticipationMethod)
+                            } else {
+                                postEffect(SplashUiEffect.NavigateToHome)
+                            }
                         }
                     }
                 }

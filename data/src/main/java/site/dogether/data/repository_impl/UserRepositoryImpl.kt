@@ -8,9 +8,12 @@ import site.dogether.data.local.PreferenceKey
 import site.dogether.data.model.JwtPayload
 import site.dogether.data.remote.ApiRoutes
 import site.dogether.data.remote.model.req.user.KakaoLoginReq
+import site.dogether.data.remote.model.res.user.CheckParticipatingResMapper
 import site.dogether.data.remote.model.res.user.UserInfoRes
 import site.dogether.data.remote.model.res.user.UserInfoResMapper
+import site.dogether.data.utils.safeGet
 import site.dogether.data.utils.safePost
+import site.dogether.domain.model.user.ParticipatingInfo
 import site.dogether.domain.model.user.UserInfo
 import site.dogether.domain.repository.UserRepository
 import kotlin.io.encoding.Base64
@@ -21,6 +24,13 @@ class UserRepositoryImpl(
 ) : UserRepository {
 
     override suspend fun getUserToken(): Result<String> = dataStoreManager.loadString(PreferenceKey.USER_TOKEN)
+
+    override suspend fun checkParticipating(): Result<ParticipatingInfo> {
+        return httpClient.safeGet(
+            apiRoute = ApiRoutes.CHECK_PARTICIPATING,
+            mapper = CheckParticipatingResMapper
+        )
+    }
 
     override suspend fun loginWithKakao(
         name: String,

@@ -24,7 +24,8 @@ val viewModelModule = module {
     viewModel {
         SplashViewModel(
             checkUpdateRequiredUseCase = get(),
-            getUserTokenUseCase = get()
+            getUserTokenUseCase = get(),
+            checkParticipatingUseCase = get()
         )
     }
     viewModel { ForceUpdateViewModel() }

@@ -40,6 +40,8 @@ fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
             is SplashUiEffect.NavigateToOnBoarding -> navigateToOnBoarding(navHostController)
 
             is SplashUiEffect.NavigateToHome -> navigateToHome(navHostController)
+
+            is SplashUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(navHostController)
         }
     }
 
@@ -66,6 +68,10 @@ private fun navigateToOnBoarding(navHostController: NavHostController) {
 
 private fun navigateToHome(navHostController: NavHostController) {
     navHostController.navigate(Screen.HOME)
+}
+
+private fun navigateToParticipationMethod(navHostController: NavHostController) {
+    navHostController.navigate(Screen.PARTICIPATION_METHOD)
 }
 
 @Composable

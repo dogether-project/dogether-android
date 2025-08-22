@@ -74,7 +74,7 @@ kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core",
 kotest-framework-engine = { group = "io.kotest", name = "kotest-framework-engine", version.ref = "kotest" }
 
 # Mockk
-mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk"}
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
 # Kotlin reflect
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
@@ -92,6 +92,7 @@ ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-conte
 ktor-client-serialization = { group = "io.ktor", name = "ktor-client-serialization", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-client-auth = { group = "io.ktor", name = "ktor-client-auth", version.ref = "ktor" }
 
 # Coil
 coil-base = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
@@ -101,7 +102,7 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 kakao = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
 
 # Datastore
-datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore"}
+datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -161,7 +162,8 @@ ktor = [
     "ktor-client-content-negotiation",
     "ktor-client-serialization",
     "ktor-serialization-kotlinx-json",
-    "ktor-client-logging"
+    "ktor-client-logging",
+    "ktor-client-auth"
 ]
 
 coil = [
