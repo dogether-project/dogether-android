@@ -3,7 +3,6 @@ package site.dogether.presentation
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import site.dogether.presentation.screen.create_group.CreateGroupScreen
 import site.dogether.presentation.screen.error.ErrorScreen
 import site.dogether.presentation.screen.force_update.ForceUpdateScreen
@@ -22,45 +21,27 @@ import site.dogether.presentation.screen.splash.SplashScreen
 import site.dogether.presentation.utils.LocalNavHostController
 
 @Composable
-fun AppNavGraph(startDestination: String = Screen.Splash.route) {
+fun AppNavGraph(startDestination: String = Screen.SPLASH) {
     val navHostController = LocalNavHostController.current
 
     NavHost(
         navController = navHostController,
         startDestination = startDestination
     ) {
-        composable(Screen.Splash.route) { SplashScreen() }
-        composable(Screen.ForceUpdate.route) { ForceUpdateScreen() }
-        composable(Screen.OnBoarding.route) { OnBoardingScreen() }
-        composable(Screen.ParticipationMethod.route) { ParticipationMethodScreen() }
-        composable(Screen.CreateGroup.route) { CreateGroupScreen() }
-        composable(Screen.GroupCreated.route) { GroupCreatedScreen() }
-        composable(Screen.ParticipateGroup.route) { ParticipateGroupScreen() }
-        composable(Screen.GroupParticipated.route) { GroupParticipatedScreen() }
-        composable(Screen.Error.route) { ErrorScreen() }
-        composable(Screen.Home.route) { HomeScreen() }
-        composable(Screen.MyPage.route) { MyPageScreen() }
-        composable(Screen.Statistics.route) { StatisticsScreen() }
-        composable(Screen.CertificationList.route) { CertificationListScreen() }
-        composable(Screen.Settings.route) { SettingsScreen() }
-        composable(Screen.GroupManagement.route) { GroupManagementScreen() }
+        composable(Screen.SPLASH) { SplashScreen() }
+        composable(Screen.FORCE_UPDATE) { ForceUpdateScreen() }
+        composable(Screen.ON_BOARDING) { OnBoardingScreen() }
+        composable(Screen.PARTICIPATION_METHOD) { ParticipationMethodScreen() }
+        composable(Screen.CREATE_GROUP) { CreateGroupScreen() }
+        composable(Screen.GROUP_CREATED) { GroupCreatedScreen() }
+        composable(Screen.PARTICIPATE_GROUP) { ParticipateGroupScreen() }
+        composable(Screen.GROUP_PARTICIPATED) { GroupParticipatedScreen() }
+        composable(Screen.ERROR) { ErrorScreen() }
+        composable(Screen.HOME) { HomeScreen() }
+        composable(Screen.MY_PAGE) { MyPageScreen() }
+        composable(Screen.STATISTICS) { StatisticsScreen() }
+        composable(Screen.CERTIFICATION_LIST) { CertificationListScreen() }
+        composable(Screen.SETTINGS) { SettingsScreen() }
+        composable(Screen.GROUP_MANAGEMENT) { GroupManagementScreen() }
     }
-}
-
-enum class Screen(val route: String) {
-    Splash("splash"),
-    ForceUpdate("force_update"),
-    OnBoarding("on_boarding"),
-    ParticipationMethod("participation_method"),
-    CreateGroup("create_group"),
-    GroupCreated("group_created"),
-    ParticipateGroup("participate_group"),
-    GroupParticipated("group_participated"),
-    Error("error"),
-    Home("home"),
-    MyPage("my_page"),
-    Statistics("statistics"),
-    CertificationList("certification_list"),
-    Settings("settings"),
-    GroupManagement("group_management"),
 }

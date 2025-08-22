@@ -61,11 +61,11 @@ private fun getAppVersion(
 }
 
 private fun navigateToOnBoarding(navHostController: NavHostController) {
-    navHostController.navigate(Screen.OnBoarding.route)
+    navHostController.navigate(Screen.ON_BOARDING)
 }
 
 private fun navigateToHome(navHostController: NavHostController) {
-    navHostController.navigate(Screen.Home.route)
+    navHostController.navigate(Screen.HOME)
 }
 
 @Composable
