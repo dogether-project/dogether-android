@@ -25,10 +25,6 @@ val localDataSourceModule = module {
         )
     }
     single<DataStoreManager> {
-        DataStoreManager(
-            dataStore = get(),
-            json = get()
-        )
+        DataStoreManager(dataStore = get())
     }
-    single<Json> { Json }
 }

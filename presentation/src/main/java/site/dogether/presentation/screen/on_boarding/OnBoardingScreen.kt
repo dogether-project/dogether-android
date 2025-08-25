@@ -30,12 +30,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
+import site.dogether.presentation.Screen
+import site.dogether.presentation.screen.on_boarding.OnBoardingUiEvent.Callback.OnErrorKakaoLogin
+import site.dogether.presentation.screen.on_boarding.OnBoardingUiEvent.Callback.OnSuccessKakaoLogin
 import site.dogether.presentation.screen.on_boarding.model.OnBoardingPage
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
@@ -47,6 +51,7 @@ import site.dogether.presentation.theme.ColorKakaoYellow
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 
@@ -55,6 +60,7 @@ private val PAGE_LIST: List<OnBoardingPage> = OnBoardingPage.entries
 @Composable
 fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
     val context = LocalContext.current
+    val navHostController = LocalNavHostController.current
 
     viewModel.collectSideEffect { uiEffect ->
         when (uiEffect) {
@@ -63,15 +69,19 @@ fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
                     context = context,
                     onSuccess = { name, idToken ->
                         viewModel.onEvent(
-                            OnBoardingUiEvent.Callback.OnSuccessKakaoLogin(
+                            OnSuccessKakaoLogin(
                                 name = name,
                                 idToken = idToken
                             )
                         )
                     },
-                    onError = { throwable -> viewModel.onEvent(OnBoardingUiEvent.Callback.OnErrorKakaoLogin(throwable)) }
+                    onError = { throwable -> viewModel.onEvent(OnErrorKakaoLogin(throwable)) }
                 )
             }
+
+            is OnBoardingUiEffect.NavigateToHome -> navigateToHome(navHostController)
+
+            is OnBoardingUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(navHostController)
         }
     }
 
@@ -118,6 +128,14 @@ private fun loginWithKakao(
             callback = callback
         )
     }
+}
+
+private fun navigateToHome(navHostController: NavHostController) {
+    navHostController.navigate(Screen.HOME)
+}
+
+private fun navigateToParticipationMethod(navHostController: NavHostController) {
+    navHostController.navigate(Screen.PARTICIPATION_METHOD)
 }
 
 @Composable

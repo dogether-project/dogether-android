@@ -21,4 +21,8 @@ sealed interface OnBoardingUiEvent {
 
 sealed interface OnBoardingUiEffect {
     object LoginWithKakao : OnBoardingUiEffect
+
+    object NavigateToHome : OnBoardingUiEffect
+
+    object NavigateToParticipationMethod : OnBoardingUiEffect
 }

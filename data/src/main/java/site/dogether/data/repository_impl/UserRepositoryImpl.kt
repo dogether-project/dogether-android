@@ -23,7 +23,45 @@ class UserRepositoryImpl(
     private val httpClient: HttpClient,
 ) : UserRepository {
 
-    override suspend fun getUserToken(): Result<String> = dataStoreManager.loadString(PreferenceKey.USER_TOKEN)
+    override suspend fun storeUserInfo(
+        name: String,
+        accessToken: String
+    ): Result<Unit> {
+        return dataStoreManager.storeString(
+            key = PreferenceKey.USER_NAME,
+            data = name
+        ).fold(
+            onSuccess = {
+                dataStoreManager.storeString(
+                    key = PreferenceKey.USER_TOKEN,
+                    data = accessToken
+                )
+            },
+            onFailure = { e ->
+                Result.failure(e)
+            }
+        )
+    }
+
+    override suspend fun getUserInfo(): Result<UserInfo> {
+        return dataStoreManager.loadString(PreferenceKey.USER_NAME).fold(
+            onSuccess = { name ->
+                val accessToken = dataStoreManager.loadString(PreferenceKey.USER_TOKEN).getOrElse { e ->
+                    return Result.failure(e)
+                }
+
+                Result.success(
+                    UserInfo(
+                        name = name,
+                        accessToken = accessToken
+                    )
+                )
+            },
+            onFailure = { e ->
+                Result.failure(e)
+            }
+        )
+    }
 
     override suspend fun checkParticipating(): Result<ParticipatingInfo> {
         return httpClient.safeGet(

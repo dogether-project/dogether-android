@@ -6,13 +6,13 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import site.dogether.domain.use_case.app_info.CheckUpdateRequiredUseCase
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
-import site.dogether.domain.use_case.user.GetUserTokenUseCase
+import site.dogether.domain.use_case.user.GetUserInfoUseCase
 import site.dogether.presentation.base.BaseViewModel
 
 class SplashViewModel(
-    private val checkUpdateRequiredUseCase: CheckUpdateRequiredUseCase,
-    private val getUserTokenUseCase: GetUserTokenUseCase,
-    private val checkParticipatingUseCase: CheckParticipatingUseCase
+    private val checkUpdateRequired: CheckUpdateRequiredUseCase,
+    private val getUserInfo: GetUserInfoUseCase,
+    private val checkParticipating: CheckParticipatingUseCase
 ) : BaseViewModel<SplashUiState, SplashUiEvent, SplashUiEffect>(SplashUiState()) {
 
     override val container: Container<SplashUiState, SplashUiEffect> = container(SplashUiState())
@@ -31,7 +31,7 @@ class SplashViewModel(
                 when (event) {
                     is SplashUiEvent.Callback.OnGetAppVersion -> {
                         viewModelScope.launch {
-                            val checkUpdateRequiredResult = checkUpdateRequiredUseCase(event.appVersion).getOrElse { e ->
+                            val checkUpdateRequiredResult = checkUpdateRequired(event.appVersion).getOrElse { e ->
                                 // handle exception
                                 return@launch
                             }
@@ -41,17 +41,17 @@ class SplashViewModel(
                                 return@launch
                             }
 
-                            val userToken = getUserTokenUseCase().getOrElse { e ->
+                            val userInfo = getUserInfo().getOrElse { e ->
                                 // handle exception
                                 return@launch
                             }
 
-                            if (userToken.isEmpty()) {
+                            if (userInfo.accessToken.isEmpty()) {
                                 postEffect(SplashUiEffect.NavigateToOnBoarding)
                                 return@launch
                             }
 
-                            val checkParticipatingResult = checkParticipatingUseCase().getOrElse {
+                            val checkParticipatingResult = checkParticipating().getOrElse {
                                 // handle exception
                                 return@launch
                             }
