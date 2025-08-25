@@ -53,10 +53,10 @@ val networkModule = module {
             install(Auth) {
                 bearer {
                     loadTokens {
-                        val userToken = dataStoreManager.loadString(PreferenceKey.USER_TOKEN).getOrElse { "" }
+                        val accessToken = dataStoreManager.loadString(PreferenceKey.USER_TOKEN).getOrElse { "" }
 
-                        if (userToken.isNotEmpty()) {
-                            BearerTokens(userToken, "")
+                        if (accessToken.isNotEmpty()) {
+                            BearerTokens(accessToken, "")
                         } else {
                             return@loadTokens null
                         }
