@@ -4,7 +4,7 @@ import site.dogether.presentation.base.BaseViewModel
 
 class ParticipationMethodViewModel : BaseViewModel<ParticipationMethodUiState, ParticipationMethodUiEvent, ParticipationMethodUiEffect>(ParticipationMethodUiState()) {
 
-    override fun onEvent(event: ParticipationMethodUiEvent) {
+    override fun handleEvent(event: ParticipationMethodUiEvent) {
         when (event) {
             is ParticipationMethodUiEvent.Click -> {
                 when (event) {

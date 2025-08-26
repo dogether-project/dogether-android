@@ -15,7 +15,7 @@ class OnBoardingViewModel(
     private val checkParticipating: CheckParticipatingUseCase,
 ) : BaseViewModel<OnBoardingUiState, OnBoardingUiEvent, OnBoardingUiEffect>(OnBoardingUiState()) {
 
-    override fun onEvent(event: OnBoardingUiEvent) {
+    override fun handleEvent(event: OnBoardingUiEvent) {
         when (event) {
             is OnBoardingUiEvent.Click -> {
                 when (event) {

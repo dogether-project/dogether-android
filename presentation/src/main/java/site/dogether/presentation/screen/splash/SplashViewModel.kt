@@ -17,7 +17,7 @@ class SplashViewModel(
 
     override val container: Container<SplashUiState, SplashUiEffect> = container(SplashUiState())
 
-    override fun onEvent(event: SplashUiEvent) {
+    override fun handleEvent(event: SplashUiEvent) {
         when (event) {
             is SplashUiEvent.Lifecycle -> {
                 when (event) {

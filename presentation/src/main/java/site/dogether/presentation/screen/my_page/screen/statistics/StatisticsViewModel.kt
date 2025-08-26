@@ -4,7 +4,7 @@ import site.dogether.presentation.base.BaseViewModel
 
 class StatisticsViewModel : BaseViewModel<StatisticsUiState, StatisticsUiEvent, StatisticsUiEffect>(StatisticsUiState()) {
 
-    override fun onEvent(event: StatisticsUiEvent) {
+    override fun handleEvent(event: StatisticsUiEvent) {
         when (event) {
             is StatisticsUiEvent.Click -> {
                 when (event) {

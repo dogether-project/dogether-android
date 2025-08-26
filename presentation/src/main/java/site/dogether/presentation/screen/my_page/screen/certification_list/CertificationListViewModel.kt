@@ -4,7 +4,7 @@ import site.dogether.presentation.base.BaseViewModel
 
 class CertificationListViewModel : BaseViewModel<CertificationListUiState, CertificationListUiEvent, CertificationListUiEffect>(CertificationListUiState()) {
 
-    override fun onEvent(event: CertificationListUiEvent) {
+    override fun handleEvent(event: CertificationListUiEvent) {
         when (event) {
             is CertificationListUiEvent.Click -> {
                 when (event) {

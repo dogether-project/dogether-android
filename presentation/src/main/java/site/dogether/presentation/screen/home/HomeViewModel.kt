@@ -20,7 +20,7 @@ class HomeViewModel(
     private val defaultDispatcher: CoroutineDispatcher,
 ) : BaseViewModel<HomeUiState, HomeUiEvent, HomeUiEffect>(HomeUiState()) {
 
-    override fun onEvent(event: HomeUiEvent) {
+    override fun handleEvent(event: HomeUiEvent) {
         when (event) {
             is HomeUiEvent.Lifecycle -> {
                 when (event) {

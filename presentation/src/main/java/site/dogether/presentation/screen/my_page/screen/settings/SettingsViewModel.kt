@@ -4,7 +4,7 @@ import site.dogether.presentation.base.BaseViewModel
 
 class SettingsViewModel : BaseViewModel<SettingsUiState, SettingsUiEvent, SettingsUiEffect>(SettingsUiState()) {
 
-    override fun onEvent(event: SettingsUiEvent) {
+    override fun handleEvent(event: SettingsUiEvent) {
         when (event) {
             is SettingsUiEvent.Click -> {
                 when (event) {

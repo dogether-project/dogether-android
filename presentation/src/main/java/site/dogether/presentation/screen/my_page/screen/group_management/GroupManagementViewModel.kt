@@ -4,7 +4,7 @@ import site.dogether.presentation.base.BaseViewModel
 
 class GroupManagementViewModel : BaseViewModel<GroupManagementUiState, GroupManagementUiEvent, GroupManagementUiEffect>(GroupManagementUiState()) {
 
-    override fun onEvent(event: GroupManagementUiEvent) {
+    override fun handleEvent(event: GroupManagementUiEvent) {
         when (event) {
             is GroupManagementUiEvent.Click -> {
                 when (event) {

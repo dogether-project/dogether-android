@@ -4,7 +4,7 @@ import site.dogether.presentation.base.BaseViewModel
 
 class MyPageViewModel : BaseViewModel<MyPageUiState, MyPageUiEvent, MyPageUiEffect>(MyPageUiState()) {
 
-    override fun onEvent(event: MyPageUiEvent) {
+    override fun handleEvent(event: MyPageUiEvent) {
         when (event) {
             else -> Unit
         }

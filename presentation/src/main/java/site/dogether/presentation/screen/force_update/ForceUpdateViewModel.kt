@@ -4,7 +4,7 @@ import site.dogether.presentation.base.BaseViewModel
 
 class ForceUpdateViewModel : BaseViewModel<ForceUpdateUiState, ForceUpdateUiEvent, ForceUpdateUiEffect>(ForceUpdateUiState()) {
 
-    override fun onEvent(event: ForceUpdateUiEvent) {
+    override fun handleEvent(event: ForceUpdateUiEvent) {
         when (event) {
             is ForceUpdateUiEvent.Click -> {
                 when (event) {

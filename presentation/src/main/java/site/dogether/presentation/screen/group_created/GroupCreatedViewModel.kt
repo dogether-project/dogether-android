@@ -4,7 +4,7 @@ import site.dogether.presentation.base.BaseViewModel
 
 class GroupCreatedViewModel : BaseViewModel<GroupCreatedUiState, GroupCreatedUiEvent, GroupCreatedUiEffect>(GroupCreatedUiState()) {
 
-    override fun onEvent(event: GroupCreatedUiEvent) {
+    override fun handleEvent(event: GroupCreatedUiEvent) {
         when (event) {
             else -> Unit
         }
