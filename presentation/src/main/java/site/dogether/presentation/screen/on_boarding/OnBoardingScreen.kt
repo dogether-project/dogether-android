@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,8 +39,6 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
-import site.dogether.presentation.screen.on_boarding.OnBoardingUiEvent.Callback.OnErrorKakaoLogin
-import site.dogether.presentation.screen.on_boarding.OnBoardingUiEvent.Callback.OnSuccessKakaoLogin
 import site.dogether.presentation.screen.on_boarding.model.OnBoardingPage
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
@@ -59,23 +58,28 @@ private val PAGE_LIST: List<OnBoardingPage> = OnBoardingPage.entries
 
 @Composable
 fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
+    val onEvent: (OnBoardingUiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
     val navHostController = LocalNavHostController.current
 
     viewModel.collectSideEffect { uiEffect ->
         when (uiEffect) {
-            is OnBoardingUiEffect.LoginWithKakao -> {
-                loginWithKakao(
+            is OnBoardingUiEffect.CheckLoginWithKakaoTalkPossibility -> {
+                val isPossible = UserApiClient.instance.isKakaoTalkLoginAvailable(context)
+                onEvent(OnBoardingUiEvent.Callback.OnLoginWithKakaoTalkPossible(isPossible))
+            }
+
+            is OnBoardingUiEffect.LoginWithKakaoTalk -> {
+                loginWithKakaoTalk(
                     context = context,
-                    onSuccess = { name, idToken ->
-                        viewModel.onEvent(
-                            OnSuccessKakaoLogin(
-                                name = name,
-                                idToken = idToken
-                            )
-                        )
-                    },
-                    onError = { throwable -> viewModel.onEvent(OnErrorKakaoLogin(throwable)) }
+                    onEvent = onEvent
+                )
+            }
+
+            is OnBoardingUiEffect.LoginWithKakaoAccount -> {
+                loginWithKakaoAccount(
+                    context = context,
+                    onEvent = onEvent
                 )
             }
 
@@ -87,47 +91,49 @@ fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
 
     OnBoardingScreenContents(
         uiState = viewModel.collectAsState().value,
-        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+        onEvent = onEvent
     )
 }
 
-private fun loginWithKakao(
-    context: Context,
-    onSuccess: (String, String) -> Unit,
-    onError: (Throwable) -> Unit,
-) {
-    val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
-        error?.let { throwable ->
-            onError(throwable)
-        } ?: run {
-            token?.let {
-                val idToken = token.idToken ?: ""
-                UserApiClient.instance.me { user, meError ->
+private fun kakaoLoginCallback(onEvent: (OnBoardingUiEvent) -> Unit): (OAuthToken?, Throwable?) -> Unit = { token, error ->
+    error?.let { throwable ->
+        onEvent(OnBoardingUiEvent.Callback.OnErrorKakaoLogin(throwable))
+    } ?: run {
+        token?.let {
+            val idToken = token.idToken.orEmpty()
+            UserApiClient.instance.me { user, meError ->
 
-                    meError?.let {
-                        onError(meError)
-                    } ?: run {
-                        user?.let {
-                            val name = user.kakaoAccount?.profile?.nickname ?: ""
-                            onSuccess(name, idToken)
-                        }
+                meError?.let {
+                    onEvent(OnBoardingUiEvent.Callback.OnErrorKakaoLogin(meError))
+                } ?: run {
+                    user?.let {
+                        val name = user.kakaoAccount?.profile?.nickname.orEmpty()
+                        onEvent(OnBoardingUiEvent.Callback.OnSuccessKakaoLogin(name, idToken))
                     }
                 }
             }
         }
     }
+}
 
-    if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
-        UserApiClient.instance.loginWithKakaoTalk(
-            context = context,
-            callback = callback
-        )
-    } else {
-        UserApiClient.instance.loginWithKakaoAccount(
-            context = context,
-            callback = callback
-        )
-    }
+private fun loginWithKakaoTalk(
+    context: Context,
+    onEvent: (OnBoardingUiEvent) -> Unit,
+) {
+    UserApiClient.instance.loginWithKakaoTalk(
+        context = context,
+        callback = kakaoLoginCallback(onEvent = onEvent)
+    )
+}
+
+private fun loginWithKakaoAccount(
+    context: Context,
+    onEvent: (OnBoardingUiEvent) -> Unit,
+) {
+    UserApiClient.instance.loginWithKakaoAccount(
+        context = context,
+        callback = kakaoLoginCallback(onEvent = onEvent)
+    )
 }
 
 private fun navigateToHome(navHostController: NavHostController) {

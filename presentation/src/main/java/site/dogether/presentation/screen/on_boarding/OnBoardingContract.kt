@@ -10,6 +10,7 @@ sealed interface OnBoardingUiEvent {
     }
 
     sealed interface Callback : OnBoardingUiEvent {
+        data class OnLoginWithKakaoTalkPossible(val isPossible: Boolean) : Callback
         data class OnSuccessKakaoLogin(
             val name: String,
             val idToken: String,
@@ -20,7 +21,11 @@ sealed interface OnBoardingUiEvent {
 }
 
 sealed interface OnBoardingUiEffect {
-    object LoginWithKakao : OnBoardingUiEffect
+    object CheckLoginWithKakaoTalkPossibility : OnBoardingUiEffect
+
+    object LoginWithKakaoTalk : OnBoardingUiEffect
+
+    object LoginWithKakaoAccount : OnBoardingUiEffect
 
     object NavigateToHome : OnBoardingUiEffect
 
