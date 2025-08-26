@@ -1,6 +1,7 @@
 package site.dogether.presentation.screen.on_boarding
 
 import androidx.lifecycle.viewModelScope
+import com.kakao.sdk.common.model.AuthError
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.LoginWithKakaoUseCase
@@ -11,7 +12,7 @@ import site.dogether.presentation.screen.on_boarding.OnBoardingUiEvent.Click.OnC
 class OnBoardingViewModel(
     private val loginWithKakao: LoginWithKakaoUseCase,
     private val storeUserInfo: StoreUserInfoUseCase,
-    private val checkParticipating: CheckParticipatingUseCase
+    private val checkParticipating: CheckParticipatingUseCase,
 ) : BaseViewModel<OnBoardingUiState, OnBoardingUiEvent, OnBoardingUiEffect>(OnBoardingUiState()) {
 
     override fun onEvent(event: OnBoardingUiEvent) {
@@ -19,13 +20,19 @@ class OnBoardingViewModel(
             is OnBoardingUiEvent.Click -> {
                 when (event) {
                     is OnClickKakaoLogin -> {
-                        postEffect(OnBoardingUiEffect.LoginWithKakao)
+                        postEffect(OnBoardingUiEffect.CheckLoginWithKakaoTalkPossibility)
                     }
                 }
             }
 
             is OnBoardingUiEvent.Callback -> {
                 when (event) {
+                    is OnBoardingUiEvent.Callback.OnLoginWithKakaoTalkPossible -> {
+                        viewModelScope.launch {
+                            postEffect(if (event.isPossible) OnBoardingUiEffect.LoginWithKakaoTalk else OnBoardingUiEffect.LoginWithKakaoAccount)
+                        }
+                    }
+
                     is OnBoardingUiEvent.Callback.OnSuccessKakaoLogin -> {
                         viewModelScope.launch {
                             val loginWithKakaoResult = loginWithKakao(
@@ -57,9 +64,19 @@ class OnBoardingViewModel(
                         }
                     }
 
-                    is OnBoardingUiEvent.Callback.OnErrorKakaoLogin -> Unit
+                    is OnBoardingUiEvent.Callback.OnErrorKakaoLogin -> {
+                        viewModelScope.launch {
+                            when ((event.throwable as? AuthError)?.statusCode) {
+                                302 -> postEffect(OnBoardingUiEffect.LoginWithKakaoAccount)
+                            }
+                        }
+                    }
                 }
             }
         }
+    }
+
+    companion object {
+        const val KEY_KAKAO_URI = "key_kakao_uri"
     }
 }
