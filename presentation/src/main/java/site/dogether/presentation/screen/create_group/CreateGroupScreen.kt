@@ -34,6 +34,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
@@ -57,6 +58,7 @@ import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.hideKeyboardOnTap
@@ -65,6 +67,14 @@ private val PAGE_LIST: List<CreateGroupPage> = CreateGroupPage.entries
 
 @Composable
 fun CreateGroupScreen(viewModel: CreateGroupViewModel = koinViewModel()) {
+    val navHostController = LocalNavHostController.current
+
+    viewModel.collectSideEffect { uiEffect ->
+        when (uiEffect) {
+            is CreateGroupUiEffect.NavigateToBack -> navHostController.popBackStack()
+        }
+    }
+
     CreateGroupScreenContents(
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
@@ -468,7 +478,7 @@ private fun CheckPageContents(
                 .height(50.dp),
             radius = 8.dp,
             text = stringResource(R.string.cta_button_create_group),
-            onClick = { }
+            onClick = { onEvent(CreateGroupUiEvent.Click.OnClickCreateGroup) }
         )
     }
 }

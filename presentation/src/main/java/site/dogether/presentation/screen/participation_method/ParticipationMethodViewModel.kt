@@ -12,8 +12,8 @@ class ParticipationMethodViewModel : BaseViewModel<ParticipationMethodUiState, P
                         postEffect(ParticipationMethodUiEffect.NavigateToCreateGroup)
                     }
 
-                    is ParticipationMethodUiEvent.Click.OnClickParticipateWithCode -> {
-                        postEffect(ParticipationMethodUiEffect.NavigateToParticipateWithCode)
+                    is ParticipationMethodUiEvent.Click.OnClickParticipateGroup -> {
+                        postEffect(ParticipationMethodUiEffect.NavigateToParticipateGroup)
                     }
                 }
             }

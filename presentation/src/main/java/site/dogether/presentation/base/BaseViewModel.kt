@@ -11,22 +11,16 @@ abstract class BaseViewModel<State : Any, Event, Effect : Any>(
 
     override val container: Container<State, Effect> = container(initialState)
 
+    protected val uiState: State
+        get() = container.stateFlow.value
+
     abstract fun onEvent(event: Event)
 
     protected fun updateState(
-        condition: ((State) -> Boolean)? = null,
-        reducer: (State) -> State
+        reducer: (State) -> State,
     ) {
         intent {
-            reduce {
-                condition?.let {
-                    if (condition(state)) {
-                        reducer(state)
-                    } else {
-                        state
-                    }
-                } ?: run { reducer(state) }
-            }
+            reduce { reducer(state) }
         }
     }
 

@@ -17,24 +17,23 @@ class CreateGroupViewModel : BaseViewModel<CreateGroupUiState, CreateGroupUiEven
             is CreateGroupUiEvent.Click -> {
                 when (event) {
                     is CreateGroupUiEvent.Click.OnClickBack -> {
-                        updateState(
-                            condition = { it.currentPage != 0 },
-                            reducer = { it.copy(currentPage = it.currentPage - 1) }
-                        )
+                        if (uiState.currentPage != 0) {
+                            updateState { it.copy(currentPage = it.currentPage - 1) }
+                        } else {
+                            postEffect(CreateGroupUiEffect.NavigateToBack)
+                        }
                     }
 
                     is CreateGroupUiEvent.Click.OnClickMinusMemberLimit -> {
-                        updateState(
-                            condition = { it.memberLimit > MinimumMemberLimit },
-                            reducer = { it.copy(memberLimit = it.memberLimit - 1) }
-                        )
+                        if (uiState.memberLimit > MinimumMemberLimit) {
+                            updateState { it.copy(memberLimit = it.memberLimit - 1) }
+                        }
                     }
 
                     is CreateGroupUiEvent.Click.OnClickPlusMemberLimit -> {
-                        updateState(
-                            condition = { it.memberLimit < MaximumMemberLimit },
-                            reducer = { it.copy(memberLimit = it.memberLimit + 1) }
-                        )
+                        if (uiState.memberLimit < MaximumMemberLimit) {
+                            updateState { it.copy(memberLimit = it.memberLimit + 1) }
+                        }
                     }
 
                     is CreateGroupUiEvent.Click.OnClickNext -> {

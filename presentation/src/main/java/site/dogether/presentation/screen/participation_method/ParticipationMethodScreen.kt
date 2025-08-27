@@ -18,14 +18,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
+import site.dogether.presentation.Screen
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body2_R
@@ -38,18 +39,20 @@ import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Yellow
+import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
+import site.dogether.presentation.utils.intervaledClickableWithoutRipple
 
 @Composable
 fun ParticipationMethodScreen(viewModel: ParticipationMethodViewModel = koinViewModel()) {
-    val context = LocalContext.current
+    val navHostController = LocalNavHostController.current
 
     viewModel.collectSideEffect { uiEffect ->
         when (uiEffect) {
-            is ParticipationMethodUiEffect.NavigateToCreateGroup -> navigateToCreateGroup()
+            is ParticipationMethodUiEffect.NavigateToCreateGroup -> navigateToCreateGroup(navHostController)
 
-            is ParticipationMethodUiEffect.NavigateToParticipateWithCode -> navigateToParticipateWithCode()
+            is ParticipationMethodUiEffect.NavigateToParticipateGroup -> navigateToParticipateWithCode(navHostController)
         }
     }
 
@@ -59,9 +62,13 @@ fun ParticipationMethodScreen(viewModel: ParticipationMethodViewModel = koinView
     )
 }
 
-private fun navigateToCreateGroup() = Unit
+private fun navigateToCreateGroup(navHostController: NavHostController) {
+    navHostController.navigate(Screen.CREATE_GROUP)
+}
 
-private fun navigateToParticipateWithCode() = Unit
+private fun navigateToParticipateWithCode(navHostController: NavHostController) {
+    navHostController.navigate(Screen.PARTICIPATE_GROUP)
+}
 
 @Composable
 private fun ParticipationMethodScreenContents(
@@ -115,7 +122,7 @@ private fun ParticipationMethodScreenContents(
             iconContentDescription = "icon_create_group",
             title = stringResource(R.string.cta_button_title_create_group),
             body = stringResource(R.string.cta_button_body_create_group),
-            onClick = {}
+            onClick = { onEvent(ParticipationMethodUiEvent.Click.OnClickCreateGroup) }
         )
 
         ParticipationMethod(
@@ -125,7 +132,7 @@ private fun ParticipationMethodScreenContents(
             iconContentDescription = "icon_key",
             title = stringResource(R.string.cta_button_title_participate_with_code),
             body = stringResource(R.string.cta_button_body_participate_with_code),
-            onClick = {}
+            onClick = { onEvent(ParticipationMethodUiEvent.Click.OnClickParticipateGroup) }
         )
     }
 }
@@ -147,7 +154,7 @@ private fun ParticipationMethod(
             .height(100.dp)
             .background(ColorBgElevated)
             .padding(horizontal = 16.dp)
-            .clickableWithoutRipple { onClick() },
+            .intervaledClickableWithoutRipple { onClick() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

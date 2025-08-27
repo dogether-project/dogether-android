@@ -12,7 +12,7 @@ data class CreateGroupUiState(
     val memberLimit: Int = 10,
     val period: Int = 3,
     val isLaunchFromToday: Boolean = true,
-    val duplicatedNameDialogState: DialogState = DialogState(false)
+    val duplicatedNameDialogState: DialogState = DialogState(false),
 )
 
 sealed interface CreateGroupUiEvent {
@@ -46,5 +46,5 @@ sealed interface CreateGroupUiEvent {
 }
 
 sealed interface CreateGroupUiEffect {
-
+    data object NavigateToBack : CreateGroupUiEffect
 }

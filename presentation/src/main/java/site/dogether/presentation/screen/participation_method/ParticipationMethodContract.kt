@@ -9,12 +9,12 @@ sealed interface ParticipationMethodUiEvent {
     sealed interface Click : ParticipationMethodUiEvent {
         data object OnClickCreateGroup : Click
 
-        data object OnClickParticipateWithCode : Click
+        data object OnClickParticipateGroup : Click
     }
 }
 
 sealed interface ParticipationMethodUiEffect {
     data object NavigateToCreateGroup : ParticipationMethodUiEffect
 
-    data object NavigateToParticipateWithCode : ParticipationMethodUiEffect
+    data object NavigateToParticipateGroup : ParticipationMethodUiEffect
 }
