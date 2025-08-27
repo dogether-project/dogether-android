@@ -1,8 +1,11 @@
 package site.dogether.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import site.dogether.KEY_JOIN_CODE
 import site.dogether.presentation.screen.create_group.CreateGroupScreen
 import site.dogether.presentation.screen.error.ErrorScreen
 import site.dogether.presentation.screen.force_update.ForceUpdateScreen
@@ -33,7 +36,11 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
         composable(Screen.ON_BOARDING) { OnBoardingScreen() }
         composable(Screen.PARTICIPATION_METHOD) { ParticipationMethodScreen() }
         composable(Screen.CREATE_GROUP) { CreateGroupScreen() }
-        composable(Screen.GROUP_CREATED) { GroupCreatedScreen() }
+        composable(
+            route = "${Screen.GROUP_CREATED}/{${KEY_JOIN_CODE}}",
+            arguments = listOf(navArgument(KEY_JOIN_CODE) { type = NavType.StringType }
+            )
+        ) { GroupCreatedScreen() }
         composable(Screen.PARTICIPATE_GROUP) { ParticipateGroupScreen() }
         composable(Screen.GROUP_PARTICIPATED) { GroupParticipatedScreen() }
         composable(Screen.ERROR) { ErrorScreen() }

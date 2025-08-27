@@ -36,6 +36,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
+import site.dogether.presentation.Screen
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
@@ -72,6 +73,8 @@ fun CreateGroupScreen(viewModel: CreateGroupViewModel = koinViewModel()) {
     viewModel.collectSideEffect { uiEffect ->
         when (uiEffect) {
             is CreateGroupUiEffect.NavigateToBack -> navHostController.popBackStack()
+
+            is CreateGroupUiEffect.NavigateToGroupCreated -> navHostController.navigate("${Screen.GROUP_CREATED}/${uiEffect.joinCode}")
         }
     }
 

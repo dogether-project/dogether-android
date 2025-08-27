@@ -93,7 +93,7 @@ private fun GroupCreatedScreenContents(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = uiState.code,
+                        text = uiState.joinCode,
                         style = Head1_B.copy(lineHeightStyle = LineHeightStyle.Default),
                         color = ColorTextDefault
                     )

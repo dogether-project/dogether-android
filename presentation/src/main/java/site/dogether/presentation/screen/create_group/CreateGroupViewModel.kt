@@ -63,6 +63,7 @@ class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseVi
                                 return@launch
                             }
 
+                            postEffect(CreateGroupUiEffect.NavigateToGroupCreated(createGroupResult.joinCode))
                         }
                     }
 

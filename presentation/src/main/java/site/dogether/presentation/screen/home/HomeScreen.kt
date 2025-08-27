@@ -314,7 +314,7 @@ private fun HomeScreenContents(
 
                         Column(modifier = Modifier.padding(start = 16.dp)) {
                             Text(
-                                text = stringResource(R.string.info_invite_code),
+                                text = stringResource(R.string.info_join_code),
                                 style = Body2_R.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
                                 color = ColorTextSecondary
                             )

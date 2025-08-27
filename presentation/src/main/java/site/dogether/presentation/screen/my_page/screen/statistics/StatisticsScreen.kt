@@ -153,7 +153,7 @@ private fun StatisticsContents(
                 )
 
                 GroupInfoColumn(
-                    title = stringResource(R.string.info_invite_code),
+                    title = stringResource(R.string.info_join_code),
                     value = "12345678"
                 )
 

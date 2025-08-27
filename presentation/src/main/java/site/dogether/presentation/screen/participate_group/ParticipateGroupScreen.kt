@@ -56,14 +56,14 @@ private fun ParticipateGroupScreenContents(
 
             Text(
                 modifier = Modifier.padding(top = 40.dp),
-                text = stringResource(R.string.title_type_invite_code),
+                text = stringResource(R.string.title_type_join_code),
                 style = Head1_B,
                 color = ColorTextDefault
             )
 
             Text(
                 modifier = Modifier.padding(top = 8.dp),
-                text = stringResource(R.string.body_type_invite_code),
+                text = stringResource(R.string.body_type_join_code),
                 style = Body1_R,
                 color = ColorTextSubtle
             )
@@ -73,9 +73,9 @@ private fun ParticipateGroupScreenContents(
                     .padding(top = 50.dp)
                     .fillMaxWidth()
                     .height(50.dp),
-                value = uiState.inviteCode,
-                onValueChanged = { text -> onEvent(ParticipateGroupUiEvent.Type.OnInviteCodeTyped(text)) },
-                hintText = stringResource(R.string.input_hint_type_invite_code)
+                value = uiState.joinCode,
+                onValueChanged = { text -> onEvent(ParticipateGroupUiEvent.Type.OnJoinCodeTyped(text)) },
+                hintText = stringResource(R.string.input_hint_type_join_code)
             )
         }
 

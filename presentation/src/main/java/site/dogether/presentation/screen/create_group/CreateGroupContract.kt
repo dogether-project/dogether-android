@@ -47,4 +47,6 @@ sealed interface CreateGroupUiEvent {
 
 sealed interface CreateGroupUiEffect {
     data object NavigateToBack : CreateGroupUiEffect
+
+    data class NavigateToGroupCreated(val joinCode: String) : CreateGroupUiEffect
 }
