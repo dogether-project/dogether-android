@@ -11,7 +11,7 @@
     <string name="title_create_group_complete">그룹 생성 완료 !\n팀원들에게 코드를 공유해보세요</string>
     <string name="title_group_created">그룹 생성 완료 !\n팀원들에게 코드를 공유해보세요</string>
     <string name="title_participate_group">그룹 가입하기</string>
-    <string name="title_type_invite_code">초대코드 입력</string>
+    <string name="title_type_join_code">초대코드 입력</string>
     <string name="title_group_participated">그룹 가입 완료 !\n이제 목표를 실천해보세요</string>
     <string name="title_error_network">네트워크 연결이 불안정해요.</string>
     <string name="title_error_unknown">일시적인 문제가 발생했어요.</string>
@@ -41,7 +41,7 @@
     <string name="body_on_boarding_1">열심히 하면 ‘인정’, 대충하면 ‘노인정’을 받아요</string>
     <string name="body_on_boarding_2">팀원의 인증을 검사해야\n새로운 목표를 설정할 수 있어요</string>
     <string name="body_add_new_group">소속된 그룹이 없어요.\n그룹을 만들거나 참여하세요!</string>
-    <string name="body_type_invite_code">초대받은 링크에서 초대코드를 확인할 수 있어요</string>
+    <string name="body_type_join_code">초대받은 링크에서 초대코드를 확인할 수 있어요</string>
     <string name="body_error_network">연결 상태를 확인한 후 다시 시도해주세요.</string>
     <string name="body_error_unknown">연결 상태를 확인한 후 다시 시도해주세요.</string>
     <string name="body_error_load_data">잠시 후 다시 시도해 주세요.</string>
@@ -107,12 +107,12 @@
     <string name="cta_button_body_launch_from_tomorrow">조금 더 준비하고,\n내일부터 시작하기</string>
 
     <string name="input_title_group_name">그룹명</string>
-    <string name="input_title_group_member_limit">그룹 인원</string>
-    <string name="input_title_period">활동 기간</string>
+    <string name="input_title_group_member_count">그룹 인원</string>
+    <string name="input_title_duration">활동 기간</string>
     <string name="input_title_launch_date">시작일</string>
 
     <string name="input_hint_group_name">멋진 그룹명으로 동기부여를 해보세요 !</string>
-    <string name="input_hint_type_invite_code">코드입력 (8자리 이상)</string>
+    <string name="input_hint_type_join_code">코드입력 (8자리 이상)</string>
 
     <string name="unit_prefix_whole">총</string>
     <string name="unit_member">명</string>
@@ -123,13 +123,13 @@
     <string name="unit_rank">등</string>
     <string name="unit_each">개</string>
 
-    <string name="info_period">활동 기간</string>
-    <string name="info_group_member_limit">그룹원</string>
+    <string name="info_duration">활동 기간</string>
+    <string name="info_group_member_count">그룹원</string>
     <string name="info_launch_date">시작일</string>
     <string name="info_end_date">종료일</string>
-    <string name="info_invite_code">초대코드</string>
+    <string name="info_join_code">초대코드</string>
     <string name="info_progress">진행 현황</string>
-    <string name="info_certification_period">인증한 기간</string>
+    <string name="info_certification_duration">인증한 기간</string>
     <string name="info_my_rank">내 순위</string>
     <string name="info_summary">요약</string>
 
@@ -154,4 +154,6 @@
 
     <string name="common_ascend_group_created">그룹 생성일순</string>
     <string name="common_ascend_todo_completed">투두 완료일순</string>
+
+    <string name="intent_title_share_join_code">참여 코드 공유</string>
 </resources>

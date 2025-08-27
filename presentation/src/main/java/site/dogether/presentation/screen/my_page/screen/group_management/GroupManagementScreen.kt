@@ -145,7 +145,7 @@ private fun GroupItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(R.string.info_group_member_limit),
+                text = stringResource(R.string.info_group_member_count),
                 style = Small_R,
                 color = ColorTextSecondary
             )
@@ -177,7 +177,7 @@ private fun GroupItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(R.string.info_invite_code),
+                text = stringResource(R.string.info_join_code),
                 style = Small_R,
                 color = ColorTextSecondary
             )

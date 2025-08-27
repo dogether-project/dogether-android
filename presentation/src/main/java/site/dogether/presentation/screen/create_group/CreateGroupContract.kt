@@ -2,17 +2,17 @@ package site.dogether.presentation.screen.create_group
 
 import site.dogether.presentation.model.DialogState
 
-const val MinimumMemberLimit = 2
-const val MaximumMemberLimit = 20
+const val MinimumMemberCount = 2
+const val MaximumMemberCount = 20
 
 data class CreateGroupUiState(
     val isLoading: Boolean = false,
     val currentPage: Int = 0,
     val name: String = "",
-    val memberLimit: Int = 10,
-    val period: Int = 3,
+    val maximumMemberCount: Int = 10,
+    val duration: Int = 3,
     val isLaunchFromToday: Boolean = true,
-    val duplicatedNameDialogState: DialogState = DialogState(false)
+    val duplicatedNameDialogState: DialogState = DialogState(false),
 )
 
 sealed interface CreateGroupUiEvent {
@@ -23,13 +23,13 @@ sealed interface CreateGroupUiEvent {
     sealed interface Click : CreateGroupUiEvent {
         data object OnClickBack : Click
 
-        data object OnClickMinusMemberLimit : Click
+        data object OnClickReduceMaximumMemberCount : Click
 
-        data object OnClickPlusMemberLimit : Click
+        data object OnClickAddMaximumMemberCount : Click
 
         data object OnClickNext : Click
 
-        data class OnClickPeriod(val period: Int) : Click
+        data class OnClickDuration(val duration: Int) : Click
 
         data class OnClickLaunchFrom(val isLaunchFromToday: Boolean) : Click
 
@@ -46,5 +46,7 @@ sealed interface CreateGroupUiEvent {
 }
 
 sealed interface CreateGroupUiEffect {
+    data object NavigateToBack : CreateGroupUiEffect
 
+    data class NavigateToGroupCreated(val joinCode: String) : CreateGroupUiEffect
 }

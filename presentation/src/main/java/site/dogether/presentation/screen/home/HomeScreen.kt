@@ -308,13 +308,13 @@ private fun HomeScreenContents(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         GroupInfoColumn(
-                            title = stringResource(R.string.info_group_member_limit),
+                            title = stringResource(R.string.info_group_member_count),
                             value = "6/10",
                         )
 
                         Column(modifier = Modifier.padding(start = 16.dp)) {
                             Text(
-                                text = stringResource(R.string.info_invite_code),
+                                text = stringResource(R.string.info_join_code),
                                 style = Body2_R.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
                                 color = ColorTextSecondary
                             )

@@ -1,6 +1,6 @@
 package site.dogether.common.exception
 
 class NetworkFailureException(
-    val code: Int,
+    val code: String,
     override val message: String,
 ) : Exception()

@@ -148,12 +148,12 @@ private fun StatisticsContents(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 GroupInfoColumn(
-                    title = stringResource(R.string.info_group_member_limit),
+                    title = stringResource(R.string.info_group_member_count),
                     value = "6/10",
                 )
 
                 GroupInfoColumn(
-                    title = stringResource(R.string.info_invite_code),
+                    title = stringResource(R.string.info_join_code),
                     value = "12345678"
                 )
 
@@ -187,14 +187,14 @@ private fun StatisticsContents(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_certification_period),
+                    painter = painterResource(R.drawable.ic_certification_duration),
                     tint = ColorIconDefault,
-                    contentDescription = "icon_certification_period"
+                    contentDescription = "icon_certification_duration"
                 )
 
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(R.string.info_certification_period),
+                    text = stringResource(R.string.info_certification_duration),
                     style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextDefault
                 )

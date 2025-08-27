@@ -34,7 +34,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
+import site.dogether.presentation.Screen
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
@@ -57,6 +59,7 @@ import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.hideKeyboardOnTap
@@ -65,6 +68,16 @@ private val PAGE_LIST: List<CreateGroupPage> = CreateGroupPage.entries
 
 @Composable
 fun CreateGroupScreen(viewModel: CreateGroupViewModel = koinViewModel()) {
+    val navHostController = LocalNavHostController.current
+
+    viewModel.collectSideEffect { uiEffect ->
+        when (uiEffect) {
+            is CreateGroupUiEffect.NavigateToBack -> navHostController.popBackStack()
+
+            is CreateGroupUiEffect.NavigateToGroupCreated -> navHostController.navigate("${Screen.GROUP_CREATED}/${uiEffect.joinCode}")
+        }
+    }
+
     CreateGroupScreenContents(
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
@@ -175,7 +188,7 @@ private fun PurposePageContents(
 
             Text(
                 modifier = Modifier.padding(top = 20.dp),
-                text = stringResource(R.string.input_title_group_member_limit),
+                text = stringResource(R.string.input_title_group_member_count),
                 style = Body1_B,
                 color = ColorTextSubtle
             )
@@ -188,28 +201,28 @@ private fun PurposePageContents(
                     .height(50.dp)
                     .background(ColorBgElevated)
             ) {
-                MemberLimitCalculateButton(
+                MaximumMemberCountCalculateButton(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .padding(start = 5.dp),
                     painter = painterResource(R.drawable.ic_minus),
                     contentDescription = "icon_minus"
-                ) { onEvent(CreateGroupUiEvent.Click.OnClickMinusMemberLimit) }
+                ) { onEvent(CreateGroupUiEvent.Click.OnClickReduceMaximumMemberCount) }
 
                 Text(
                     modifier = Modifier.align(Alignment.Center),
-                    text = "${uiState.memberLimit}" + stringResource(R.string.unit_member),
+                    text = "${uiState.maximumMemberCount}" + stringResource(R.string.unit_member),
                     style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextDefault
                 )
 
-                MemberLimitCalculateButton(
+                MaximumMemberCountCalculateButton(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(end = 5.dp),
                     painter = painterResource(R.drawable.ic_plus),
                     contentDescription = "icon_plus"
-                ) { onEvent(CreateGroupUiEvent.Click.OnClickPlusMemberLimit) }
+                ) { onEvent(CreateGroupUiEvent.Click.OnClickAddMaximumMemberCount) }
             }
 
             Row(
@@ -219,13 +232,13 @@ private fun PurposePageContents(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "$MinimumMemberLimit" + stringResource(R.string.unit_member),
+                    text = "$MinimumMemberCount" + stringResource(R.string.unit_member),
                     style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextSecondary
                 )
 
                 Text(
-                    text = "$MaximumMemberLimit" + stringResource(R.string.unit_member),
+                    text = "$MaximumMemberCount" + stringResource(R.string.unit_member),
                     style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextSecondary
                 )
@@ -246,7 +259,7 @@ private fun PurposePageContents(
 }
 
 @Composable
-private fun MemberLimitCalculateButton(
+private fun MaximumMemberCountCalculateButton(
     modifier: Modifier,
     painter: Painter,
     contentDescription: String,
@@ -276,7 +289,7 @@ private fun SchedulePageContents(
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = stringResource(R.string.input_title_period),
+                text = stringResource(R.string.input_title_duration),
                 style = Body1_B,
                 color = ColorTextSubtle
             )
@@ -287,16 +300,16 @@ private fun SchedulePageContents(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                PeriodButton(
-                    period = 3,
-                    selectedPeriod = uiState.period,
-                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickPeriod(3)) }
+                DurationButton(
+                    duration = 3,
+                    selectedDuration = uiState.duration,
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickDuration(3)) }
                 )
 
-                PeriodButton(
-                    period = 7,
-                    selectedPeriod = uiState.period,
-                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickPeriod(7)) }
+                DurationButton(
+                    duration = 7,
+                    selectedDuration = uiState.duration,
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickDuration(7)) }
                 )
             }
 
@@ -306,16 +319,16 @@ private fun SchedulePageContents(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                PeriodButton(
-                    period = 14,
-                    selectedPeriod = uiState.period,
-                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickPeriod(14)) }
+                DurationButton(
+                    duration = 14,
+                    selectedDuration = uiState.duration,
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickDuration(14)) }
                 )
 
-                PeriodButton(
-                    period = 28,
-                    selectedPeriod = uiState.period,
-                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickPeriod(28)) }
+                DurationButton(
+                    duration = 28,
+                    selectedDuration = uiState.duration,
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickDuration(28)) }
                 )
             }
 
@@ -359,12 +372,12 @@ private fun SchedulePageContents(
 }
 
 @Composable
-private fun RowScope.PeriodButton(
-    period: Int,
-    selectedPeriod: Int,
+private fun RowScope.DurationButton(
+    duration: Int,
+    selectedDuration: Int,
     onClick: () -> Unit,
 ) {
-    val isSelected = period == selectedPeriod
+    val isSelected = duration == selectedDuration
 
     Box(
         modifier = Modifier
@@ -385,10 +398,10 @@ private fun RowScope.PeriodButton(
     ) {
         Text(
             modifier = Modifier.align(Alignment.CenterStart),
-            text = if (period < 7) {
-                "$period" + stringResource(R.string.unit_day)
+            text = if (duration < 7) {
+                "$duration" + stringResource(R.string.unit_day)
             } else {
-                "${period / 7}" + stringResource(R.string.unit_week)
+                "${duration / 7}" + stringResource(R.string.unit_week)
             },
             style = Body1_B.copy(lineHeightStyle = LineHeightStyle.Default),
             color = if (isSelected) ColorTextPrimary else ColorTextDefault
@@ -455,8 +468,8 @@ private fun CheckPageContents(
             GroupInfoBoard(
                 modifier = Modifier.padding(horizontal = 32.dp),
                 name = uiState.name,
-                period = uiState.period,
-                memberLimit = uiState.memberLimit,
+                duration = uiState.duration,
+                maximumMemberCount = uiState.maximumMemberCount,
                 isLaunchFromToday = uiState.isLaunchFromToday
             )
         }
@@ -468,7 +481,7 @@ private fun CheckPageContents(
                 .height(50.dp),
             radius = 8.dp,
             text = stringResource(R.string.cta_button_create_group),
-            onClick = { }
+            onClick = { onEvent(CreateGroupUiEvent.Click.OnClickCreateGroup) }
         )
     }
 }

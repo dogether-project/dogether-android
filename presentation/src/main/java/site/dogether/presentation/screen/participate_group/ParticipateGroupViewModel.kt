@@ -8,8 +8,8 @@ class ParticipateGroupViewModel : BaseViewModel<ParticipateGroupUiState, Partici
         when (event) {
             is ParticipateGroupUiEvent.Type -> {
                 when (event) {
-                    is ParticipateGroupUiEvent.Type.OnInviteCodeTyped -> {
-                        updateState { it.copy(inviteCode = event.text) }
+                    is ParticipateGroupUiEvent.Type.OnJoinCodeTyped -> {
+                        updateState { it.copy(joinCode = event.text) }
                     }
                 }
             }

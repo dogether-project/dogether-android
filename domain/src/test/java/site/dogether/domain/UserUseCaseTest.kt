@@ -52,7 +52,7 @@ class LoginWithKakaoUseCaseTest : BehaviorSpec({
         }
 
         `when`("로그인 중 예외가 발생하면") {
-            val exception = NetworkFailureException(400, "로그인 실패")
+            val exception = NetworkFailureException("400", "로그인 실패")
 
             coEvery {
                 repository.loginWithKakao(

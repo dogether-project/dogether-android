@@ -1,8 +1,11 @@
 package site.dogether.presentation.screen.create_group
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import site.dogether.domain.use_case.group.CreateGroupUseCase
 import site.dogether.presentation.base.BaseViewModel
 
-class CreateGroupViewModel : BaseViewModel<CreateGroupUiState, CreateGroupUiEvent, CreateGroupUiEffect>(CreateGroupUiState()) {
+class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseViewModel<CreateGroupUiState, CreateGroupUiEvent, CreateGroupUiEffect>(CreateGroupUiState()) {
 
     override fun onEvent(event: CreateGroupUiEvent) {
         when (event) {
@@ -17,32 +20,31 @@ class CreateGroupViewModel : BaseViewModel<CreateGroupUiState, CreateGroupUiEven
             is CreateGroupUiEvent.Click -> {
                 when (event) {
                     is CreateGroupUiEvent.Click.OnClickBack -> {
-                        updateState(
-                            condition = { it.currentPage != 0 },
-                            reducer = { it.copy(currentPage = it.currentPage - 1) }
-                        )
+                        if (uiState.currentPage != 0) {
+                            updateState { it.copy(currentPage = it.currentPage - 1) }
+                        } else {
+                            postEffect(CreateGroupUiEffect.NavigateToBack)
+                        }
                     }
 
-                    is CreateGroupUiEvent.Click.OnClickMinusMemberLimit -> {
-                        updateState(
-                            condition = { it.memberLimit > MinimumMemberLimit },
-                            reducer = { it.copy(memberLimit = it.memberLimit - 1) }
-                        )
+                    is CreateGroupUiEvent.Click.OnClickReduceMaximumMemberCount -> {
+                        if (uiState.maximumMemberCount > MinimumMemberCount) {
+                            updateState { it.copy(maximumMemberCount = it.maximumMemberCount - 1) }
+                        }
                     }
 
-                    is CreateGroupUiEvent.Click.OnClickPlusMemberLimit -> {
-                        updateState(
-                            condition = { it.memberLimit < MaximumMemberLimit },
-                            reducer = { it.copy(memberLimit = it.memberLimit + 1) }
-                        )
+                    is CreateGroupUiEvent.Click.OnClickAddMaximumMemberCount -> {
+                        if (uiState.maximumMemberCount < MaximumMemberCount) {
+                            updateState { it.copy(maximumMemberCount = it.maximumMemberCount + 1) }
+                        }
                     }
 
                     is CreateGroupUiEvent.Click.OnClickNext -> {
                         updateState { it.copy(currentPage = it.currentPage + 1) }
                     }
 
-                    is CreateGroupUiEvent.Click.OnClickPeriod -> {
-                        updateState { it.copy(period = event.period) }
+                    is CreateGroupUiEvent.Click.OnClickDuration -> {
+                        updateState { it.copy(duration = event.duration) }
                     }
 
                     is CreateGroupUiEvent.Click.OnClickLaunchFrom -> {
@@ -50,15 +52,24 @@ class CreateGroupViewModel : BaseViewModel<CreateGroupUiState, CreateGroupUiEven
                     }
 
                     is CreateGroupUiEvent.Click.OnClickCreateGroup -> {
+                        viewModelScope.launch {
+                            val createGroupResult = createGroup(
+                                name = uiState.name,
+                                maximumMemberCount = uiState.maximumMemberCount,
+                                isLaunchFromToday = uiState.isLaunchFromToday,
+                                duration = uiState.duration
+                            ).getOrElse { throwable ->
+                                return@launch
+                            }
 
+                            postEffect(CreateGroupUiEffect.NavigateToGroupCreated(createGroupResult.joinCode))
+                        }
                     }
 
                     is CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogNegative -> {
                         updateState {
                             dismissDuplicatedNameDialog()
-                            it.copy(
-                                currentPage = 0
-                            )
+                            it.copy(currentPage = 0)
                         }
                     }
 

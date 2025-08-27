@@ -19,10 +19,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,9 +37,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -204,12 +209,20 @@ fun DogetherTextField(
     val focusManager = LocalFocusManager.current
     var borderColorState by remember { mutableStateOf(Color.Transparent) }
 
+    var inner by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(text = value, selection = TextRange(value.length)))
+    }
+
+    LaunchedEffect(value) {
+        if (inner.composition == null && value != inner.text) {
+            inner = inner.copy(text = value, selection = TextRange(value.length))
+        }
+    }
+
     Row(
         modifier
             .clip(RoundedCornerShape(12.dp))
-            .onFocusChanged { focusState ->
-                borderColorState = if (focusState.hasFocus) ColorBorderPrimary else Color.Transparent
-            }
+            .onFocusChanged { focusState -> borderColorState = if (focusState.hasFocus) ColorBorderPrimary else Color.Transparent }
             .background(ColorBgElevated)
             .border(
                 width = (1.5).dp,
@@ -220,9 +233,14 @@ fun DogetherTextField(
     ) {
         BasicTextField(
             modifier = Modifier.weight(1f),
-            value = value,
+            value = inner,
             cursorBrush = SolidColor(Color.White),
-            onValueChange = { text -> if (lengthLimit != 0 && text.length <= lengthLimit) onValueChanged(text) else onValueChanged(text) },
+            onValueChange = { newValue ->
+                val limitedText = newValue.text.take(lengthLimit)
+                val fixed = newValue.copy(text = limitedText)
+                inner = fixed
+                if (limitedText != value) onValueChanged(limitedText)
+            },
             singleLine = singleLine,
             textStyle = textStyle.copy(color = textColor),
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
@@ -233,13 +251,9 @@ fun DogetherTextField(
                 }
             ),
             decorationBox = {
-                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    if (value.isEmpty()) {
-                        Text(
-                            text = hintText,
-                            style = hintTextStyle,
-                            color = hintTextColor
-                        )
+                Box(Modifier.padding(horizontal = 16.dp)) {
+                    if (inner.text.isEmpty()) {
+                        Text(text = hintText, style = hintTextStyle, color = hintTextColor)
                     } else {
                         it()
                     }
@@ -247,17 +261,12 @@ fun DogetherTextField(
             }
         )
 
-        if (lengthLimit != 0) {
+        if (lengthLimit > 0) {
             Text(
                 modifier = Modifier.padding(end = 16.dp),
                 text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = ColorTextPrimary)) {
-                        append("${value.length}")
-                    }
-
-                    withStyle(SpanStyle(color = ColorTextSecondary)) {
-                        append("/${lengthLimit}")
-                    }
+                    withStyle(SpanStyle(color = ColorTextPrimary)) { append("${inner.text.length}") }
+                    withStyle(SpanStyle(color = ColorTextSecondary)) { append("/$lengthLimit") }
                 },
                 style = Small_S.copy(lineHeightStyle = LineHeightStyle.Default)
             )
@@ -281,7 +290,9 @@ private fun DogetherTextFieldPreview() {
 @Composable
 fun BackButton(onClick: () -> Unit) {
     Icon(
-        modifier = Modifier.clickableWithoutRipple { onClick() },
+        modifier = Modifier
+            .minimumInteractiveComponentSize()
+            .clickableWithoutRipple { onClick() },
         painter = painterResource(R.drawable.ic_arrow_back),
         tint = ColorIconDefault,
         contentDescription = "icon_arrow_back"
@@ -298,8 +309,8 @@ private fun BackButtonPreview() {
 fun GroupInfoBoard(
     modifier: Modifier,
     name: String,
-    period: Int,
-    memberLimit: Int,
+    duration: Int,
+    maximumMemberCount: Int,
     isLaunchFromToday: Boolean,
 ) {
     Column(
@@ -332,17 +343,17 @@ fun GroupInfoBoard(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             InfoRow(
-                title = stringResource(R.string.info_period),
-                value = if (period < 7) {
-                    "$period" + stringResource(R.string.unit_day)
+                title = stringResource(R.string.info_duration),
+                value = if (duration < 7) {
+                    "$duration" + stringResource(R.string.unit_day)
                 } else {
-                    "${period / 7}" + stringResource(R.string.unit_week)
+                    "${duration / 7}" + stringResource(R.string.unit_week)
                 },
             )
 
             InfoRow(
-                title = stringResource(R.string.info_group_member_limit),
-                value = stringResource(R.string.unit_prefix_whole) + " $memberLimit" + stringResource(R.string.unit_member)
+                title = stringResource(R.string.info_group_member_count),
+                value = stringResource(R.string.unit_prefix_whole) + " $maximumMemberCount" + stringResource(R.string.unit_member)
             )
 
             InfoRow(
@@ -352,7 +363,7 @@ fun GroupInfoBoard(
 
             InfoRow(
                 title = stringResource(R.string.info_end_date),
-                value = if (isLaunchFromToday) today.plusDays(period.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.plusDays(period.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR)
+                value = if (isLaunchFromToday) today.plusDays(duration.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.plusDays(duration.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR)
             )
         }
     }
@@ -366,8 +377,8 @@ private fun GroupInfoBoardPreview() {
             .fillMaxWidth()
             .height(240.dp),
         name = "Name",
-        period = 21,
-        memberLimit = 10,
+        duration = 21,
+        maximumMemberCount = 10,
         isLaunchFromToday = true
     )
 }
