@@ -1,8 +1,11 @@
 package site.dogether.presentation.screen.create_group
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import site.dogether.domain.use_case.group.CreateGroupUseCase
 import site.dogether.presentation.base.BaseViewModel
 
-class CreateGroupViewModel : BaseViewModel<CreateGroupUiState, CreateGroupUiEvent, CreateGroupUiEffect>(CreateGroupUiState()) {
+class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseViewModel<CreateGroupUiState, CreateGroupUiEvent, CreateGroupUiEffect>(CreateGroupUiState()) {
 
     override fun onEvent(event: CreateGroupUiEvent) {
         when (event) {
@@ -24,15 +27,15 @@ class CreateGroupViewModel : BaseViewModel<CreateGroupUiState, CreateGroupUiEven
                         }
                     }
 
-                    is CreateGroupUiEvent.Click.OnClickMinusMemberLimit -> {
-                        if (uiState.memberLimit > MinimumMemberLimit) {
-                            updateState { it.copy(memberLimit = it.memberLimit - 1) }
+                    is CreateGroupUiEvent.Click.OnClickReduceMaximumMemberCount -> {
+                        if (uiState.maximumMemberCount > MinimumMemberCount) {
+                            updateState { it.copy(maximumMemberCount = it.maximumMemberCount - 1) }
                         }
                     }
 
-                    is CreateGroupUiEvent.Click.OnClickPlusMemberLimit -> {
-                        if (uiState.memberLimit < MaximumMemberLimit) {
-                            updateState { it.copy(memberLimit = it.memberLimit + 1) }
+                    is CreateGroupUiEvent.Click.OnClickAddMaximumMemberCount -> {
+                        if (uiState.maximumMemberCount < MaximumMemberCount) {
+                            updateState { it.copy(maximumMemberCount = it.maximumMemberCount + 1) }
                         }
                     }
 
@@ -49,7 +52,18 @@ class CreateGroupViewModel : BaseViewModel<CreateGroupUiState, CreateGroupUiEven
                     }
 
                     is CreateGroupUiEvent.Click.OnClickCreateGroup -> {
+                        viewModelScope.launch {
+                            val createGroupResult = createGroup(
+                                name = uiState.name,
+                                maximumMemberCount = uiState.maximumMemberCount,
+                                isLaunchFromToday = uiState.isLaunchFromToday,
+                                duration = uiState.duration
+                            ).getOrElse {
+                                // handle exception
+                                return@launch
+                            }
 
+                        }
                     }
 
                     is CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogNegative -> {

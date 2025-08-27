@@ -185,7 +185,7 @@ private fun PurposePageContents(
 
             Text(
                 modifier = Modifier.padding(top = 20.dp),
-                text = stringResource(R.string.input_title_group_member_limit),
+                text = stringResource(R.string.input_title_group_member_count),
                 style = Body1_B,
                 color = ColorTextSubtle
             )
@@ -198,28 +198,28 @@ private fun PurposePageContents(
                     .height(50.dp)
                     .background(ColorBgElevated)
             ) {
-                MemberLimitCalculateButton(
+                MaximumMemberCountCalculateButton(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .padding(start = 5.dp),
                     painter = painterResource(R.drawable.ic_minus),
                     contentDescription = "icon_minus"
-                ) { onEvent(CreateGroupUiEvent.Click.OnClickMinusMemberLimit) }
+                ) { onEvent(CreateGroupUiEvent.Click.OnClickReduceMaximumMemberCount) }
 
                 Text(
                     modifier = Modifier.align(Alignment.Center),
-                    text = "${uiState.memberLimit}" + stringResource(R.string.unit_member),
+                    text = "${uiState.maximumMemberCount}" + stringResource(R.string.unit_member),
                     style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextDefault
                 )
 
-                MemberLimitCalculateButton(
+                MaximumMemberCountCalculateButton(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(end = 5.dp),
                     painter = painterResource(R.drawable.ic_plus),
                     contentDescription = "icon_plus"
-                ) { onEvent(CreateGroupUiEvent.Click.OnClickPlusMemberLimit) }
+                ) { onEvent(CreateGroupUiEvent.Click.OnClickAddMaximumMemberCount) }
             }
 
             Row(
@@ -229,13 +229,13 @@ private fun PurposePageContents(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "$MinimumMemberLimit" + stringResource(R.string.unit_member),
+                    text = "$MinimumMemberCount" + stringResource(R.string.unit_member),
                     style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextSecondary
                 )
 
                 Text(
-                    text = "$MaximumMemberLimit" + stringResource(R.string.unit_member),
+                    text = "$MaximumMemberCount" + stringResource(R.string.unit_member),
                     style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextSecondary
                 )
@@ -256,7 +256,7 @@ private fun PurposePageContents(
 }
 
 @Composable
-private fun MemberLimitCalculateButton(
+private fun MaximumMemberCountCalculateButton(
     modifier: Modifier,
     painter: Painter,
     contentDescription: String,
@@ -466,7 +466,7 @@ private fun CheckPageContents(
                 modifier = Modifier.padding(horizontal = 32.dp),
                 name = uiState.name,
                 duration = uiState.duration,
-                memberLimit = uiState.memberLimit,
+                maximumMemberCount = uiState.maximumMemberCount,
                 isLaunchFromToday = uiState.isLaunchFromToday
             )
         }

@@ -307,7 +307,7 @@ fun GroupInfoBoard(
     modifier: Modifier,
     name: String,
     duration: Int,
-    memberLimit: Int,
+    maximumMemberCount: Int,
     isLaunchFromToday: Boolean,
 ) {
     Column(
@@ -349,8 +349,8 @@ fun GroupInfoBoard(
             )
 
             InfoRow(
-                title = stringResource(R.string.info_group_member_limit),
-                value = stringResource(R.string.unit_prefix_whole) + " $memberLimit" + stringResource(R.string.unit_member)
+                title = stringResource(R.string.info_group_member_count),
+                value = stringResource(R.string.unit_prefix_whole) + " $maximumMemberCount" + stringResource(R.string.unit_member)
             )
 
             InfoRow(
@@ -375,7 +375,7 @@ private fun GroupInfoBoardPreview() {
             .height(240.dp),
         name = "Name",
         duration = 21,
-        memberLimit = 10,
+        maximumMemberCount = 10,
         isLaunchFromToday = true
     )
 }

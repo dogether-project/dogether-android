@@ -12,4 +12,5 @@ object ApiRoutes {
     const val KAKAO_LOGIN = "auth/login"
     const val CHECK_UPDATE_REQUIRED = "app-info/force-update-check"
     const val CHECK_PARTICIPATING = "groups/participating"
+    const val CREATE_GROUP = "groups"
 }

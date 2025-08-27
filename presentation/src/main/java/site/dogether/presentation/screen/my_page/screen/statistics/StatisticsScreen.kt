@@ -148,7 +148,7 @@ private fun StatisticsContents(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 GroupInfoColumn(
-                    title = stringResource(R.string.info_group_member_limit),
+                    title = stringResource(R.string.info_group_member_count),
                     value = "6/10",
                 )
 

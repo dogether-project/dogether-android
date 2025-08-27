@@ -37,7 +37,9 @@ val viewModelModule = module {
         )
     }
     viewModel { ParticipationMethodViewModel() }
-    viewModel { CreateGroupViewModel() }
+    viewModel {
+        CreateGroupViewModel(createGroup = get())
+    }
     viewModel { GroupCreatedViewModel() }
     viewModel { ParticipateGroupViewModel() }
     viewModel { GroupParticipatedViewModel() }

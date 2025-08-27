@@ -107,7 +107,7 @@
     <string name="cta_button_body_launch_from_tomorrow">조금 더 준비하고,\n내일부터 시작하기</string>
 
     <string name="input_title_group_name">그룹명</string>
-    <string name="input_title_group_member_limit">그룹 인원</string>
+    <string name="input_title_group_member_count">그룹 인원</string>
     <string name="input_title_duration">활동 기간</string>
     <string name="input_title_launch_date">시작일</string>
 
@@ -124,7 +124,7 @@
     <string name="unit_each">개</string>
 
     <string name="info_duration">활동 기간</string>
-    <string name="info_group_member_limit">그룹원</string>
+    <string name="info_group_member_count">그룹원</string>
     <string name="info_launch_date">시작일</string>
     <string name="info_end_date">종료일</string>
     <string name="info_invite_code">초대코드</string>

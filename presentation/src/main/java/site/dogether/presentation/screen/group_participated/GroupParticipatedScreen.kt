@@ -67,7 +67,7 @@ private fun GroupParticipatedScreenContents(
                 ),
                 name = "name",
                 duration = 14,
-                memberLimit = 10,
+                maximumMemberCount = 10,
                 isLaunchFromToday = true
             )
         }
