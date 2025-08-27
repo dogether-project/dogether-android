@@ -9,8 +9,13 @@ import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -60,6 +65,43 @@ fun Modifier.conditionedClickableWithoutRipple(
     condition: Boolean,
     onClick: () -> Unit,
 ): Modifier = if (condition) this.then(Modifier.clickableWithoutRipple { onClick() }) else this
+
+
+fun Modifier.intervaledClickable(
+    interval: Long = 500L,
+    onClick: () -> Unit,
+): Modifier = composed {
+    var lastClickTime by remember { mutableLongStateOf(0L) }
+
+    this.clickable(
+        indication = null,
+        interactionSource = remember { MutableInteractionSource() }
+    ) {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastClickTime > interval) {
+            lastClickTime = currentTime
+            onClick()
+        }
+    }
+}
+
+fun Modifier.intervaledClickableWithoutRipple(
+    interval: Long = 500L,
+    onClick: () -> Unit,
+): Modifier = composed {
+    var lastClickTime by remember { mutableLongStateOf(0L) }
+
+    this.clickable(
+        indication = null,
+        interactionSource = remember { MutableInteractionSource() }
+    ) {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastClickTime > interval) {
+            lastClickTime = currentTime
+            onClick()
+        }
+    }
+}
 
 @Composable
 fun Float.toDp() = with(LocalDensity.current) { this@toDp.toDp() }
