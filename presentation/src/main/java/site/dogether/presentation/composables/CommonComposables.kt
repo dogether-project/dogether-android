@@ -306,7 +306,7 @@ private fun BackButtonPreview() {
 fun GroupInfoBoard(
     modifier: Modifier,
     name: String,
-    period: Int,
+    duration: Int,
     memberLimit: Int,
     isLaunchFromToday: Boolean,
 ) {
@@ -340,11 +340,11 @@ fun GroupInfoBoard(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             InfoRow(
-                title = stringResource(R.string.info_period),
-                value = if (period < 7) {
-                    "$period" + stringResource(R.string.unit_day)
+                title = stringResource(R.string.info_duration),
+                value = if (duration < 7) {
+                    "$duration" + stringResource(R.string.unit_day)
                 } else {
-                    "${period / 7}" + stringResource(R.string.unit_week)
+                    "${duration / 7}" + stringResource(R.string.unit_week)
                 },
             )
 
@@ -360,7 +360,7 @@ fun GroupInfoBoard(
 
             InfoRow(
                 title = stringResource(R.string.info_end_date),
-                value = if (isLaunchFromToday) today.plusDays(period.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.plusDays(period.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR)
+                value = if (isLaunchFromToday) today.plusDays(duration.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.plusDays(duration.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR)
             )
         }
     }
@@ -374,7 +374,7 @@ private fun GroupInfoBoardPreview() {
             .fillMaxWidth()
             .height(240.dp),
         name = "Name",
-        period = 21,
+        duration = 21,
         memberLimit = 10,
         isLaunchFromToday = true
     )

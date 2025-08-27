@@ -40,8 +40,8 @@ class CreateGroupViewModel : BaseViewModel<CreateGroupUiState, CreateGroupUiEven
                         updateState { it.copy(currentPage = it.currentPage + 1) }
                     }
 
-                    is CreateGroupUiEvent.Click.OnClickPeriod -> {
-                        updateState { it.copy(period = event.period) }
+                    is CreateGroupUiEvent.Click.OnClickDuration -> {
+                        updateState { it.copy(duration = event.duration) }
                     }
 
                     is CreateGroupUiEvent.Click.OnClickLaunchFrom -> {

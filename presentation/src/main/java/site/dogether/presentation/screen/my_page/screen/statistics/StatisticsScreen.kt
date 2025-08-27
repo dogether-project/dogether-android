@@ -187,14 +187,14 @@ private fun StatisticsContents(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_certification_period),
+                    painter = painterResource(R.drawable.ic_certification_duration),
                     tint = ColorIconDefault,
-                    contentDescription = "icon_certification_period"
+                    contentDescription = "icon_certification_duration"
                 )
 
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(R.string.info_certification_period),
+                    text = stringResource(R.string.info_certification_duration),
                     style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextDefault
                 )

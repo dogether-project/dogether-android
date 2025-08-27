@@ -10,7 +10,7 @@ data class CreateGroupUiState(
     val currentPage: Int = 0,
     val name: String = "",
     val memberLimit: Int = 10,
-    val period: Int = 3,
+    val duration: Int = 3,
     val isLaunchFromToday: Boolean = true,
     val duplicatedNameDialogState: DialogState = DialogState(false),
 )
@@ -29,7 +29,7 @@ sealed interface CreateGroupUiEvent {
 
         data object OnClickNext : Click
 
-        data class OnClickPeriod(val period: Int) : Click
+        data class OnClickDuration(val duration: Int) : Click
 
         data class OnClickLaunchFrom(val isLaunchFromToday: Boolean) : Click
 

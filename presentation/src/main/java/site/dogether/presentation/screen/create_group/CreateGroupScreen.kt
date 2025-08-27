@@ -286,7 +286,7 @@ private fun SchedulePageContents(
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = stringResource(R.string.input_title_period),
+                text = stringResource(R.string.input_title_duration),
                 style = Body1_B,
                 color = ColorTextSubtle
             )
@@ -297,16 +297,16 @@ private fun SchedulePageContents(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                PeriodButton(
-                    period = 3,
-                    selectedPeriod = uiState.period,
-                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickPeriod(3)) }
+                DurationButton(
+                    duration = 3,
+                    selectedDuration = uiState.duration,
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickDuration(3)) }
                 )
 
-                PeriodButton(
-                    period = 7,
-                    selectedPeriod = uiState.period,
-                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickPeriod(7)) }
+                DurationButton(
+                    duration = 7,
+                    selectedDuration = uiState.duration,
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickDuration(7)) }
                 )
             }
 
@@ -316,16 +316,16 @@ private fun SchedulePageContents(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                PeriodButton(
-                    period = 14,
-                    selectedPeriod = uiState.period,
-                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickPeriod(14)) }
+                DurationButton(
+                    duration = 14,
+                    selectedDuration = uiState.duration,
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickDuration(14)) }
                 )
 
-                PeriodButton(
-                    period = 28,
-                    selectedPeriod = uiState.period,
-                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickPeriod(28)) }
+                DurationButton(
+                    duration = 28,
+                    selectedDuration = uiState.duration,
+                    onClick = { onEvent(CreateGroupUiEvent.Click.OnClickDuration(28)) }
                 )
             }
 
@@ -369,12 +369,12 @@ private fun SchedulePageContents(
 }
 
 @Composable
-private fun RowScope.PeriodButton(
-    period: Int,
-    selectedPeriod: Int,
+private fun RowScope.DurationButton(
+    duration: Int,
+    selectedDuration: Int,
     onClick: () -> Unit,
 ) {
-    val isSelected = period == selectedPeriod
+    val isSelected = duration == selectedDuration
 
     Box(
         modifier = Modifier
@@ -395,10 +395,10 @@ private fun RowScope.PeriodButton(
     ) {
         Text(
             modifier = Modifier.align(Alignment.CenterStart),
-            text = if (period < 7) {
-                "$period" + stringResource(R.string.unit_day)
+            text = if (duration < 7) {
+                "$duration" + stringResource(R.string.unit_day)
             } else {
-                "${period / 7}" + stringResource(R.string.unit_week)
+                "${duration / 7}" + stringResource(R.string.unit_week)
             },
             style = Body1_B.copy(lineHeightStyle = LineHeightStyle.Default),
             color = if (isSelected) ColorTextPrimary else ColorTextDefault
@@ -465,7 +465,7 @@ private fun CheckPageContents(
             GroupInfoBoard(
                 modifier = Modifier.padding(horizontal = 32.dp),
                 name = uiState.name,
-                period = uiState.period,
+                duration = uiState.duration,
                 memberLimit = uiState.memberLimit,
                 isLaunchFromToday = uiState.isLaunchFromToday
             )
