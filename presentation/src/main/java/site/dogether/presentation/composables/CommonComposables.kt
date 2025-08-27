@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -289,7 +290,9 @@ private fun DogetherTextFieldPreview() {
 @Composable
 fun BackButton(onClick: () -> Unit) {
     Icon(
-        modifier = Modifier.clickableWithoutRipple { onClick() },
+        modifier = Modifier
+            .minimumInteractiveComponentSize()
+            .clickableWithoutRipple { onClick() },
         painter = painterResource(R.drawable.ic_arrow_back),
         tint = ColorIconDefault,
         contentDescription = "icon_arrow_back"

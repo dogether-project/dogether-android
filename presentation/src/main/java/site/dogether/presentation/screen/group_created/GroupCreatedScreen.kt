@@ -1,5 +1,7 @@
 package site.dogether.presentation.screen.group_created
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -10,13 +12,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
@@ -24,7 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
+import site.dogether.presentation.Screen
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBgSurface
@@ -34,14 +41,45 @@ import site.dogether.presentation.theme.ColorIconSecondary
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
+import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
+    val context = LocalContext.current
+    val navHostController = LocalNavHostController.current
+
+    viewModel.collectSideEffect { uiEffect ->
+        when (uiEffect) {
+            is GroupCreatedUiEffect.ShareJoinCode -> shareJoinCode(
+                context = context,
+                joinCode = uiEffect.joinCode
+            )
+
+            is GroupCreatedUiEffect.NavigateToHome -> navHostController.navigate(Screen.HOME)
+        }
+    }
+
     GroupCreatedScreenContents(
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
+}
+
+private fun shareJoinCode(
+    context: Context,
+    joinCode: String,
+) {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.intent_title_share_join_code))
+        putExtra(Intent.EXTRA_TEXT, joinCode)
+        type = "text/plain"
+    }
+
+    val shareIntent = Intent.createChooser(sendIntent, context.getString(R.string.intent_title_share_join_code))
+    context.startActivity(shareIntent)
 }
 
 @Composable
@@ -54,6 +92,7 @@ private fun GroupCreatedScreenContents(
             modifier = Modifier
                 .padding(top = 68.dp)
                 .fillMaxWidth()
+                .statusBarsPadding()
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -99,7 +138,10 @@ private fun GroupCreatedScreenContents(
                     )
 
                     Icon(
-                        modifier = Modifier.padding(start = 8.dp),
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .minimumInteractiveComponentSize()
+                            .clickableWithoutRipple { onEvent(GroupCreatedUiEvent.Click.OnClickShare) },
                         painter = painterResource(R.drawable.ic_export),
                         tint = ColorIconSecondary,
                         contentDescription = "icon_export"
@@ -134,7 +176,7 @@ private fun GroupCreatedScreenContents(
                 .height(50.dp),
             isEnabled = true,
             text = stringResource(R.string.cta_button_navigate_to_home),
-            onClick = {}
+            onClick = { onEvent(GroupCreatedUiEvent.Click.OnClickNavigateToHome) }
         )
     }
 }

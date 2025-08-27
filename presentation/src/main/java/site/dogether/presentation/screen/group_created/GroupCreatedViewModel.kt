@@ -14,7 +14,17 @@ class GroupCreatedViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel<
 
     override fun onEvent(event: GroupCreatedUiEvent) {
         when (event) {
-            else -> Unit
+            is GroupCreatedUiEvent.Click -> {
+                when(event) {
+                    is GroupCreatedUiEvent.Click.OnClickShare -> {
+                        postEffect(GroupCreatedUiEffect.ShareJoinCode(uiState.joinCode))
+                    }
+
+                    is GroupCreatedUiEvent.Click.OnClickNavigateToHome -> {
+                        postEffect(GroupCreatedUiEffect.NavigateToHome)
+                    }
+                }
+            }
         }
     }
 }

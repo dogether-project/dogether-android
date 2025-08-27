@@ -154,4 +154,6 @@
 
     <string name="common_ascend_group_created">그룹 생성일순</string>
     <string name="common_ascend_todo_completed">투두 완료일순</string>
+
+    <string name="intent_title_share_join_code">참여 코드 공유</string>
 </resources>

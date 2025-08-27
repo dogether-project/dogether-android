@@ -56,11 +56,11 @@ class SplashViewModel(
                                 return@launch
                             }
 
-//                            if (checkParticipatingResult.shouldParticipating) {
+                            if (checkParticipatingResult.shouldParticipating) {
                                 postEffect(SplashUiEffect.NavigateToParticipationMethod)
-//                            } else {
-//                                postEffect(SplashUiEffect.NavigateToHome)
-//                            }
+                            } else {
+                                postEffect(SplashUiEffect.NavigateToHome)
+                            }
                         }
                     }
                 }
