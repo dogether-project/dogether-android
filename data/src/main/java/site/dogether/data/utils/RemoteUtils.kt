@@ -41,11 +41,11 @@ suspend inline fun <reified T> safeApiCall(
                 Result.failure(IllegalStateException("Response body 'data' is null"))
             }
         } else {
-            val errorBody = response.bodyAsText()
+            val parsedErrorBody = json.decodeFromString<BaseResponse<Nothing>>(response.bodyAsText())
             Result.failure(
                 NetworkFailureException(
-                    code = response.status.value,
-                    message = json.decodeFromString<BaseResponse<Nothing>>(errorBody).message
+                    code = parsedErrorBody.code,
+                    message = parsedErrorBody.message
                 )
             )
         }

@@ -58,8 +58,7 @@ class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseVi
                                 maximumMemberCount = uiState.maximumMemberCount,
                                 isLaunchFromToday = uiState.isLaunchFromToday,
                                 duration = uiState.duration
-                            ).getOrElse {
-                                // handle exception
+                            ).getOrElse { throwable ->
                                 return@launch
                             }
 
@@ -70,9 +69,7 @@ class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseVi
                     is CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogNegative -> {
                         updateState {
                             dismissDuplicatedNameDialog()
-                            it.copy(
-                                currentPage = 0
-                            )
+                            it.copy(currentPage = 0)
                         }
                     }
 
