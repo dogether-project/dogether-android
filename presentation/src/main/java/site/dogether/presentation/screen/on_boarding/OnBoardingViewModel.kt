@@ -7,15 +7,18 @@ import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.LoginWithKakaoUseCase
 import site.dogether.domain.use_case.user.StoreUserInfoUseCase
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.on_boarding.OnBoardingUiEvent.Click.OnClickKakaoLogin
 
 class OnBoardingViewModel(
     private val loginWithKakao: LoginWithKakaoUseCase,
     private val storeUserInfo: StoreUserInfoUseCase,
     private val checkParticipating: CheckParticipatingUseCase,
-) : BaseViewModel<OnBoardingUiState, OnBoardingUiEvent, OnBoardingUiEffect>(OnBoardingUiState()) {
+) : BaseViewModel<OnBoardingUiState>(OnBoardingUiState()) {
 
-    override fun onEvent(event: OnBoardingUiEvent) {
+    override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is OnBoardingUiEvent.Click -> {
                 when (event) {

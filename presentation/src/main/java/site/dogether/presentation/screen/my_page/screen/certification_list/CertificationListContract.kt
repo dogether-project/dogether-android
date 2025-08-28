@@ -1,5 +1,7 @@
 package site.dogether.presentation.screen.my_page.screen.certification_list
 
+import site.dogether.presentation.base.UiEffect
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.Chip
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.SortingMethod
 
@@ -12,7 +14,7 @@ data class CertificationListUiState(
     val isSelectSortingMethodBottomSheetShowing: Boolean = false,
 )
 
-sealed interface CertificationListUiEvent {
+sealed interface CertificationListUiEvent : UiEvent {
     sealed interface Click : CertificationListUiEvent {
         data object OnClickSelectSortingMethod : Click
 
@@ -26,6 +28,6 @@ sealed interface CertificationListUiEvent {
     }
 }
 
-sealed interface CertificationListUiEffect {
+sealed interface CertificationListUiEffect : UiEffect {
 
 }

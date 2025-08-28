@@ -1,10 +1,13 @@
 package site.dogether.presentation.screen.my_page.screen.statistics
 
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEvent
 
-class StatisticsViewModel : BaseViewModel<StatisticsUiState, StatisticsUiEvent, StatisticsUiEffect>(StatisticsUiState()) {
+class StatisticsViewModel : BaseViewModel<StatisticsUiState>(StatisticsUiState()) {
 
-    override fun onEvent(event: StatisticsUiEvent) {
+    override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is StatisticsUiEvent.Click -> {
                 when (event) {

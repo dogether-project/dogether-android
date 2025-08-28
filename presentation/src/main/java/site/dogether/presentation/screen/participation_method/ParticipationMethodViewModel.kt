@@ -1,10 +1,13 @@
 package site.dogether.presentation.screen.participation_method
 
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEvent
 
-class ParticipationMethodViewModel : BaseViewModel<ParticipationMethodUiState, ParticipationMethodUiEvent, ParticipationMethodUiEffect>(ParticipationMethodUiState()) {
+class ParticipationMethodViewModel : BaseViewModel<ParticipationMethodUiState>(ParticipationMethodUiState()) {
 
-    override fun onEvent(event: ParticipationMethodUiEvent) {
+    override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is ParticipationMethodUiEvent.Click -> {
                 when (event) {

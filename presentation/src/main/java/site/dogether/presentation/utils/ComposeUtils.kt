@@ -32,6 +32,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.compose.collectSideEffect
+import site.dogether.presentation.Screen
+import site.dogether.presentation.base.UiEffect
+import site.dogether.presentation.base.BaseViewModel
 
 @Preview(
     showBackground = true,
@@ -41,6 +45,19 @@ annotation class ScreenPreview
 
 val LocalNavHostController = staticCompositionLocalOf<NavHostController> {
     error("NavHostController not provided")
+}
+
+@Composable
+inline fun <reified Effect : UiEffect> BaseViewModel<*>.CollectEffect(crossinline onCollected: (Effect) -> Unit) {
+    val navHostController = LocalNavHostController.current
+    collectSideEffect { effect ->
+        when (effect) {
+            is UiEffect.NavigateToPreviousScreen -> navHostController.popBackStack()
+            is UiEffect.NavigateToError -> navHostController.navigate(Screen.ERROR)
+            is Effect -> onCollected(effect)
+            else -> Unit
+        }
+    }
 }
 
 @Composable

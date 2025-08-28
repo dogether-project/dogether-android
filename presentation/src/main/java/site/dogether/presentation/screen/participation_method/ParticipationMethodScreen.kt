@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body2_R
@@ -39,16 +39,16 @@ import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Yellow
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.intervaledClickableWithoutRipple
 
 @Composable
 fun ParticipationMethodScreen(viewModel: ParticipationMethodViewModel = koinViewModel()) {
     val navHostController = LocalNavHostController.current
 
-    viewModel.collectSideEffect { uiEffect ->
+    viewModel.CollectEffect<ParticipationMethodUiEffect> { uiEffect ->
         when (uiEffect) {
             is ParticipationMethodUiEffect.NavigateToCreateGroup -> navigateToCreateGroup(navHostController)
 
@@ -73,7 +73,7 @@ private fun navigateToParticipateWithCode(navHostController: NavHostController) 
 @Composable
 private fun ParticipationMethodScreenContents(
     uiState: ParticipationMethodUiState,
-    onEvent: (ParticipationMethodUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier

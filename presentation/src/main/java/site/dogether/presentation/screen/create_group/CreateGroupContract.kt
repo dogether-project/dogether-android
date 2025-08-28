@@ -1,5 +1,7 @@
 package site.dogether.presentation.screen.create_group
 
+import site.dogether.presentation.base.UiEffect
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.DialogState
 
 const val MinimumMemberCount = 2
@@ -15,7 +17,7 @@ data class CreateGroupUiState(
     val duplicatedNameDialogState: DialogState = DialogState(false),
 )
 
-sealed interface CreateGroupUiEvent {
+sealed interface CreateGroupUiEvent : UiEvent {
     sealed interface Typed : CreateGroupUiEvent {
         data class OnGroupNameTyped(val text: String) : Typed
     }
@@ -45,7 +47,7 @@ sealed interface CreateGroupUiEvent {
     }
 }
 
-sealed interface CreateGroupUiEffect {
+sealed interface CreateGroupUiEffect : UiEffect {
     data object NavigateToBack : CreateGroupUiEffect
 
     data class NavigateToGroupCreated(val joinCode: String) : CreateGroupUiEffect

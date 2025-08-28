@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.NegativeCTAButton
 import site.dogether.presentation.composables.TopBar
@@ -44,7 +45,7 @@ fun ErrorScreen(viewModel: ErrorViewModel = koinViewModel()) {
 @Composable
 private fun ErrorScreenContents(
     uiState: ErrorUiState,
-    onEvent: (ErrorUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier

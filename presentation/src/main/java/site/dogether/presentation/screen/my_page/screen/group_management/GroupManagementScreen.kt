@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
@@ -31,12 +32,19 @@ import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Red400
 import site.dogether.presentation.theme.Small_R
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun GroupManagementScreen(viewModel: GroupManagementViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
+
+    viewModel.CollectEffect<GroupManagementUiEffect> { uiEffect ->
+        when (uiEffect) {
+            else -> Unit
+        }
+    }
 
     GroupManagementScreenContents(
         uiState = uiState,
@@ -52,7 +60,7 @@ fun GroupManagementScreen(viewModel: GroupManagementViewModel = koinViewModel())
 @Composable
 private fun GroupManagementScreenContents(
     uiState: GroupManagementUiState,
-    onEvent: (GroupManagementUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -60,7 +68,7 @@ private fun GroupManagementScreenContents(
             .fillMaxSize()
     ) {
         TopBar(
-            start = { BackButton {} },
+            start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
             centerText = stringResource(R.string.title_group_management)
         )
 
@@ -83,7 +91,7 @@ private fun GroupManagementScreenContents(
 @Composable
 private fun InitDialog(
     uiState: GroupManagementUiState,
-    onEvent: (GroupManagementUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     if (uiState.withdrawDialogState.isShowing) {
         ActionDialog(

@@ -5,26 +5,34 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 
-abstract class BaseViewModel<State : Any, Event, Effect : Any>(
+open class BaseViewModel<State : Any>(
     initialState: State,
-) : ContainerHost<State, Effect>, ViewModel() {
+) : ContainerHost<State, UiEffect>, ViewModel() {
 
-    override val container: Container<State, Effect> = container(initialState)
+    override val container: Container<State, UiEffect> = container(initialState)
 
     protected val uiState: State
         get() = container.stateFlow.value
 
-    abstract fun onEvent(event: Event)
+    open fun onEvent(event: UiEvent) {
+        when (event) {
+            is UiEvent.Click -> {
+                when (event) {
+                    is UiEvent.Click.OnClickBack -> {
+                        postEffect(UiEffect.NavigateToPreviousScreen)
+                    }
+                }
+            }
+        }
+    }
 
     protected fun updateState(
         reducer: (State) -> State,
     ) {
-        intent {
-            reduce { reducer(state) }
-        }
+        intent { reduce { reducer(state) } }
     }
 
-    protected fun postEffect(effect: Effect) {
+    protected fun postEffect(effect: UiEffect) {
         intent { postSideEffect(effect) }
     }
 }

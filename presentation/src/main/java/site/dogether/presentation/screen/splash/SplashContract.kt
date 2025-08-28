@@ -1,10 +1,13 @@
 package site.dogether.presentation.screen.splash
 
+import site.dogether.presentation.base.UiEffect
+import site.dogether.presentation.base.UiEvent
+
 data class SplashUiState(
     val isPermissionDialogShowing: Boolean = false,
 )
 
-sealed interface SplashUiEvent {
+sealed interface SplashUiEvent : UiEvent {
     sealed interface Lifecycle : SplashUiEvent {
         data object OnStart : Lifecycle
     }
@@ -14,7 +17,7 @@ sealed interface SplashUiEvent {
     }
 }
 
-sealed interface SplashUiEffect {
+sealed interface SplashUiEffect : UiEffect {
     data object GetAppVersion : SplashUiEffect
 
     data object NavigateToOnBoarding : SplashUiEffect

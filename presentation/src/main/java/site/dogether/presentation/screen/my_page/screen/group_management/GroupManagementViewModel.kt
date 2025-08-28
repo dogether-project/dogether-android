@@ -1,10 +1,13 @@
 package site.dogether.presentation.screen.my_page.screen.group_management
 
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEvent
 
-class GroupManagementViewModel : BaseViewModel<GroupManagementUiState, GroupManagementUiEvent, GroupManagementUiEffect>(GroupManagementUiState()) {
+class GroupManagementViewModel : BaseViewModel<GroupManagementUiState>(GroupManagementUiState()) {
 
-    override fun onEvent(event: GroupManagementUiEvent) {
+    override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is GroupManagementUiEvent.Click -> {
                 when (event) {

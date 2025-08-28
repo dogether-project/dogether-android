@@ -34,9 +34,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
@@ -59,6 +59,7 @@ import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
@@ -70,7 +71,7 @@ private val PAGE_LIST: List<CreateGroupPage> = CreateGroupPage.entries
 fun CreateGroupScreen(viewModel: CreateGroupViewModel = koinViewModel()) {
     val navHostController = LocalNavHostController.current
 
-    viewModel.collectSideEffect { uiEffect ->
+    viewModel.CollectEffect<CreateGroupUiEffect> { uiEffect ->
         when (uiEffect) {
             is CreateGroupUiEffect.NavigateToBack -> navHostController.popBackStack()
 
@@ -92,7 +93,7 @@ fun CreateGroupScreen(viewModel: CreateGroupViewModel = koinViewModel()) {
 @Composable
 private fun CreateGroupScreenContents(
     uiState: CreateGroupUiState,
-    onEvent: (CreateGroupUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     val pagerState = rememberPagerState { PAGE_LIST.size }
 
@@ -161,7 +162,7 @@ private fun CreateGroupScreenContents(
 @Composable
 private fun PurposePageContents(
     uiState: CreateGroupUiState,
-    onEvent: (CreateGroupUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -284,7 +285,7 @@ private fun MaximumMemberCountCalculateButton(
 @Composable
 private fun SchedulePageContents(
     uiState: CreateGroupUiState,
-    onEvent: (CreateGroupUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.weight(1f)) {
@@ -459,7 +460,7 @@ private fun RowScope.LaunchFromButton(
 @Composable
 private fun CheckPageContents(
     uiState: CreateGroupUiState,
-    onEvent: (CreateGroupUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(40.dp))
@@ -489,7 +490,7 @@ private fun CheckPageContents(
 @Composable
 private fun InitDialog(
     uiState: CreateGroupUiState,
-    onEvent: (CreateGroupUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     if (uiState.duplicatedNameDialogState.isShowing) {
         ActionDialog(

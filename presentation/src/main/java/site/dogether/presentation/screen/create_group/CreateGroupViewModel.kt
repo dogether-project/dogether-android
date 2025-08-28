@@ -4,10 +4,13 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.group.CreateGroupUseCase
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEvent
 
-class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseViewModel<CreateGroupUiState, CreateGroupUiEvent, CreateGroupUiEffect>(CreateGroupUiState()) {
+class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseViewModel<CreateGroupUiState>(CreateGroupUiState()) {
 
-    override fun onEvent(event: CreateGroupUiEvent) {
+    override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is CreateGroupUiEvent.Typed -> {
                 when (event) {

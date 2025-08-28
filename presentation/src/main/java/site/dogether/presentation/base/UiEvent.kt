@@ -1,7 +1,7 @@
 package site.dogether.presentation.base
 
-interface BaseUiEvent {
-    sealed interface Click {
+interface UiEvent {
+    sealed interface Click : UiEvent {
         data object OnClickBack : Click
     }
 }

@@ -1,5 +1,7 @@
 package site.dogether.presentation.screen.my_page.screen.settings
 
+import site.dogether.presentation.base.UiEffect
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.DialogState
 
 data class SettingsUiState(
@@ -7,7 +9,7 @@ data class SettingsUiState(
     val withdrawDialogState: DialogState = DialogState(),
 )
 
-sealed interface SettingsUiEvent {
+sealed interface SettingsUiEvent : UiEvent {
     sealed interface Click : SettingsUiEvent {
         data object OnClickLogout : Click
 
@@ -29,6 +31,6 @@ sealed interface SettingsUiEvent {
     }
 }
 
-sealed interface SettingsUiEffect {
+sealed interface SettingsUiEffect : UiEffect {
 
 }

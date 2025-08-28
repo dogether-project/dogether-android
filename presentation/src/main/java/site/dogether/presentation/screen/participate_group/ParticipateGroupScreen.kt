@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
@@ -35,7 +36,7 @@ fun ParticipateGroupScreen(viewModel: ParticipateGroupViewModel = koinViewModel(
 @Composable
 private fun ParticipateGroupScreenContents(
     uiState: ParticipateGroupUiState,
-    onEvent: (ParticipateGroupUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier

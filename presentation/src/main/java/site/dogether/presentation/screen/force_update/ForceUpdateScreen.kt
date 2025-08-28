@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.ColorTextDefault
@@ -36,7 +37,7 @@ fun ForceUpdateScreen(viewModel: ForceUpdateViewModel = koinViewModel()) {
 @Composable
 private fun ForceUpdateScreenContents(
     uiState: ForceUpdateUiState,
-    onEvent: (ForceUpdateUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier

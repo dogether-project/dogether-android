@@ -29,9 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBgSurface
@@ -41,6 +41,7 @@ import site.dogether.presentation.theme.ColorIconSecondary
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
@@ -50,7 +51,7 @@ fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
     val context = LocalContext.current
     val navHostController = LocalNavHostController.current
 
-    viewModel.collectSideEffect { uiEffect ->
+    viewModel.CollectEffect<GroupCreatedUiEffect> { uiEffect ->
         when (uiEffect) {
             is GroupCreatedUiEffect.ShareJoinCode -> shareJoinCode(
                 context = context,
@@ -85,7 +86,7 @@ private fun shareJoinCode(
 @Composable
 private fun GroupCreatedScreenContents(
     uiState: GroupCreatedUiState,
-    onEvent: (GroupCreatedUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column(

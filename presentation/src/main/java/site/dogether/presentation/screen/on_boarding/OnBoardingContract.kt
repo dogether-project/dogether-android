@@ -1,10 +1,13 @@
 package site.dogether.presentation.screen.on_boarding
 
+import site.dogether.presentation.base.UiEffect
+import site.dogether.presentation.base.UiEvent
+
 data class OnBoardingUiState(
     val isLoading: Boolean = false,
 )
 
-sealed interface OnBoardingUiEvent {
+sealed interface OnBoardingUiEvent : UiEvent {
     sealed interface Click : OnBoardingUiEvent {
         object OnClickKakaoLogin : Click
     }
@@ -20,7 +23,7 @@ sealed interface OnBoardingUiEvent {
     }
 }
 
-sealed interface OnBoardingUiEffect {
+sealed interface OnBoardingUiEffect : UiEffect {
     object CheckLoginWithKakaoTalkPossibility : OnBoardingUiEffect
 
     object LoginWithKakaoTalk : OnBoardingUiEffect

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.GroupInfoBoard
 import site.dogether.presentation.theme.ColorIconPrimary
@@ -35,7 +36,7 @@ fun GroupParticipatedScreen(viewModel: GroupParticipatedViewModel = koinViewMode
 @Composable
 private fun GroupParticipatedScreenContents(
     uiState: GroupParticipatedUiState,
-    onEvent: (GroupParticipatedUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column(

@@ -1,10 +1,13 @@
 package site.dogether.presentation.screen.my_page.screen.certification_list
 
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEvent
 
-class CertificationListViewModel : BaseViewModel<CertificationListUiState, CertificationListUiEvent, CertificationListUiEffect>(CertificationListUiState()) {
+class CertificationListViewModel : BaseViewModel<CertificationListUiState>(CertificationListUiState()) {
 
-    override fun onEvent(event: CertificationListUiEvent) {
+    override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is CertificationListUiEvent.Click -> {
                 when (event) {

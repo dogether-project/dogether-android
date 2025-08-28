@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.TopBar
@@ -52,7 +53,7 @@ fun MyPageScreen(viewModel: MyPageViewModel = koinViewModel()) {
 @Composable
 private fun MyPageScreenContents(
     uiState: MyPageUiState,
-    onEvent: (MyPageUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier

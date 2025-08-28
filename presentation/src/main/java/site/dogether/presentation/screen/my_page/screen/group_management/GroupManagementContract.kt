@@ -1,5 +1,7 @@
 package site.dogether.presentation.screen.my_page.screen.group_management
 
+import site.dogether.presentation.base.UiEffect
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.DialogState
 
 data class GroupManagementUiState(
@@ -7,7 +9,7 @@ data class GroupManagementUiState(
     val withdrawDialogState: DialogState = DialogState(),
 )
 
-sealed interface GroupManagementUiEvent {
+sealed interface GroupManagementUiEvent : UiEvent {
     sealed interface Click : GroupManagementUiEvent {
         data class OnClickWithdraw(val group: String) : Click
 
@@ -21,6 +23,6 @@ sealed interface GroupManagementUiEvent {
     }
 }
 
-sealed interface GroupManagementUiEffect {
+sealed interface GroupManagementUiEffect : UiEffect {
 
 }

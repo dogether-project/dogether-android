@@ -1,10 +1,13 @@
 package site.dogether.presentation.screen.my_page.screen.settings
 
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEvent
 
-class SettingsViewModel : BaseViewModel<SettingsUiState, SettingsUiEvent, SettingsUiEffect>(SettingsUiState()) {
+class SettingsViewModel : BaseViewModel<SettingsUiState>(SettingsUiState()) {
 
-    override fun onEvent(event: SettingsUiEvent) {
+    override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is SettingsUiEvent.Click -> {
                 when (event) {
