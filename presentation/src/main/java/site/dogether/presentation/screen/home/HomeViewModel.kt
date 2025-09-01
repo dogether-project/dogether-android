@@ -8,6 +8,7 @@ import site.dogether.common.HoursPerDay
 import site.dogether.common.MinutesPerHour
 import site.dogether.common.SecondsPerMinute
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
 import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
 import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
@@ -18,9 +19,11 @@ import java.time.Duration.between
 
 class HomeViewModel(
     private val defaultDispatcher: CoroutineDispatcher,
-) : BaseViewModel<HomeUiState, HomeUiEvent, HomeUiEffect>(HomeUiState()) {
+) : BaseViewModel<HomeUiState>(HomeUiState()) {
 
-    override fun onEvent(event: HomeUiEvent) {
+    override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is HomeUiEvent.Lifecycle -> {
                 when (event) {

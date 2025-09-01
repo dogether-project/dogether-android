@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.Chip
@@ -76,7 +77,7 @@ import site.dogether.presentation.utils.clickableWithoutRipple
 @Composable
 fun CertificationListScreen(viewModel: CertificationListViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
-    val onEvent: (CertificationListUiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
+    val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
 
     CertificationListScreenContents(
         uiState = uiState,
@@ -98,7 +99,7 @@ fun CertificationListScreen(viewModel: CertificationListViewModel = koinViewMode
 @Composable
 private fun CertificationListScreenContents(
     uiState: CertificationListUiState,
-    onEvent: (CertificationListUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
@@ -121,7 +122,7 @@ private fun CertificationListScreenContents(
 @Composable
 private fun ColumnScope.CertificationListContents(
     uiState: CertificationListUiState,
-    onEvent: (CertificationListUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(

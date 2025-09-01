@@ -13,9 +13,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
+import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
@@ -23,11 +24,11 @@ import site.dogether.presentation.utils.ScreenPreview
 @Composable
 fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
-    val onEvent: (SplashUiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
+    val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
     val navHostController = LocalNavHostController.current
 
-    viewModel.collectSideEffect { uiEffect ->
+    viewModel.CollectEffect<SplashUiEffect> { uiEffect ->
         when (uiEffect) {
             is SplashUiEffect.GetAppVersion -> {
                 getAppVersion(

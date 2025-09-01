@@ -63,9 +63,9 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.common.MaxDailyTodoCount
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.GroupInfoColumn
@@ -107,6 +107,7 @@ import site.dogether.presentation.theme.Red400
 import site.dogether.presentation.theme.Small_R
 import site.dogether.presentation.theme.Small_S
 import site.dogether.presentation.theme.Yellow
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.DATE_FORMAT_FULL_YEAR
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.alphaByProgress
@@ -123,10 +124,10 @@ import kotlin.math.sqrt
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
-    val onEvent: (HomeUiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
+    val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
 
-    viewModel.collectSideEffect { uiEffect ->
+    viewModel.CollectEffect<HomeUiEffect> { uiEffect ->
         when (uiEffect) {
             is HomeUiEffect.CheckNotificationPermission -> checkNotificationPermission(
                 context = context,
@@ -184,7 +185,7 @@ private fun navigateToNotificationSetting(context: Context) {
 @Composable
 private fun HomeScreenContents(
     uiState: HomeUiState,
-    onEvent: (HomeUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val tooltipState = remember { PersistentTooltipStateImpl() }
@@ -454,7 +455,7 @@ private fun HomeScreenContents(
 @Composable
 private fun InitDialog(
     uiState: HomeUiState,
-    onEvent: (HomeUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     if (uiState.permissionDialogState.isShowing) {
         ActionDialog(
@@ -632,7 +633,7 @@ private fun AnchoredBottomSheet(
 @Composable
 private fun LaunchFromTomorrowContents(
     uiState: HomeUiState,
-    onEvent: (HomeUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -704,7 +705,7 @@ private fun LaunchFromTomorrowContents(
 @Composable
 private fun TodoContents(
     uiState: HomeUiState,
-    onEvent: (HomeUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -724,7 +725,7 @@ private fun TodoContents(
 @Composable
 private fun ColumnScope.TodoListContents(
     uiState: HomeUiState,
-    onEvent: (HomeUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Row(
         modifier = Modifier

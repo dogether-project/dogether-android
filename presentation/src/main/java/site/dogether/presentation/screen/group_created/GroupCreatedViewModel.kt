@@ -3,8 +3,9 @@ package site.dogether.presentation.screen.group_created
 import androidx.lifecycle.SavedStateHandle
 import site.dogether.KEY_JOIN_CODE
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEvent
 
-class GroupCreatedViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel<GroupCreatedUiState, GroupCreatedUiEvent, GroupCreatedUiEffect>(GroupCreatedUiState()) {
+class GroupCreatedViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel<GroupCreatedUiState>(GroupCreatedUiState()) {
 
     init {
         savedStateHandle.get<String>(KEY_JOIN_CODE)?.let { joinCode ->
@@ -12,7 +13,9 @@ class GroupCreatedViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel<
         }
     }
 
-    override fun onEvent(event: GroupCreatedUiEvent) {
+    override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is GroupCreatedUiEvent.Click -> {
                 when(event) {

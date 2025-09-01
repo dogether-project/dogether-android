@@ -1,6 +1,8 @@
 package site.dogether.presentation.screen.home
 
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEffect
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.DialogState
 import site.dogether.presentation.model.Todo
 import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
@@ -48,7 +50,7 @@ data class HomeUiState(
     ),
 )
 
-sealed interface HomeUiEvent {
+sealed interface HomeUiEvent : UiEvent {
     sealed interface Lifecycle : HomeUiEvent {
         data object OnFirstComposition : Lifecycle
     }
@@ -72,7 +74,7 @@ sealed interface HomeUiEvent {
     }
 }
 
-sealed interface HomeUiEffect {
+sealed interface HomeUiEffect : UiEffect {
     data object CheckNotificationPermission : HomeUiEffect
 
     data object NavigateToNotificationSettings : HomeUiEffect

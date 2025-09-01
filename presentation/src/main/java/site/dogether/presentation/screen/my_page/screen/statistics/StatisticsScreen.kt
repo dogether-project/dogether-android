@@ -37,6 +37,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.SelectGroupBottomSheet
@@ -70,7 +71,7 @@ import kotlin.math.sqrt
 @Composable
 fun StatisticsScreen(viewModel: StatisticsViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
-    val onEvent: (StatisticsUiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
+    val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
 
     StatisticsScreenContents(
         uiState = viewModel.collectAsState().value,
@@ -93,7 +94,7 @@ fun StatisticsScreen(viewModel: StatisticsViewModel = koinViewModel()) {
 @Composable
 private fun StatisticsScreenContents(
     uiState: StatisticsUiState,
-    onEvent: (StatisticsUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -119,7 +120,7 @@ private fun StatisticsScreenContents(
 @Composable
 private fun StatisticsContents(
     uiState: StatisticsUiState,
-    onEvent: (StatisticsUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Column {

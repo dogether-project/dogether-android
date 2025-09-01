@@ -8,16 +8,20 @@ import site.dogether.domain.use_case.app_info.CheckUpdateRequiredUseCase
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.GetUserInfoUseCase
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
+import site.dogether.presentation.base.UiEvent
 
 class SplashViewModel(
     private val checkUpdateRequired: CheckUpdateRequiredUseCase,
     private val getUserInfo: GetUserInfoUseCase,
-    private val checkParticipating: CheckParticipatingUseCase
-) : BaseViewModel<SplashUiState, SplashUiEvent, SplashUiEffect>(SplashUiState()) {
+    private val checkParticipating: CheckParticipatingUseCase,
+) : BaseViewModel<SplashUiState>(SplashUiState()) {
 
-    override val container: Container<SplashUiState, SplashUiEffect> = container(SplashUiState())
+    override val container: Container<SplashUiState, UiEffect> = container(SplashUiState())
 
-    override fun onEvent(event: SplashUiEvent) {
+    override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is SplashUiEvent.Lifecycle -> {
                 when (event) {

@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,9 +35,9 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.on_boarding.model.OnBoardingPage
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
@@ -50,6 +49,7 @@ import site.dogether.presentation.theme.ColorKakaoYellow
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
@@ -58,11 +58,11 @@ private val PAGE_LIST: List<OnBoardingPage> = OnBoardingPage.entries
 
 @Composable
 fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
-    val onEvent: (OnBoardingUiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
+    val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
     val navHostController = LocalNavHostController.current
 
-    viewModel.collectSideEffect { uiEffect ->
+    viewModel.CollectEffect<OnBoardingUiEffect> { uiEffect ->
         when (uiEffect) {
             is OnBoardingUiEffect.CheckLoginWithKakaoTalkPossibility -> {
                 val isPossible = UserApiClient.instance.isKakaoTalkLoginAvailable(context)
@@ -95,7 +95,7 @@ fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
     )
 }
 
-private fun kakaoLoginCallback(onEvent: (OnBoardingUiEvent) -> Unit): (OAuthToken?, Throwable?) -> Unit = { token, error ->
+private fun kakaoLoginCallback(onEvent: (UiEvent) -> Unit): (OAuthToken?, Throwable?) -> Unit = { token, error ->
     error?.let { throwable ->
         onEvent(OnBoardingUiEvent.Callback.OnErrorKakaoLogin(throwable))
     } ?: run {
@@ -118,7 +118,7 @@ private fun kakaoLoginCallback(onEvent: (OnBoardingUiEvent) -> Unit): (OAuthToke
 
 private fun loginWithKakaoTalk(
     context: Context,
-    onEvent: (OnBoardingUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     UserApiClient.instance.loginWithKakaoTalk(
         context = context,
@@ -128,7 +128,7 @@ private fun loginWithKakaoTalk(
 
 private fun loginWithKakaoAccount(
     context: Context,
-    onEvent: (OnBoardingUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     UserApiClient.instance.loginWithKakaoAccount(
         context = context,
@@ -147,7 +147,7 @@ private fun navigateToParticipationMethod(navHostController: NavHostController) 
 @Composable
 private fun OnBoardingScreenContents(
     uiState: OnBoardingUiState,
-    onEvent: (OnBoardingUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier

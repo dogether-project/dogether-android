@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
@@ -48,7 +49,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 @Composable
 private fun SettingsScreenContents(
     uiState: SettingsUiState,
-    onEvent: (SettingsUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -103,7 +104,7 @@ private fun SettingsScreenContents(
 @Composable
 private fun InitDialog(
     uiState: SettingsUiState,
-    onEvent: (SettingsUiEvent) -> Unit,
+    onEvent: (UiEvent) -> Unit,
 ) {
     if (uiState.logoutDialogState.isShowing) {
         ActionDialog(
