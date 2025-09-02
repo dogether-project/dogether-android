@@ -15,6 +15,10 @@ sealed interface ParticipateGroupUiEvent : UiEvent {
     sealed interface Type : ParticipateGroupUiEvent {
         data class OnJoinCodeTyped(val text: String) : Type
     }
+
+    sealed interface Click : ParticipateGroupUiEvent {
+        data object OnClickParticipate : Click
+    }
 }
 
 sealed interface ParticipateGroupUiEffect : UiEffect {

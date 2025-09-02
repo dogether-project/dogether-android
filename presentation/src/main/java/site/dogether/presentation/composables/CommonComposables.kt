@@ -236,10 +236,18 @@ fun DogetherTextField(
             value = inner,
             cursorBrush = SolidColor(Color.White),
             onValueChange = { newValue ->
-                val limitedText = newValue.text.take(lengthLimit)
-                val fixed = newValue.copy(text = limitedText)
-                inner = fixed
-                if (limitedText != value) onValueChanged(limitedText)
+                when (lengthLimit) {
+                    0 -> {
+                        onValueChanged(newValue.text)
+                    }
+
+                    else -> {
+                        val limitedText = newValue.text.take(lengthLimit)
+                        val fixed = newValue.copy(text = limitedText)
+                        inner = fixed
+                        if (limitedText != value) onValueChanged(limitedText)
+                    }
+                }
             },
             singleLine = singleLine,
             textStyle = textStyle.copy(color = textColor),

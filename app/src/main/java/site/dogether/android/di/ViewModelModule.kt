@@ -40,8 +40,8 @@ val viewModelModule = module {
     viewModel {
         CreateGroupViewModel(createGroup = get())
     }
-    viewModel { GroupCreatedViewModel(get()) }
-    viewModel { ParticipateGroupViewModel() }
+    viewModel { GroupCreatedViewModel(savedStateHandle = get()) }
+    viewModel { ParticipateGroupViewModel(participateGroup = get()) }
     viewModel { GroupParticipatedViewModel() }
     viewModel { ErrorViewModel() }
     viewModel {
