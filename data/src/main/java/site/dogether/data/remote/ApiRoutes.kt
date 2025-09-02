@@ -13,4 +13,5 @@ object ApiRoutes {
     const val CHECK_UPDATE_REQUIRED = "app-info/force-update-check"
     const val CHECK_PARTICIPATING = "groups/participating"
     const val CREATE_GROUP = "groups"
+    const val PARTICIPATE_GROUP = "groups/join"
 }

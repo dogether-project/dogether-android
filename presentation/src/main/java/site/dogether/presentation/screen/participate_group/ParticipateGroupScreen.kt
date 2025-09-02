@@ -23,10 +23,14 @@ import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.ScreenPreview
+import site.dogether.presentation.utils.hideKeyboardOnTap
 
 @Composable
 fun ParticipateGroupScreen(viewModel: ParticipateGroupViewModel = koinViewModel()) {
+    viewModel.CollectEffect<ParticipateGroupUiEffect> {}
+
     ParticipateGroupScreenContents(
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
@@ -41,7 +45,8 @@ private fun ParticipateGroupScreenContents(
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .hideKeyboardOnTap(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
@@ -88,7 +93,7 @@ private fun ParticipateGroupScreenContents(
             text = stringResource(R.string.cta_button_participate),
             radius = 8.dp,
             isEnabled = uiState.isValid,
-            onClick = { }
+            onClick = { onEvent(ParticipateGroupUiEvent.Click.OnClickParticipate) }
         )
     }
 }

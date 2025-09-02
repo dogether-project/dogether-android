@@ -3,9 +3,12 @@ package site.dogether.data.repository_impl
 import io.ktor.client.HttpClient
 import site.dogether.data.remote.ApiRoutes
 import site.dogether.data.remote.model.req.group.CreateGroupReq
+import site.dogether.data.remote.model.req.group.ParticipateGroupReq
 import site.dogether.data.remote.model.res.group.CreateGroupResMapper
+import site.dogether.data.remote.model.res.group.ParticipateGroupResMapper
 import site.dogether.data.utils.safePost
 import site.dogether.domain.model.group.CreatedGroupInfo
+import site.dogether.domain.model.group.ParticipateGroupInfo
 import site.dogether.domain.repository.GroupRepository
 
 class GroupRepositoryImpl(private val httpClient: HttpClient) : GroupRepository {
@@ -25,6 +28,14 @@ class GroupRepositoryImpl(private val httpClient: HttpClient) : GroupRepository 
                 duration = duration
             ),
             mapper = CreateGroupResMapper
+        )
+    }
+
+    override suspend fun participateGroup(joinCode: String): Result<ParticipateGroupInfo> {
+        return httpClient.safePost(
+            apiRoute = ApiRoutes.PARTICIPATE_GROUP,
+            body = ParticipateGroupReq(joinCode),
+            mapper = ParticipateGroupResMapper
         )
     }
 }
