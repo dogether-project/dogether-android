@@ -38,6 +38,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.navigateTo
 import site.dogether.presentation.screen.on_boarding.model.OnBoardingPage
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
@@ -85,7 +86,9 @@ fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
 
             is OnBoardingUiEffect.NavigateToHome -> navigateToHome(navHostController)
 
-            is OnBoardingUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(navHostController)
+            is OnBoardingUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(
+                navHostController
+            )
         }
     }
 
@@ -95,26 +98,27 @@ fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
     )
 }
 
-private fun kakaoLoginCallback(onEvent: (UiEvent) -> Unit): (OAuthToken?, Throwable?) -> Unit = { token, error ->
-    error?.let { throwable ->
-        onEvent(OnBoardingUiEvent.Callback.OnErrorKakaoLogin(throwable))
-    } ?: run {
-        token?.let {
-            val idToken = token.idToken.orEmpty()
-            UserApiClient.instance.me { user, meError ->
+private fun kakaoLoginCallback(onEvent: (UiEvent) -> Unit): (OAuthToken?, Throwable?) -> Unit =
+    { token, error ->
+        error?.let { throwable ->
+            onEvent(OnBoardingUiEvent.Callback.OnErrorKakaoLogin(throwable))
+        } ?: run {
+            token?.let {
+                val idToken = token.idToken.orEmpty()
+                UserApiClient.instance.me { user, meError ->
 
-                meError?.let {
-                    onEvent(OnBoardingUiEvent.Callback.OnErrorKakaoLogin(meError))
-                } ?: run {
-                    user?.let {
-                        val name = user.kakaoAccount?.profile?.nickname.orEmpty()
-                        onEvent(OnBoardingUiEvent.Callback.OnSuccessKakaoLogin(name, idToken))
+                    meError?.let {
+                        onEvent(OnBoardingUiEvent.Callback.OnErrorKakaoLogin(meError))
+                    } ?: run {
+                        user?.let {
+                            val name = user.kakaoAccount?.profile?.nickname.orEmpty()
+                            onEvent(OnBoardingUiEvent.Callback.OnSuccessKakaoLogin(name, idToken))
+                        }
                     }
                 }
             }
         }
     }
-}
 
 private fun loginWithKakaoTalk(
     context: Context,
@@ -137,11 +141,11 @@ private fun loginWithKakaoAccount(
 }
 
 private fun navigateToHome(navHostController: NavHostController) {
-    navHostController.navigate(Screen.HOME)
+    navHostController.navigateTo(Screen.HOME)
 }
 
 private fun navigateToParticipationMethod(navHostController: NavHostController) {
-    navHostController.navigate(Screen.PARTICIPATION_METHOD)
+    navHostController.navigateTo(Screen.PARTICIPATION_METHOD)
 }
 
 @Composable
@@ -201,7 +205,10 @@ private fun OnBoardingScreenContents(
                         }
                     },
                     page = { pageIndex ->
-                        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(
+                            Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             Text(
                                 text = stringResource(PAGE_LIST[pageIndex].titleStringId),
                                 style = Head1_B,
@@ -269,7 +276,8 @@ private fun FixedHeightPager(
     SubcomposeLayout { constraints ->
         val placeables = (0 until pageCount).map { index ->
             val measurables = subcompose("page-$index") { page(index) }
-            measurables.maxBy { it.maxIntrinsicHeight(constraints.maxWidth) }.measure(constraints.copy(minHeight = 0))
+            measurables.maxBy { it.maxIntrinsicHeight(constraints.maxWidth) }
+                .measure(constraints.copy(minHeight = 0))
         }
         val maxHeight = placeables.maxOf { it.height }
 

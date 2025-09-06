@@ -64,6 +64,7 @@ import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.hideKeyboardOnTap
+import site.dogether.presentation.utils.lowerCaseName
 
 private val PAGE_LIST: List<CreateGroupPage> = CreateGroupPage.entries
 
@@ -75,7 +76,10 @@ fun CreateGroupScreen(viewModel: CreateGroupViewModel = koinViewModel()) {
         when (uiEffect) {
             is CreateGroupUiEffect.NavigateToBack -> navHostController.popBackStack()
 
-            is CreateGroupUiEffect.NavigateToGroupCreated -> navHostController.navigate("${Screen.GROUP_CREATED}/${uiEffect.joinCode}")
+            is CreateGroupUiEffect.NavigateToGroupCreated -> {
+                // TODO : extension function
+                navHostController.navigate("${Screen.GROUP_CREATED.lowerCaseName()}/${uiEffect.joinCode}")
+            }
         }
     }
 

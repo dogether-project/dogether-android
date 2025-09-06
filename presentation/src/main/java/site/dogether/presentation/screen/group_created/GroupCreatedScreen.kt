@@ -33,6 +33,7 @@ import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.CTAButton
+import site.dogether.presentation.navigateTo
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBgSurface
 import site.dogether.presentation.theme.ColorBorderDisabled
@@ -53,12 +54,16 @@ fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
 
     viewModel.CollectEffect<GroupCreatedUiEffect> { uiEffect ->
         when (uiEffect) {
-            is GroupCreatedUiEffect.ShareJoinCode -> shareJoinCode(
-                context = context,
-                joinCode = uiEffect.joinCode
-            )
+            is GroupCreatedUiEffect.ShareJoinCode -> {
+                shareJoinCode(
+                    context = context,
+                    joinCode = uiEffect.joinCode
+                )
+            }
 
-            is GroupCreatedUiEffect.NavigateToHome -> navHostController.navigate(Screen.HOME)
+            is GroupCreatedUiEffect.NavigateToHome -> {
+                navHostController.navigateTo(Screen.HOME)
+            }
         }
     }
 
@@ -79,7 +84,8 @@ private fun shareJoinCode(
         type = "text/plain"
     }
 
-    val shareIntent = Intent.createChooser(sendIntent, context.getString(R.string.intent_title_share_join_code))
+    val shareIntent =
+        Intent.createChooser(sendIntent, context.getString(R.string.intent_title_share_join_code))
     context.startActivity(shareIntent)
 }
 

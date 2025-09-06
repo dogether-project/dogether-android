@@ -1,6 +1,10 @@
 package site.dogether.presentation
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,9 +26,10 @@ import site.dogether.presentation.screen.participate_group.ParticipateGroupScree
 import site.dogether.presentation.screen.participation_method.ParticipationMethodScreen
 import site.dogether.presentation.screen.splash.SplashScreen
 import site.dogether.presentation.utils.LocalNavHostController
+import site.dogether.presentation.utils.lowerCaseName
 
 @Composable
-fun AppNavGraph(startDestination: String = Screen.SPLASH) {
+fun AppNavGraph(startDestination: Screen = Screen.SPLASH) {
     val navHostController = LocalNavHostController.current
 
     NavHost(
@@ -51,4 +56,15 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
         composable(Screen.SETTINGS) { SettingsScreen() }
         composable(Screen.GROUP_MANAGEMENT) { GroupManagementScreen() }
     }
+}
+
+private fun NavGraphBuilder.composable(
+    route: Screen,
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
+) {
+    composable(route = route.lowerCaseName(), content = content)
+}
+
+fun NavHostController.navigateTo(route: Screen) {
+    navigate(route.lowerCaseName())
 }

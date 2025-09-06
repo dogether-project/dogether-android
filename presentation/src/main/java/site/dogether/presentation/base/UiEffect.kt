@@ -6,7 +6,7 @@ import site.dogether.presentation.screen.error.model.Error
 interface UiEffect {
     data object NavigateToPreviousScreen : UiEffect
 
-    data class NavigateTo(val screen: String) : UiEffect
+    data class NavigateTo(val screen: Screen) : UiEffect
 
     data class NavigateToError(val error: Error) : UiEffect
 }

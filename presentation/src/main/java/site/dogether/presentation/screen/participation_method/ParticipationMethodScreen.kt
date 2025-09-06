@@ -29,6 +29,7 @@ import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.navigateTo
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorIconDefault
@@ -50,9 +51,13 @@ fun ParticipationMethodScreen(viewModel: ParticipationMethodViewModel = koinView
 
     viewModel.CollectEffect<ParticipationMethodUiEffect> { uiEffect ->
         when (uiEffect) {
-            is ParticipationMethodUiEffect.NavigateToCreateGroup -> navigateToCreateGroup(navHostController)
+            is ParticipationMethodUiEffect.NavigateToCreateGroup -> navigateToCreateGroup(
+                navHostController
+            )
 
-            is ParticipationMethodUiEffect.NavigateToParticipateGroup -> navigateToParticipateWithCode(navHostController)
+            is ParticipationMethodUiEffect.NavigateToParticipateGroup -> navigateToParticipateWithCode(
+                navHostController
+            )
         }
     }
 
@@ -63,11 +68,11 @@ fun ParticipationMethodScreen(viewModel: ParticipationMethodViewModel = koinView
 }
 
 private fun navigateToCreateGroup(navHostController: NavHostController) {
-    navHostController.navigate(Screen.CREATE_GROUP)
+    navHostController.navigateTo(Screen.CREATE_GROUP)
 }
 
 private fun navigateToParticipateWithCode(navHostController: NavHostController) {
-    navHostController.navigate(Screen.PARTICIPATE_GROUP)
+    navHostController.navigateTo(Screen.PARTICIPATE_GROUP)
 }
 
 @Composable

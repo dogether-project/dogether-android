@@ -16,6 +16,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.navigateTo
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
@@ -33,7 +34,13 @@ fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
             is SplashUiEffect.GetAppVersion -> {
                 getAppVersion(
                     context = context,
-                    onSuccess = { appVersion -> onEvent(SplashUiEvent.Callback.OnGetAppVersion(appVersion)) },
+                    onSuccess = { appVersion ->
+                        onEvent(
+                            SplashUiEvent.Callback.OnGetAppVersion(
+                                appVersion
+                            )
+                        )
+                    },
                     onFailure = {}
                 )
             }
@@ -42,7 +49,9 @@ fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
 
             is SplashUiEffect.NavigateToHome -> navigateToHome(navHostController)
 
-            is SplashUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(navHostController)
+            is SplashUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(
+                navHostController
+            )
         }
     }
 
@@ -64,15 +73,15 @@ private fun getAppVersion(
 }
 
 private fun navigateToOnBoarding(navHostController: NavHostController) {
-    navHostController.navigate(Screen.ON_BOARDING)
+    navHostController.navigateTo(Screen.ON_BOARDING)
 }
 
 private fun navigateToHome(navHostController: NavHostController) {
-    navHostController.navigate(Screen.HOME)
+    navHostController.navigateTo(Screen.HOME)
 }
 
 private fun navigateToParticipationMethod(navHostController: NavHostController) {
-    navHostController.navigate(Screen.PARTICIPATION_METHOD)
+    navHostController.navigateTo(Screen.PARTICIPATION_METHOD)
 }
 
 @Composable

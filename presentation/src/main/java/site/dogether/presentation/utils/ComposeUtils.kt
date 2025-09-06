@@ -36,6 +36,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.navigateTo
 
 @Preview(
     showBackground = true,
@@ -53,7 +54,7 @@ inline fun <reified Effect : UiEffect> BaseViewModel<*>.CollectEffect(crossinlin
     collectSideEffect { effect ->
         when (effect) {
             is UiEffect.NavigateToPreviousScreen -> navHostController.popBackStack()
-            is UiEffect.NavigateToError -> navHostController.navigate(Screen.ERROR)
+            is UiEffect.NavigateToError -> navHostController.navigateTo(Screen.ERROR)
             is Effect -> onCollected(effect)
             else -> Unit
         }
