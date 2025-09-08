@@ -3,6 +3,7 @@ package site.dogether.android.di
 import org.koin.dsl.module
 import site.dogether.domain.use_case.app_info.CheckUpdateRequiredUseCase
 import site.dogether.domain.use_case.group.CreateGroupUseCase
+import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.domain.use_case.group.ParticipateGroupUseCase
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.GetUserInfoUseCase
@@ -17,4 +18,5 @@ val useCaseModule = module {
     factory { StoreUserInfoUseCase(repository = get()) }
     factory { CreateGroupUseCase(repository = get()) }
     factory { ParticipateGroupUseCase(repository = get()) }
+    factory { GetJoiningGroupsUseCase(repository = get()) }
 }

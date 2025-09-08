@@ -5,9 +5,12 @@ import site.dogether.data.remote.ApiRoutes
 import site.dogether.data.remote.model.req.group.CreateGroupReq
 import site.dogether.data.remote.model.req.group.ParticipateGroupReq
 import site.dogether.data.remote.model.res.group.CreateGroupResMapper
+import site.dogether.data.remote.model.res.group.GetJoiningGroupsResMapper
 import site.dogether.data.remote.model.res.group.ParticipateGroupResMapper
+import site.dogether.data.utils.safeGet
 import site.dogether.data.utils.safePost
 import site.dogether.domain.model.group.CreatedGroupInfo
+import site.dogether.domain.model.group.JoiningGroups
 import site.dogether.domain.model.group.ParticipateGroupInfo
 import site.dogether.domain.repository.GroupRepository
 
@@ -36,6 +39,13 @@ class GroupRepositoryImpl(private val httpClient: HttpClient) : GroupRepository 
             apiRoute = ApiRoutes.PARTICIPATE_GROUP,
             body = ParticipateGroupReq(joinCode),
             mapper = ParticipateGroupResMapper
+        )
+    }
+
+    override suspend fun getJoiningGroups(): Result<JoiningGroups> {
+        return httpClient.safeGet(
+            apiRoute = ApiRoutes.GET_JOINING_GROUPS,
+            mapper = GetJoiningGroupsResMapper
         )
     }
 }

@@ -1,13 +1,13 @@
 package site.dogether.presentation.screen.my_page.screen.statistics
 
+import site.dogether.domain.model.group.Group
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 
 data class StatisticsUiState(
     val isLoading: Boolean = false,
-    val groups: List<String> = listOf("DND 작심삼일 탈출러"),
-    val selectedGroup: String = "DND 작심삼일 탈출러",
-    val groupList: List<String> = listOf("DND 작심삼일 탈출러", "DND 작심삼일 탈출러"),
+    val groups: List<Group> = emptyList(),
+    val selectedGroup: Group = Group(),
     val isSelectGroupBottomSheetShowing: Boolean = false,
 )
 

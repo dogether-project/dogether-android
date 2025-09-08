@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.home
 
+import site.dogether.domain.model.group.Group
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
@@ -16,7 +17,7 @@ data class HomeUiState(
     val isLoading: Boolean = false,
     val timerProgress: Float = 0f,
     val timerText: String = "",
-    val selectedGroup: String = "DND 작심삼일 탈출러",
+    val selectedGroup: Group = Group(),
     val todoList: List<Todo> = listOf(
         Todo(
             id = 1,
@@ -43,7 +44,7 @@ data class HomeUiState(
     val filteredTodoList: List<Todo> = listOf(),
     val isSelectGroupBottomSheetShowing: Boolean = false,
     val permissionDialogState: DialogState = DialogState(),
-    val groupList: List<String> = listOf("DND 작심삼일 탈출러", "배고픈 민족들"),
+    val groups: List<Group> = listOf(),
     val tooltipUiState: TooltipUiState = TooltipUiState(
         isShowing = true,
         stringId = R.string.tooltip_group_finished

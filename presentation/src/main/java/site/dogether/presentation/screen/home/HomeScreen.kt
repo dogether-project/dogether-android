@@ -148,7 +148,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
         SelectGroupBottomSheet(
             sheetState = selectGroupBottomSheetState,
             selectedGroup = uiState.selectedGroup,
-            groupList = uiState.groupList,
+            groups = uiState.groups,
             isAddButtonShowing = true,
             onDismissRequest = { onEvent(HomeUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
             onClickGroupItem = { }
@@ -286,7 +286,7 @@ private fun HomeScreenContents(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "DND 작심삼일 탈출러",
+                            text = uiState.selectedGroup.name,
                             style = Head1_B.copy(lineHeightStyle = LineHeightStyle.Default),
                             color = ColorTextPrimary
                         )
@@ -310,7 +310,7 @@ private fun HomeScreenContents(
                     ) {
                         GroupInfoColumn(
                             title = stringResource(R.string.info_group_member_count),
-                            value = "6/10",
+                            value = "${uiState.selectedGroup.currentMemberCount}/${uiState.selectedGroup.maximumMemberCount}",
                         )
 
                         Column(modifier = Modifier.padding(start = 16.dp)) {
@@ -322,7 +322,7 @@ private fun HomeScreenContents(
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "12345678",
+                                    text = uiState.selectedGroup.joinCode,
                                     style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
                                     color = ColorTextDefault
                                 )
@@ -337,7 +337,7 @@ private fun HomeScreenContents(
 
                         GroupInfoColumn(
                             title = stringResource(R.string.info_end_date),
-                            value = "25.02.22"
+                            value = uiState.selectedGroup.endAt
                         )
                     }
                 }
@@ -378,7 +378,7 @@ private fun HomeScreenContents(
                 )
 
                 Text(
-                    text = "(n${stringResource(R.string.unit_day_passed)})",
+                    text = "(${uiState.selectedGroup.progressDay}${stringResource(R.string.unit_day_passed)})",
                     style = Small_R.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextSecondary
                 )
@@ -393,7 +393,7 @@ private fun HomeScreenContents(
                 ) {
                     Box(
                         modifier = Modifier
-                            .width(64.dp)
+                            .fillMaxWidth(uiState.selectedGroup.progressRate)
                             .height(8.dp)
                             .background(ColorBgPrimary)
                     )

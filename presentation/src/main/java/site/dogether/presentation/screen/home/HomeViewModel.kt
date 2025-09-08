@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import site.dogether.common.HoursPerDay
 import site.dogether.common.MinutesPerHour
 import site.dogether.common.SecondsPerMinute
+import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
@@ -19,6 +20,7 @@ import java.time.Duration.between
 
 class HomeViewModel(
     private val defaultDispatcher: CoroutineDispatcher,
+    private val getJoiningGroups: GetJoiningGroupsUseCase,
 ) : BaseViewModel<HomeUiState>(HomeUiState()) {
 
     override fun onEvent(event: UiEvent) {
@@ -28,6 +30,20 @@ class HomeViewModel(
             is HomeUiEvent.Lifecycle -> {
                 when (event) {
                     is HomeUiEvent.Lifecycle.OnFirstComposition -> {
+                        viewModelScope.launch {
+                            val getJoiningGroupsResult = getJoiningGroups().getOrElse {
+                                // handel exception
+                                return@launch
+                            }
+
+                            updateState {
+                                it.copy(
+                                    selectedGroup = getJoiningGroupsResult.groups[getJoiningGroupsResult.lastSelectedGroupIndex],
+                                    groups = getJoiningGroupsResult.groups
+                                )
+                            }
+                        }
+
                         postEffect(HomeUiEffect.CheckNotificationPermission)
                     }
                 }

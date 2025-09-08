@@ -47,6 +47,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import site.dogether.domain.model.group.Group
 import site.dogether.presentation.R
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
@@ -457,11 +458,11 @@ private fun GroupInfoColumnPreview() {
 @Composable
 fun SelectGroupBottomSheet(
     sheetState: SheetState,
-    selectedGroup: String,
-    groupList: List<String>,
+    selectedGroup: Group,
+    groups: List<Group>,
     isAddButtonShowing: Boolean,
     onDismissRequest: () -> Unit,
-    onClickGroupItem: (String) -> Unit,
+    onClickGroupItem: (Group) -> Unit,
 ) {
     ModalBottomSheet(
         sheetState = sheetState,
@@ -504,7 +505,7 @@ fun SelectGroupBottomSheet(
                 )
             }
 
-            groupList.forEach {
+            groups.forEach {
                 GroupItem(
                     group = it,
                     isSelected = it == selectedGroup,
@@ -539,7 +540,7 @@ fun SelectGroupBottomSheet(
 
 @Composable
 private fun GroupItem(
-    group: String,
+    group: Group,
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -552,7 +553,7 @@ private fun GroupItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = group,
+            text = group.name,
             style = Body1_B.copy(lineHeightStyle = LineHeightStyle.Default),
             color = if (isSelected) ColorTextPrimary else ColorTextDisabled
         )
@@ -571,7 +572,7 @@ private fun GroupItem(
 @Composable
 private fun GroupItemPreview() {
     GroupItem(
-        group = "Group",
+        group = Group(),
         isSelected = true,
         onClick = {}
     )

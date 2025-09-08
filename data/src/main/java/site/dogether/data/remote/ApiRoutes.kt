@@ -14,4 +14,5 @@ object ApiRoutes {
     const val CHECK_PARTICIPATING = "groups/participating"
     const val CREATE_GROUP = "groups"
     const val PARTICIPATE_GROUP = "groups/join"
+    const val GET_JOINING_GROUPS = "groups/my"
 }

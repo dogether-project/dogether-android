@@ -45,7 +45,10 @@ val viewModelModule = module {
     viewModel { GroupParticipatedViewModel() }
     viewModel { ErrorViewModel() }
     viewModel {
-        HomeViewModel(defaultDispatcher = get(named(DefaultDispatcher)))
+        HomeViewModel(
+            defaultDispatcher = get(named(DefaultDispatcher)),
+            getJoiningGroups = get()
+        )
     }
     viewModel { MyPageViewModel() }
     viewModel { StatisticsViewModel() }
