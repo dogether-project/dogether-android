@@ -65,6 +65,8 @@ sealed interface HomeUiEvent : UiEvent {
 
         data object OnClickPermissionDialogPositive : Click
 
+        data class OnClickGroup(val group: Group) : Click
+
         data object OnClickAddGroup : Click
     }
 

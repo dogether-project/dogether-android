@@ -151,7 +151,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             groups = uiState.groups,
             isAddButtonShowing = true,
             onDismissRequest = { onEvent(HomeUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
-            onClickGroupItem = { },
+            onClickGroupItem = { group -> onEvent(HomeUiEvent.Click.OnClickGroup(group)) },
             onClickAddGroup = { onEvent(HomeUiEvent.Click.OnClickAddGroup) }
         )
     }

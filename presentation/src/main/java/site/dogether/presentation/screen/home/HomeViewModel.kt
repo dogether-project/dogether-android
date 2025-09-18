@@ -90,6 +90,15 @@ class HomeViewModel(
                         postEffect(HomeUiEffect.NavigateToNotificationSettings)
                     }
 
+                    is HomeUiEvent.Click.OnClickGroup -> {
+                        updateState {
+                            it.copy(
+                                selectedGroup = event.group,
+                                isSelectGroupBottomSheetShowing = false
+                            )
+                        }
+                    }
+
                     is HomeUiEvent.Click.OnClickAddGroup -> {
                         updateState { it.copy(isSelectGroupBottomSheetShowing = false) }
                         postEffect(UiEffect.NavigateTo(Screen.PARTICIPATION_METHOD))
