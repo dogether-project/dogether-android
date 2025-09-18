@@ -4,11 +4,13 @@ import io.ktor.client.HttpClient
 import site.dogether.data.remote.ApiRoutes
 import site.dogether.data.remote.model.req.group.CreateGroupReq
 import site.dogether.data.remote.model.req.group.ParticipateGroupReq
+import site.dogether.data.remote.model.req.group.StoreLastSelectedGroupIdReq
 import site.dogether.data.remote.model.res.group.CreateGroupResMapper
 import site.dogether.data.remote.model.res.group.GetJoiningGroupsResMapper
 import site.dogether.data.remote.model.res.group.ParticipateGroupResMapper
 import site.dogether.data.utils.safeGet
 import site.dogether.data.utils.safePost
+import site.dogether.data.utils.safePostWithoutRes
 import site.dogether.domain.model.group.CreatedGroupInfo
 import site.dogether.domain.model.group.JoiningGroups
 import site.dogether.domain.model.group.ParticipateGroupInfo
@@ -46,6 +48,13 @@ class GroupRepositoryImpl(private val httpClient: HttpClient) : GroupRepository 
         return httpClient.safeGet(
             apiRoute = ApiRoutes.GET_JOINING_GROUPS,
             mapper = GetJoiningGroupsResMapper
+        )
+    }
+
+    override suspend fun storeLastSelectedGroupId(groupId: Int): Result<Unit> {
+        return httpClient.safePostWithoutRes(
+            apiRoute = ApiRoutes.STORE_LAST_SELECTED_GROUP_ID,
+            body = StoreLastSelectedGroupIdReq(groupId)
         )
     }
 }

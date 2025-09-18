@@ -47,7 +47,8 @@ val viewModelModule = module {
     viewModel {
         HomeViewModel(
             defaultDispatcher = get(named(DefaultDispatcher)),
-            getJoiningGroups = get()
+            getJoiningGroups = get(),
+            storeLastSelectedGroupId = get()
         )
     }
     viewModel { MyPageViewModel() }

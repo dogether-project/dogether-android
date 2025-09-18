@@ -57,7 +57,7 @@ suspend inline fun <reified T> safeApiCall(
 suspend inline fun <reified Req, reified Res : DataModel, Domain : DomainModel> HttpClient.safePost(
     apiRoute: String,
     body: Req,
-    mapper: DataMapper<Res, Domain>,
+    mapper: DataMapper<Res, Domain>
 ): Result<Domain> {
     return safeApiCall<Res> {
         post(apiRoute) {
@@ -76,4 +76,26 @@ suspend inline fun <reified Res : DataModel, Domain : DomainModel> HttpClient.sa
             params.forEach { (key, value) -> parameter(key, value) }
         }
     }.mapToDomain(mapper)
+}
+
+suspend inline fun <reified Req> HttpClient.safePostWithoutRes(
+    apiRoute: String,
+    body: Req,
+): Result<Unit> {
+    return safeApiCall<Unit> {
+        post(apiRoute) {
+            setBody(body)
+        }
+    }
+}
+
+suspend fun HttpClient.safeGetWithoutRes(
+    apiRoute: String,
+    params: Map<String, String> = emptyMap(),
+): Result<Unit> {
+    return safeApiCall<Unit> {
+        get(apiRoute) {
+            params.forEach { (key, value) -> parameter(key, value) }
+        }
+    }
 }

@@ -15,4 +15,5 @@ object ApiRoutes {
     const val CREATE_GROUP = "groups"
     const val PARTICIPATE_GROUP = "groups/join"
     const val GET_JOINING_GROUPS = "groups/my"
+    const val STORE_LAST_SELECTED_GROUP_ID = "groups/last-selected"
 }

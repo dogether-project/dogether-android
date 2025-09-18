@@ -8,6 +8,7 @@ import site.dogether.common.HoursPerDay
 import site.dogether.common.MinutesPerHour
 import site.dogether.common.SecondsPerMinute
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
+import site.dogether.domain.use_case.group.StoreLastSelectedGroupIdUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
@@ -21,6 +22,7 @@ import java.time.Duration.between
 class HomeViewModel(
     private val defaultDispatcher: CoroutineDispatcher,
     private val getJoiningGroups: GetJoiningGroupsUseCase,
+    private val storeLastSelectedGroupId: StoreLastSelectedGroupIdUseCase
 ) : BaseViewModel<HomeUiState>(HomeUiState()) {
 
     override fun onEvent(event: UiEvent) {
@@ -32,15 +34,21 @@ class HomeViewModel(
                     is HomeUiEvent.Lifecycle.OnFirstComposition -> {
                         viewModelScope.launch {
                             val getJoiningGroupsResult = getJoiningGroups().getOrElse {
-                                // handel exception
+                                // handle exception
                                 return@launch
                             }
 
+                            val selectedGroup = getJoiningGroupsResult.groups[getJoiningGroupsResult.lastSelectedGroupIndex]
+
                             updateState {
                                 it.copy(
-                                    selectedGroup = getJoiningGroupsResult.groups[getJoiningGroupsResult.lastSelectedGroupIndex],
+                                    selectedGroup = selectedGroup,
                                     groups = getJoiningGroupsResult.groups
                                 )
+                            }
+
+                            storeLastSelectedGroupId(selectedGroup.id).getOrElse {
+                                // handle exception
                             }
                         }
 

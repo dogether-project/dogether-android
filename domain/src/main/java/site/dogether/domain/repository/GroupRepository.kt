@@ -16,4 +16,6 @@ interface GroupRepository {
     suspend fun participateGroup(joinCode: String): Result<ParticipateGroupInfo>
 
     suspend fun getJoiningGroups(): Result<JoiningGroups>
+
+    suspend fun storeLastSelectedGroupId(groupId: Int): Result<Unit>
 }
