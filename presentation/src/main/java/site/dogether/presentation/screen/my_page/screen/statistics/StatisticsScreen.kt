@@ -86,7 +86,8 @@ fun StatisticsScreen(viewModel: StatisticsViewModel = koinViewModel()) {
             groups = uiState.groups,
             isAddButtonShowing = false,
             onDismissRequest = { onEvent(StatisticsUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
-            onClickGroupItem = { }
+            onClickGroupItem = { },
+            onClickAddGroup = { }
         )
     }
 }

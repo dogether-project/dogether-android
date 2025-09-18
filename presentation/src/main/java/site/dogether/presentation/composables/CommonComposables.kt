@@ -463,6 +463,7 @@ fun SelectGroupBottomSheet(
     isAddButtonShowing: Boolean,
     onDismissRequest: () -> Unit,
     onClickGroupItem: (Group) -> Unit,
+    onClickAddGroup: () -> Unit
 ) {
     ModalBottomSheet(
         sheetState = sheetState,
@@ -517,7 +518,8 @@ fun SelectGroupBottomSheet(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp),
+                        .height(50.dp)
+                        .clickableWithoutRipple { onClickAddGroup() },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(

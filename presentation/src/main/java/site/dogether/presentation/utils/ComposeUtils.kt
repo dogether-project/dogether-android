@@ -54,6 +54,7 @@ inline fun <reified Effect : UiEffect> BaseViewModel<*>.CollectEffect(crossinlin
         when (effect) {
             is UiEffect.NavigateToPreviousScreen -> navHostController.popBackStack()
             is UiEffect.NavigateToError -> navHostController.navigate(Screen.ERROR)
+            is UiEffect.NavigateTo -> navHostController.navigate(effect.screen)
             is Effect -> onCollected(effect)
             else -> Unit
         }

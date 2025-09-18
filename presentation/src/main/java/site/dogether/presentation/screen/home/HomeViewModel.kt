@@ -9,7 +9,9 @@ import site.dogether.common.MinutesPerHour
 import site.dogether.common.SecondsPerMinute
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.domain.use_case.group.StoreLastSelectedGroupIdUseCase
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
 import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
@@ -86,6 +88,11 @@ class HomeViewModel(
                     is HomeUiEvent.Click.OnClickPermissionDialogPositive -> {
                         updateState { it.copy(permissionDialogState = it.permissionDialogState.copy(isShowing = false)) }
                         postEffect(HomeUiEffect.NavigateToNotificationSettings)
+                    }
+
+                    is HomeUiEvent.Click.OnClickAddGroup -> {
+                        updateState { it.copy(isSelectGroupBottomSheetShowing = false) }
+                        postEffect(UiEffect.NavigateTo(Screen.PARTICIPATION_METHOD))
                     }
                 }
             }

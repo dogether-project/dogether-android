@@ -64,6 +64,8 @@ sealed interface HomeUiEvent : UiEvent {
         data object OnClickPermissionDialogNegative : Click
 
         data object OnClickPermissionDialogPositive : Click
+
+        data object OnClickAddGroup : Click
     }
 
     sealed interface Callback : HomeUiEvent {

@@ -151,7 +151,8 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             groups = uiState.groups,
             isAddButtonShowing = true,
             onDismissRequest = { onEvent(HomeUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
-            onClickGroupItem = { }
+            onClickGroupItem = { },
+            onClickAddGroup = { onEvent(HomeUiEvent.Click.OnClickAddGroup) }
         )
     }
 
@@ -561,8 +562,8 @@ private fun AnchoredBottomSheet(
             .fillMaxWidth()
             .height(
                 (sheetState.frameHeight
-                        - sheetState.sheetOffsetY.value
-                        + sheetState.statusBarHeight).toDp()
+                  - sheetState.sheetOffsetY.value
+                  + sheetState.statusBarHeight).toDp()
             )
             .nestedScroll(connection)
             .bottomSheetSnappable(
