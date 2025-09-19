@@ -113,6 +113,7 @@ import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.alphaByProgress
 import site.dogether.presentation.utils.bottomSheetSnappable
 import site.dogether.presentation.utils.clickableWithoutRipple
+import site.dogether.presentation.utils.formattedToday
 import site.dogether.presentation.utils.isPermissionGranted
 import site.dogether.presentation.utils.toDp
 import site.dogether.presentation.utils.toFormattedString
@@ -448,6 +449,10 @@ private fun HomeScreenContents(
         AnchoredBottomSheet(
             sheetState = anchoredBottomSheetState,
             connection = connection,
+            selectedDate = uiState.selectedDate,
+            todoList = uiState.todoList,
+            filteredTodoList = uiState.filteredTodoList,
+            selectedChip = uiState.selectedChip,
             progressDay = uiState.selectedGroup.progressDay,
             timerText = uiState.timerText,
             timerProgress = uiState.timerProgress,
@@ -550,6 +555,10 @@ private fun DosikTooltip(
 private fun AnchoredBottomSheet(
     sheetState: AnchoredBottomSheetState,
     connection: NestedScrollConnection,
+    selectedDate: String,
+    todoList: List<Todo>,
+    filteredTodoList: List<Todo>,
+    selectedChip: Chip,
     progressDay: Int,
     timerText: String,
     timerProgress: Float,
@@ -622,7 +631,7 @@ private fun AnchoredBottomSheet(
             }
         }
 
-        when(progressDay) {
+        when (progressDay) {
             0 -> {
                 LaunchFromTomorrowContents(
                     timerText = timerText,
@@ -632,16 +641,18 @@ private fun AnchoredBottomSheet(
             }
 
             else -> {
-
+                if (selectedDate != formattedToday && todoList.isEmpty()) {
+                    NoTodoContents()
+                } else {
+                    TodoContents(
+                        todoList = todoList,
+                        filteredTodoList = filteredTodoList,
+                        selectedChip = selectedChip,
+                        onEvent = onEvent
+                    )
+                }
             }
         }
-
-//            TodoContents(
-//                uiState = uiState,
-//                onEvent = onEvent
-//            )
-
-//            NoTodoContents()
 
 //            FinishedContents()
     }

@@ -12,6 +12,7 @@ val DATE_FORMAT_FULL_YEAR: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy
 val today: LocalDateTime = LocalDateTime.now()
 val tomorrow: LocalDateTime = today.plusDays(1)
 val tomorrowMidnight: LocalDateTime = today.toLocalDate().plusDays(1).atStartOfDay()
+val formattedToday = today.toFormattedString(DATE_FORMAT_FULL_YEAR)
 
 fun Context.isPermissionGranted(permission: String): Boolean = checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
 

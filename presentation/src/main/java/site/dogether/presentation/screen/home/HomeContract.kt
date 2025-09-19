@@ -18,28 +18,8 @@ data class HomeUiState(
     val timerProgress: Float = 0f,
     val timerText: String = "",
     val selectedGroup: Group = Group(),
-    val todoList: List<Todo> = listOf(
-        Todo(
-            id = 1,
-            content = "테스트 컨텐츠",
-            status = STATUS_CERTIFY_PENDING,
-        ),
-        Todo(
-            id = 2,
-            content = "테스트 컨텐츠",
-            status = STATUS_APPROVE,
-        ),
-        Todo(
-            id = 3,
-            content = "테스트 컨텐츠",
-            status = STATUS_REJECT,
-        ),
-        Todo(
-            id = 4,
-            content = "테스트 컨텐츠",
-            status = STATUS_REVIEW_PENDING,
-        ),
-    ),
+    val todoList: List<Todo> = emptyList(),
+    val selectedDate: String = "",
     val selectedChip: Chip = Chip.All,
     val filteredTodoList: List<Todo> = listOf(),
     val isSelectGroupBottomSheetShowing: Boolean = false,

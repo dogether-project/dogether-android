@@ -17,6 +17,7 @@ import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
 import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
 import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.screen.home.model.Chip
+import site.dogether.presentation.utils.formattedToday
 import site.dogether.presentation.utils.today
 import site.dogether.presentation.utils.tomorrowMidnight
 import java.time.Duration.between
@@ -45,7 +46,9 @@ class HomeViewModel(
                             updateState {
                                 it.copy(
                                     selectedGroup = selectedGroup,
-                                    groups = getJoiningGroupsResult.groups
+                                    groups = getJoiningGroupsResult.groups,
+                                    selectedDate = formattedToday,
+
                                 )
                             }
 
