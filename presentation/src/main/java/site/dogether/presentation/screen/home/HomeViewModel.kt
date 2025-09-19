@@ -49,6 +49,10 @@ class HomeViewModel(
                                 )
                             }
 
+                            if (uiState.selectedGroup.progressDay == 0) {
+                                launchTomorrowTimer()
+                            }
+
                             storeLastSelectedGroupId(selectedGroup.id).getOrElse {
                                 // handle exception
                             }

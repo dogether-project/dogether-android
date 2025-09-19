@@ -283,7 +283,9 @@ private fun HomeScreenContents(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Row(
-                        modifier = Modifier.padding(top = 6.dp),
+                        modifier = Modifier
+                            .padding(top = 6.dp)
+                            .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickSelectGroup) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -293,9 +295,7 @@ private fun HomeScreenContents(
                         )
 
                         Icon(
-                            modifier = Modifier
-                                .padding(start = 4.dp)
-                                .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickSelectGroup) },
+                            modifier = Modifier.padding(start = 4.dp),
                             painter = painterResource(R.drawable.ic_arrow_down),
                             tint = ColorIconElevated,
                             contentDescription = "icon_arrow_down"
@@ -445,10 +445,13 @@ private fun HomeScreenContents(
                     ) { bounds -> anchoredBottomSheetState.lowerAnchorY = bounds.positionInWindow.y + bounds.height }
             )
         }
-
         AnchoredBottomSheet(
             sheetState = anchoredBottomSheetState,
-            connection = connection
+            connection = connection,
+            progressDay = uiState.selectedGroup.progressDay,
+            timerText = uiState.timerText,
+            timerProgress = uiState.timerProgress,
+            onEvent = onEvent
         )
     }
 }
@@ -547,6 +550,10 @@ private fun DosikTooltip(
 private fun AnchoredBottomSheet(
     sheetState: AnchoredBottomSheetState,
     connection: NestedScrollConnection,
+    progressDay: Int,
+    timerText: String,
+    timerProgress: Float,
+    onEvent: (UiEvent) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -615,10 +622,19 @@ private fun AnchoredBottomSheet(
             }
         }
 
-//            LaunchFromTomorrowContents(
-//                uiState = uiState,
-//                onEvent = onEvent
-//            )
+        when(progressDay) {
+            0 -> {
+                LaunchFromTomorrowContents(
+                    timerText = timerText,
+                    timerProgress = timerProgress,
+                    onEvent = onEvent
+                )
+            }
+
+            else -> {
+
+            }
+        }
 
 //            TodoContents(
 //                uiState = uiState,
@@ -633,7 +649,8 @@ private fun AnchoredBottomSheet(
 
 @Composable
 private fun LaunchFromTomorrowContents(
-    uiState: HomeUiState,
+    timerText: String,
+    timerProgress: Float,
     onEvent: (UiEvent) -> Unit,
 ) {
     Column(
@@ -660,7 +677,7 @@ private fun LaunchFromTomorrowContents(
                 drawArc(
                     brush = SolidColor(ColorBgPrimary),
                     startAngle = -90f,
-                    sweepAngle = uiState.timerProgress * 360f,
+                    sweepAngle = timerProgress * 360f,
                     useCenter = false,
                     style = Stroke(
                         width = strokeWidth,
@@ -680,7 +697,7 @@ private fun LaunchFromTomorrowContents(
 
                 Text(
                     modifier = Modifier.padding(top = 2.dp),
-                    text = uiState.timerText,
+                    text = timerText,
                     style = Head1_B.copy(fontFeatureSettings = "tnum"),
                     color = ColorTextDefault
                 )
@@ -705,16 +722,20 @@ private fun LaunchFromTomorrowContents(
 
 @Composable
 private fun TodoContents(
-    uiState: HomeUiState,
+    todoList: List<Todo>,
+    filteredTodoList: List<Todo>,
+    selectedChip: Chip,
     onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (uiState.todoList.isNotEmpty()) {
+        if (todoList.isNotEmpty()) {
             TodoListContents(
-                uiState = uiState,
+                todoList = todoList,
+                filteredTodoList = filteredTodoList,
+                selectedChip = selectedChip,
                 onEvent = onEvent
             )
         } else {
@@ -725,7 +746,9 @@ private fun TodoContents(
 
 @Composable
 private fun ColumnScope.TodoListContents(
-    uiState: HomeUiState,
+    todoList: List<Todo>,
+    filteredTodoList: List<Todo>,
+    selectedChip: Chip,
     onEvent: (UiEvent) -> Unit,
 ) {
     Row(
@@ -736,7 +759,7 @@ private fun ColumnScope.TodoListContents(
     ) {
         ChipItem(
             chip = Chip.All,
-            isSelected = Chip.All == uiState.selectedChip,
+            isSelected = Chip.All == selectedChip,
             color = ColorBgPrimary,
             onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.All)) }
         )
@@ -744,7 +767,7 @@ private fun ColumnScope.TodoListContents(
         ChipItem(
             chip = Chip.ReviewPending,
             icon = painterResource(R.drawable.ic_review_pending),
-            isSelected = Chip.ReviewPending == uiState.selectedChip,
+            isSelected = Chip.ReviewPending == selectedChip,
             color = Yellow,
             onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.ReviewPending)) }
         )
@@ -752,7 +775,7 @@ private fun ColumnScope.TodoListContents(
         ChipItem(
             chip = Chip.Approve,
             icon = painterResource(R.drawable.ic_approve),
-            isSelected = Chip.Approve == uiState.selectedChip,
+            isSelected = Chip.Approve == selectedChip,
             color = ColorBgPrimary,
             onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.Approve)) }
         )
@@ -760,7 +783,7 @@ private fun ColumnScope.TodoListContents(
         ChipItem(
             chip = Chip.Reject,
             icon = painterResource(R.drawable.ic_reject),
-            isSelected = Chip.Reject == uiState.selectedChip,
+            isSelected = Chip.Reject == selectedChip,
             color = Red400,
             onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.Reject)) }
         )
@@ -774,7 +797,7 @@ private fun ColumnScope.TodoListContents(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        uiState.filteredTodoList.forEach { todo -> TodoItem(todo) }
+        filteredTodoList.forEach { todo -> TodoItem(todo) }
 
         Row(
             modifier = Modifier
@@ -792,7 +815,7 @@ private fun ColumnScope.TodoListContents(
 
             Text(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(R.string.cta_button_add_todo) + " (${uiState.todoList.size}/$MaxDailyTodoCount)",
+                text = stringResource(R.string.cta_button_add_todo) + " (${todoList.size}/$MaxDailyTodoCount)",
                 style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
                 color = ColorTextSubtle
             )
