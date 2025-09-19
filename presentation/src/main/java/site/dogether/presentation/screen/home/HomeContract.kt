@@ -26,7 +26,7 @@ data class HomeUiState(
     val permissionDialogState: DialogState = DialogState(),
     val groups: List<Group> = listOf(),
     val tooltipUiState: TooltipUiState = TooltipUiState(
-        isShowing = true,
+        isShowing = false,
         stringId = R.string.tooltip_group_finished
     ),
 )

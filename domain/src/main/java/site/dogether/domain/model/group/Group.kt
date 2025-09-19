@@ -18,6 +18,7 @@ data class Group(
     companion object {
         const val STATUS_READY = "READY"
         const val STATUS_RUNNING = "RUNNING"
+        const val STATUS_D_DAY = "D_DAY"
         const val STATUS_FINISHED = "FINISHED"
     }
 }

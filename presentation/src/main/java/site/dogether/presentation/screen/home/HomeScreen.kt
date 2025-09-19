@@ -61,9 +61,13 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import okhttp3.internal.format
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
+import site.dogether.domain.model.group.Group.Companion.STATUS_FINISHED
+import site.dogether.domain.model.group.Group.Companion.STATUS_READY
+import site.dogether.domain.model.group.Group.Companion.STATUS_RUNNING
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
@@ -446,14 +450,15 @@ private fun HomeScreenContents(
                     ) { bounds -> anchoredBottomSheetState.lowerAnchorY = bounds.positionInWindow.y + bounds.height }
             )
         }
+
         AnchoredBottomSheet(
             sheetState = anchoredBottomSheetState,
             connection = connection,
+            status = uiState.selectedGroup.status,
             selectedDate = uiState.selectedDate,
             todoList = uiState.todoList,
             filteredTodoList = uiState.filteredTodoList,
             selectedChip = uiState.selectedChip,
-            progressDay = uiState.selectedGroup.progressDay,
             timerText = uiState.timerText,
             timerProgress = uiState.timerProgress,
             onEvent = onEvent
@@ -555,11 +560,11 @@ private fun DosikTooltip(
 private fun AnchoredBottomSheet(
     sheetState: AnchoredBottomSheetState,
     connection: NestedScrollConnection,
+    status: String,
     selectedDate: String,
     todoList: List<Todo>,
     filteredTodoList: List<Todo>,
     selectedChip: Chip,
-    progressDay: Int,
     timerText: String,
     timerProgress: Float,
     onEvent: (UiEvent) -> Unit
@@ -631,8 +636,8 @@ private fun AnchoredBottomSheet(
             }
         }
 
-        when (progressDay) {
-            0 -> {
+        when (status) {
+            STATUS_READY -> {
                 LaunchFromTomorrowContents(
                     timerText = timerText,
                     timerProgress = timerProgress,
@@ -640,7 +645,7 @@ private fun AnchoredBottomSheet(
                 )
             }
 
-            else -> {
+            STATUS_RUNNING -> {
                 if (selectedDate != formattedToday && todoList.isEmpty()) {
                     NoTodoContents()
                 } else {
@@ -652,9 +657,11 @@ private fun AnchoredBottomSheet(
                     )
                 }
             }
-        }
 
-//            FinishedContents()
+            STATUS_FINISHED -> {
+                FinishedContents()
+            }
+        }
     }
 }
 

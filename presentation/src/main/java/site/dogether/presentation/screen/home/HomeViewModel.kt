@@ -48,7 +48,6 @@ class HomeViewModel(
                                     selectedGroup = selectedGroup,
                                     groups = getJoiningGroupsResult.groups,
                                     selectedDate = formattedToday,
-
                                 )
                             }
 
