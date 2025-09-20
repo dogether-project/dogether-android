@@ -1,17 +1,18 @@
 package site.dogether.presentation.screen.home
 
 import site.dogether.domain.model.group.Group
+import site.dogether.domain.model.group.Group.Companion.STATUS_READY
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.DialogState
 import site.dogether.presentation.model.Todo
-import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
-import site.dogether.presentation.model.Todo.Companion.STATUS_CERTIFY_PENDING
-import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
-import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.TooltipUiState
+import site.dogether.presentation.utils.DATE_FORMAT_SHORT_YEAR
+import site.dogether.presentation.utils.toLocalDate
+import site.dogether.presentation.utils.today
+import java.time.LocalDate
 
 data class HomeUiState(
     val isLoading: Boolean = false,
@@ -19,7 +20,7 @@ data class HomeUiState(
     val timerText: String = "",
     val selectedGroup: Group = Group(),
     val todoList: List<Todo> = emptyList(),
-    val selectedDate: String = "",
+    val selectedDate: LocalDate = today,
     val selectedChip: Chip = Chip.All,
     val filteredTodoList: List<Todo> = listOf(),
     val isSelectGroupBottomSheetShowing: Boolean = false,
@@ -29,7 +30,17 @@ data class HomeUiState(
         isShowing = false,
         stringId = R.string.tooltip_group_finished
     ),
-)
+) {
+    val isGoPrevDayPossible: Boolean
+        get() = if (selectedGroup.startAt.isNotEmpty()) {
+            when (selectedGroup.status) {
+                STATUS_READY -> false
+                else -> selectedDate != selectedGroup.startAt.toLocalDate(DATE_FORMAT_SHORT_YEAR)
+            }
+        } else false
+    val isGoNextDayPossible: Boolean
+        get() = selectedDate < today
+}
 
 sealed interface HomeUiEvent : UiEvent {
     sealed interface Lifecycle : HomeUiEvent {
@@ -48,6 +59,10 @@ sealed interface HomeUiEvent : UiEvent {
         data class OnClickGroup(val group: Group) : Click
 
         data object OnClickAddGroup : Click
+
+        data object OnClickPrevDay : Click
+
+        data object OnClickNextDay : Click
     }
 
     sealed interface Callback : HomeUiEvent {

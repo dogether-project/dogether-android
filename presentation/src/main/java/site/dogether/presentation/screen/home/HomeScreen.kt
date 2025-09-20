@@ -61,7 +61,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import okhttp3.internal.format
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
@@ -117,11 +116,12 @@ import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.alphaByProgress
 import site.dogether.presentation.utils.bottomSheetSnappable
 import site.dogether.presentation.utils.clickableWithoutRipple
-import site.dogether.presentation.utils.formattedToday
+import site.dogether.presentation.utils.conditionedClickableWithoutRipple
 import site.dogether.presentation.utils.isPermissionGranted
 import site.dogether.presentation.utils.toDp
 import site.dogether.presentation.utils.toFormattedString
 import site.dogether.presentation.utils.today
+import java.time.LocalDate
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
@@ -457,6 +457,8 @@ private fun HomeScreenContents(
             status = uiState.selectedGroup.status,
             selectedDate = uiState.selectedDate,
             todoList = uiState.todoList,
+            isGoPrevDayPossible = uiState.isGoPrevDayPossible,
+            isGoNextDayPossible = uiState.isGoNextDayPossible,
             filteredTodoList = uiState.filteredTodoList,
             selectedChip = uiState.selectedChip,
             timerText = uiState.timerText,
@@ -561,13 +563,15 @@ private fun AnchoredBottomSheet(
     sheetState: AnchoredBottomSheetState,
     connection: NestedScrollConnection,
     status: String,
-    selectedDate: String,
+    selectedDate: LocalDate,
+    isGoPrevDayPossible: Boolean,
+    isGoNextDayPossible: Boolean,
     todoList: List<Todo>,
     filteredTodoList: List<Todo>,
     selectedChip: Chip,
     timerText: String,
     timerProgress: Float,
-    onEvent: (UiEvent) -> Unit
+    onEvent: (UiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -583,8 +587,8 @@ private fun AnchoredBottomSheet(
             .fillMaxWidth()
             .height(
                 (sheetState.frameHeight
-                  - sheetState.sheetOffsetY.value
-                  + sheetState.statusBarHeight).toDp()
+                        - sheetState.sheetOffsetY.value
+                        + sheetState.statusBarHeight).toDp()
             )
             .nestedScroll(connection)
             .bottomSheetSnappable(
@@ -606,17 +610,18 @@ private fun AnchoredBottomSheet(
                     .clip(RoundedCornerShape(8.dp))
                     .size(24.dp)
                     .background(ColorBgSurface)
+                    .conditionedClickableWithoutRipple(isGoPrevDayPossible) { onEvent(HomeUiEvent.Click.OnClickPrevDay) }
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.Center),
                     painter = painterResource(R.drawable.ic_brace_left),
-                    tint = ColorIconDisabled,
+                    tint = if (isGoPrevDayPossible) ColorIconElevated else ColorIconDisabled,
                     contentDescription = "icon_brace_left"
                 )
             }
 
             Text(
-                text = today.toFormattedString(DATE_FORMAT_FULL_YEAR),
+                text = selectedDate.toFormattedString(DATE_FORMAT_FULL_YEAR),
                 style = Head2_B.copy(lineHeightStyle = LineHeightStyle.Default),
                 color = ColorTextDefault
             )
@@ -626,11 +631,12 @@ private fun AnchoredBottomSheet(
                     .clip(RoundedCornerShape(8.dp))
                     .size(24.dp)
                     .background(ColorBgSurface)
+                    .conditionedClickableWithoutRipple(isGoNextDayPossible) { onEvent(HomeUiEvent.Click.OnClickNextDay) }
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.Center),
                     painter = painterResource(R.drawable.ic_brace_right),
-                    tint = ColorIconDisabled,
+                    tint = if (isGoNextDayPossible) ColorIconElevated else ColorIconDisabled,
                     contentDescription = "icon_brace_right"
                 )
             }
@@ -646,7 +652,7 @@ private fun AnchoredBottomSheet(
             }
 
             STATUS_RUNNING -> {
-                if (selectedDate != formattedToday && todoList.isEmpty()) {
+                if (selectedDate != today && todoList.isEmpty()) {
                     NoTodoContents()
                 } else {
                     TodoContents(
@@ -876,7 +882,7 @@ private fun ColumnScope.EmptyTodoListContents() {
             .height(50.dp),
         radius = 8.dp,
         text = stringResource(R.string.cta_button_create_todo),
-        onClick = {}
+        onClick = { }
     )
 }
 

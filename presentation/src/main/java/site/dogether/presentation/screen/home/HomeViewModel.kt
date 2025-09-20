@@ -17,15 +17,15 @@ import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
 import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
 import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.screen.home.model.Chip
-import site.dogether.presentation.utils.formattedToday
 import site.dogether.presentation.utils.today
+import site.dogether.presentation.utils.todayWithTime
 import site.dogether.presentation.utils.tomorrowMidnight
 import java.time.Duration.between
 
 class HomeViewModel(
     private val defaultDispatcher: CoroutineDispatcher,
     private val getJoiningGroups: GetJoiningGroupsUseCase,
-    private val storeLastSelectedGroupId: StoreLastSelectedGroupIdUseCase
+    private val storeLastSelectedGroupId: StoreLastSelectedGroupIdUseCase,
 ) : BaseViewModel<HomeUiState>(HomeUiState()) {
 
     override fun onEvent(event: UiEvent) {
@@ -47,7 +47,7 @@ class HomeViewModel(
                                 it.copy(
                                     selectedGroup = selectedGroup,
                                     groups = getJoiningGroupsResult.groups,
-                                    selectedDate = formattedToday,
+                                    selectedDate = today,
                                 )
                             }
 
@@ -109,6 +109,14 @@ class HomeViewModel(
                         updateState { it.copy(isSelectGroupBottomSheetShowing = false) }
                         postEffect(UiEffect.NavigateTo(Screen.PARTICIPATION_METHOD))
                     }
+
+                    is HomeUiEvent.Click.OnClickPrevDay -> {
+                        updateState { it.copy(selectedDate = uiState.selectedDate.minusDays(1)) }
+                    }
+
+                    is HomeUiEvent.Click.OnClickNextDay -> {
+                        updateState { it.copy(selectedDate = uiState.selectedDate.plusDays(1)) }
+                    }
                 }
             }
 
@@ -132,7 +140,7 @@ class HomeViewModel(
 
     private fun launchTomorrowTimer() {
         val totalSecondsInDay = HoursPerDay * MinutesPerHour * SecondsPerMinute
-        var remainingSeconds = between(today, tomorrowMidnight).seconds
+        var remainingSeconds = between(todayWithTime, tomorrowMidnight).seconds
 
         viewModelScope.launch(defaultDispatcher) {
             while (remainingSeconds > 0) {
