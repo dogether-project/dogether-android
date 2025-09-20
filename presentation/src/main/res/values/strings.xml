@@ -135,7 +135,7 @@
 
     <string name="notice_share">카카오톡, 문자 등을 통해 공유해보세요 !</string>
 
-    <string name="tooltip_last_day">마지막 인증일이에요!\n내일부터 인증이 불가능해요.</string>
+    <string name="tooltip_group_d_day">마지막 인증일이에요!\n내일부터 인증이 불가능해요.</string>
     <string name="tooltip_group_finished">그룹이 종료됐어요!</string>
 
     <string name="my_page_menu_certification_list">인증 목록</string>

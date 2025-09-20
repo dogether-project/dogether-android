@@ -2,7 +2,6 @@ package site.dogether.presentation.screen.home
 
 import site.dogether.domain.model.group.Group
 import site.dogether.domain.model.group.Group.Companion.STATUS_READY
-import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.DialogState
@@ -26,10 +25,7 @@ data class HomeUiState(
     val isSelectGroupBottomSheetShowing: Boolean = false,
     val permissionDialogState: DialogState = DialogState(),
     val groups: List<Group> = listOf(),
-    val tooltipUiState: TooltipUiState = TooltipUiState(
-        isShowing = false,
-        stringId = R.string.tooltip_group_finished
-    ),
+    val tooltipUiState: TooltipUiState = TooltipUiState(),
 ) {
     val isGoPrevDayPossible: Boolean
         get() = if (selectedGroup.startAt.isNotEmpty()) {
@@ -63,6 +59,8 @@ sealed interface HomeUiEvent : UiEvent {
         data object OnClickPrevDay : Click
 
         data object OnClickNextDay : Click
+
+        data object OnClickDismissTooltip : Click
     }
 
     sealed interface Callback : HomeUiEvent {

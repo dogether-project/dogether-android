@@ -354,7 +354,7 @@ private fun HomeScreenContents(
                         DosikTooltip(
                             modifier = Modifier.alphaByProgress(anchoredBottomSheetState.expandingProgress),
                             text = uiState.tooltipUiState.stringId?.let { stringResource(it) }.orEmpty(),
-                            onClickDismiss = { }
+                            onClickDismiss = { onEvent(HomeUiEvent.Click.OnClickDismissTooltip) }
                         )
                     },
                     state = tooltipState,

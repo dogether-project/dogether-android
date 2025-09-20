@@ -2,13 +2,18 @@ package site.dogether.presentation.screen.home
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import site.dogether.common.HoursPerDay
 import site.dogether.common.MinutesPerHour
 import site.dogether.common.SecondsPerMinute
+import site.dogether.domain.model.group.Group
+import site.dogether.domain.model.group.Group.Companion.STATUS_D_DAY
+import site.dogether.domain.model.group.Group.Companion.STATUS_FINISHED
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.domain.use_case.group.StoreLastSelectedGroupIdUseCase
+import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
@@ -17,6 +22,7 @@ import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
 import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
 import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.screen.home.model.Chip
+import site.dogether.presentation.screen.home.state.TooltipUiState
 import site.dogether.presentation.utils.today
 import site.dogether.presentation.utils.todayWithTime
 import site.dogether.presentation.utils.tomorrowMidnight
@@ -27,6 +33,8 @@ class HomeViewModel(
     private val getJoiningGroups: GetJoiningGroupsUseCase,
     private val storeLastSelectedGroupId: StoreLastSelectedGroupIdUseCase,
 ) : BaseViewModel<HomeUiState>(HomeUiState()) {
+
+    private lateinit var timerJob: Job
 
     override fun onEvent(event: UiEvent) {
         super.onEvent(event)
@@ -41,23 +49,8 @@ class HomeViewModel(
                                 return@launch
                             }
 
-                            val selectedGroup = getJoiningGroupsResult.groups[getJoiningGroupsResult.lastSelectedGroupIndex]
-
-                            updateState {
-                                it.copy(
-                                    selectedGroup = selectedGroup,
-                                    groups = getJoiningGroupsResult.groups,
-                                    selectedDate = today,
-                                )
-                            }
-
-                            if (uiState.selectedGroup.progressDay == 0) {
-                                launchTomorrowTimer()
-                            }
-
-                            storeLastSelectedGroupId(selectedGroup.id).getOrElse {
-                                // handle exception
-                            }
+                            updateState { it.copy(groups = getJoiningGroupsResult.groups) }
+                            selectGroup(getJoiningGroupsResult.groups[getJoiningGroupsResult.lastSelectedGroupIndex])
                         }
 
                         postEffect(HomeUiEffect.CheckNotificationPermission)
@@ -117,6 +110,10 @@ class HomeViewModel(
                     is HomeUiEvent.Click.OnClickNextDay -> {
                         updateState { it.copy(selectedDate = uiState.selectedDate.plusDays(1)) }
                     }
+
+                    is HomeUiEvent.Click.OnClickDismissTooltip -> {
+                        updateState { it.copy(tooltipUiState = it.tooltipUiState.copy(isShowing = false)) }
+                    }
                 }
             }
 
@@ -142,7 +139,7 @@ class HomeViewModel(
         val totalSecondsInDay = HoursPerDay * MinutesPerHour * SecondsPerMinute
         var remainingSeconds = between(todayWithTime, tomorrowMidnight).seconds
 
-        viewModelScope.launch(defaultDispatcher) {
+        timerJob = viewModelScope.launch(defaultDispatcher) {
             while (remainingSeconds > 0) {
                 delay(1000L)
                 remainingSeconds--
@@ -161,6 +158,38 @@ class HomeViewModel(
                     )
                 }
             }
+        }
+    }
+
+    private suspend fun selectGroup(group: Group) {
+        if (uiState.selectedGroup.progressDay == 0) {
+            launchTomorrowTimer()
+        } else {
+            if (::timerJob.isInitialized) {
+                timerJob.cancel()
+            }
+        }
+
+        storeLastSelectedGroupId(group.id).getOrElse {
+            // handle exception
+        }
+
+        updateState {
+            it.copy(
+                selectedGroup = group,
+                todoList = listOf(), // todo
+                selectedDate = today,
+                selectedChip = Chip.All,
+                filteredTodoList = listOf(), // todo
+                tooltipUiState = TooltipUiState(
+                    isShowing = group.status == STATUS_D_DAY || group.status == STATUS_FINISHED,
+                    stringId = when (group.status) {
+                        STATUS_D_DAY -> R.string.tooltip_group_d_day
+                        STATUS_FINISHED -> R.string.tooltip_group_finished
+                        else -> null
+                    }
+                )
+            )
         }
     }
 }
