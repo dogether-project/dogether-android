@@ -2,10 +2,10 @@ package site.dogether.presentation.screen.home
 
 import site.dogether.domain.model.group.Group
 import site.dogether.domain.model.group.Group.Companion.STATUS_READY
+import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.DialogState
-import site.dogether.presentation.model.Todo
 import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.TooltipUiState
 import site.dogether.presentation.utils.DATE_FORMAT_SHORT_YEAR

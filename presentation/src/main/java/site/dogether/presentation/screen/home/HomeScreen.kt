@@ -67,6 +67,11 @@ import site.dogether.common.MaxDailyTodoCount
 import site.dogether.domain.model.group.Group.Companion.STATUS_FINISHED
 import site.dogether.domain.model.group.Group.Companion.STATUS_READY
 import site.dogether.domain.model.group.Group.Companion.STATUS_RUNNING
+import site.dogether.domain.model.todo.Todo
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_APPROVE
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_CERTIFY_PENDING
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_REJECT
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
@@ -74,11 +79,6 @@ import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.TopBar
-import site.dogether.presentation.model.Todo
-import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
-import site.dogether.presentation.model.Todo.Companion.STATUS_CERTIFY_PENDING
-import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
-import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 import site.dogether.presentation.screen.home.state.PersistentTooltipStateImpl

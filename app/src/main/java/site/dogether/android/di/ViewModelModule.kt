@@ -48,7 +48,8 @@ val viewModelModule = module {
         HomeViewModel(
             defaultDispatcher = get(named(DefaultDispatcher)),
             getJoiningGroups = get(),
-            storeLastSelectedGroupId = get()
+            storeLastSelectedGroupId = get(),
+            getMyTodoSpecificDate = get()
         )
     }
     viewModel { MyPageViewModel() }

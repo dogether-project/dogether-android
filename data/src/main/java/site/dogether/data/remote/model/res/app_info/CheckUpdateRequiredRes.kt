@@ -3,7 +3,7 @@ package site.dogether.data.remote.model.res.app_info
 import kotlinx.serialization.Serializable
 import site.dogether.data.model.DataMapper
 import site.dogether.data.model.DataModel
-import site.dogether.domain.model.app_invo.UpdateInfo
+import site.dogether.domain.model.app_info.UpdateInfo
 
 @Serializable
 data class CheckUpdateRequiredRes(

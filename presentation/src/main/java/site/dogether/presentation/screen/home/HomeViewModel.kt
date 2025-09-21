@@ -11,27 +11,33 @@ import site.dogether.common.SecondsPerMinute
 import site.dogether.domain.model.group.Group
 import site.dogether.domain.model.group.Group.Companion.STATUS_D_DAY
 import site.dogether.domain.model.group.Group.Companion.STATUS_FINISHED
+import site.dogether.domain.model.todo.Todo
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_APPROVE
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_REJECT
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.domain.use_case.group.StoreLastSelectedGroupIdUseCase
+import site.dogether.domain.use_case.todo.GetMyTodoSpecificDateUseCase
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
-import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
-import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
-import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.TooltipUiState
+import site.dogether.presentation.utils.DATE_FORMAT_FULL_YEAR
+import site.dogether.presentation.utils.toFormattedString
 import site.dogether.presentation.utils.today
 import site.dogether.presentation.utils.todayWithTime
 import site.dogether.presentation.utils.tomorrowMidnight
 import java.time.Duration.between
+import java.time.LocalDate
 
 class HomeViewModel(
     private val defaultDispatcher: CoroutineDispatcher,
     private val getJoiningGroups: GetJoiningGroupsUseCase,
     private val storeLastSelectedGroupId: StoreLastSelectedGroupIdUseCase,
+    private val getMyTodoSpecificDate: GetMyTodoSpecificDateUseCase
 ) : BaseViewModel<HomeUiState>(HomeUiState()) {
 
     private lateinit var timerJob: Job
@@ -90,11 +96,8 @@ class HomeViewModel(
                     }
 
                     is HomeUiEvent.Click.OnClickGroup -> {
-                        updateState {
-                            it.copy(
-                                selectedGroup = event.group,
-                                isSelectGroupBottomSheetShowing = false
-                            )
+                        viewModelScope.launch {
+                            selectGroup(group = event.group)
                         }
                     }
 
@@ -104,11 +107,43 @@ class HomeViewModel(
                     }
 
                     is HomeUiEvent.Click.OnClickPrevDay -> {
-                        updateState { it.copy(selectedDate = uiState.selectedDate.minusDays(1)) }
+                        viewModelScope.launch {
+                            val date = uiState.selectedDate.minusDays(1)
+                            val getMyTodoSpecificDateResult = getMyTodoSpecificDate(
+                                groupId = uiState.selectedGroup.id,
+                                date = date.toFormattedString(DATE_FORMAT_FULL_YEAR)
+                            ).getOrElse {
+                                // handle exception
+                                return@launch
+                            }.todos
+
+                            updateState {
+                                it.copy(
+                                    selectedDate = date,
+                                    todoList = getMyTodoSpecificDateResult
+                                )
+                            }
+                        }
                     }
 
                     is HomeUiEvent.Click.OnClickNextDay -> {
-                        updateState { it.copy(selectedDate = uiState.selectedDate.plusDays(1)) }
+                        viewModelScope.launch {
+                            val date = uiState.selectedDate.plusDays(1)
+                            val getMyTodoSpecificDateResult = getMyTodoSpecificDate(
+                                groupId = uiState.selectedGroup.id,
+                                date = date.toFormattedString(DATE_FORMAT_FULL_YEAR)
+                            ).getOrElse {
+                                // handle exception
+                                return@launch
+                            }.todos
+
+                            updateState {
+                                it.copy(
+                                    selectedDate = date,
+                                    todoList = getMyTodoSpecificDateResult
+                                )
+                            }
+                        }
                     }
 
                     is HomeUiEvent.Click.OnClickDismissTooltip -> {
@@ -170,6 +205,14 @@ class HomeViewModel(
             }
         }
 
+        val getMyTodoSpecificDateResult = getMyTodoSpecificDate(
+            groupId = group.id,
+            date = today.toFormattedString(DATE_FORMAT_FULL_YEAR)
+        ).getOrElse {
+            // handle exception
+            return
+        }.todos
+
         storeLastSelectedGroupId(group.id).getOrElse {
             // handle exception
         }
@@ -177,7 +220,7 @@ class HomeViewModel(
         updateState {
             it.copy(
                 selectedGroup = group,
-                todoList = listOf(), // todo
+                todoList = getMyTodoSpecificDateResult,
                 selectedDate = today,
                 selectedChip = Chip.All,
                 filteredTodoList = listOf(), // todo
@@ -188,7 +231,8 @@ class HomeViewModel(
                         STATUS_FINISHED -> R.string.tooltip_group_finished
                         else -> null
                     }
-                )
+                ),
+                isSelectGroupBottomSheetShowing = false
             )
         }
     }
