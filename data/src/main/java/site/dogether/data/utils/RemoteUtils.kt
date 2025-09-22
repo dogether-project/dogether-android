@@ -41,7 +41,30 @@ suspend inline fun <reified T> safeApiCall(
                 Result.failure(IllegalStateException("Response body 'data' is null"))
             }
         } else {
-            val parsedErrorBody = json.decodeFromString<BaseResponse<Nothing>>(response.bodyAsText())
+            val parsedErrorBody =
+                json.decodeFromString<BaseResponse<Nothing>>(response.bodyAsText())
+            Result.failure(
+                NetworkFailureException(
+                    code = parsedErrorBody.code,
+                    message = parsedErrorBody.message
+                )
+            )
+        }
+    } catch (e: Throwable) {
+        Result.failure(e)
+    }
+}
+
+suspend inline fun safeApiCallWithoutRes(
+    apiCall: suspend () -> HttpResponse,
+): Result<Unit> {
+    return try {
+        val response = apiCall()
+        if (response.status.isSuccess()) {
+            Result.success(Unit)
+        } else {
+            val parsedErrorBody =
+                json.decodeFromString<BaseResponse<Nothing>>(response.bodyAsText())
             Result.failure(
                 NetworkFailureException(
                     code = parsedErrorBody.code,
@@ -82,7 +105,7 @@ suspend inline fun <reified Req> HttpClient.safePostWithoutRes(
     apiRoute: String,
     body: Req,
 ): Result<Unit> {
-    return safeApiCall<Unit> {
+    return safeApiCallWithoutRes {
         post(apiRoute) {
             setBody(body)
         }
@@ -93,7 +116,7 @@ suspend fun HttpClient.safeGetWithoutRes(
     apiRoute: String,
     params: Map<String, String> = emptyMap(),
 ): Result<Unit> {
-    return safeApiCall<Unit> {
+    return safeApiCallWithoutRes {
         get(apiRoute) {
             params.forEach { (key, value) -> parameter(key, value) }
         }

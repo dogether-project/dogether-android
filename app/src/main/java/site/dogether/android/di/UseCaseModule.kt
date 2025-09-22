@@ -6,6 +6,7 @@ import site.dogether.domain.use_case.group.CreateGroupUseCase
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.domain.use_case.group.ParticipateGroupUseCase
 import site.dogether.domain.use_case.group.StoreLastSelectedGroupIdUseCase
+import site.dogether.domain.use_case.todo.CreateMyTodosUseCase
 import site.dogether.domain.use_case.todo.GetMyTodoSpecificDateUseCase
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.GetUserInfoUseCase
@@ -23,4 +24,5 @@ val useCaseModule = module {
     factory { GetJoiningGroupsUseCase(repository = get()) }
     factory { StoreLastSelectedGroupIdUseCase(repository = get()) }
     factory { GetMyTodoSpecificDateUseCase(repository = get()) }
+    factory { CreateMyTodosUseCase(repository = get()) }
 }

@@ -7,4 +7,6 @@ interface TodoRepository {
         groupId: Int,
         date: String
     ): Result<GetMyTodoSpecificDateInfo>
+
+    suspend fun createMyTodo(groupId: Int, todos: List<String>): Result<Unit>
 }
