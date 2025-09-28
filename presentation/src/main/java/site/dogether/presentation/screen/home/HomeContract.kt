@@ -21,7 +21,6 @@ data class HomeUiState(
     val todoList: List<Todo> = emptyList(),
     val selectedDate: LocalDate = today,
     val selectedChip: Chip = Chip.All,
-    val filteredTodoList: List<Todo> = listOf(),
     val isSelectGroupBottomSheetShowing: Boolean = false,
     val permissionDialogState: DialogState = DialogState(),
     val groups: List<Group> = listOf(),
@@ -36,6 +35,13 @@ data class HomeUiState(
         } else false
     val isGoNextDayPossible: Boolean
         get() = selectedDate < today
+    val filteredTodoList: List<Todo>
+        get() = when (selectedChip) {
+            Chip.All -> todoList
+            Chip.Approve -> todoList.filter { it.status == Todo.STATUS_APPROVE }
+            Chip.Reject -> todoList.filter { it.status == Todo.STATUS_REJECT }
+            Chip.ReviewPending -> todoList.filter { it.status == Todo.STATUS_REVIEW_PENDING }
+        }
 }
 
 sealed interface HomeUiEvent : UiEvent {

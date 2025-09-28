@@ -67,19 +67,7 @@ class HomeViewModel(
             is HomeUiEvent.Click -> {
                 when (event) {
                     is HomeUiEvent.Click.OnClickChip -> {
-                        updateState {
-                            it.copy(
-                                selectedChip = event.chip,
-                                filteredTodoList = it.todoList.filter { todo ->
-                                    when (event.chip) {
-                                        Chip.All -> true
-                                        Chip.Approve -> todo.status == STATUS_APPROVE
-                                        Chip.Reject -> todo.status == STATUS_REJECT
-                                        Chip.ReviewPending -> todo.status == STATUS_REVIEW_PENDING
-                                    }
-                                }
-                            )
-                        }
+                        updateState { it.copy(selectedChip = event.chip) }
                     }
 
                     is HomeUiEvent.Click.OnClickSelectGroup -> {
@@ -227,7 +215,6 @@ class HomeViewModel(
                 todoList = getMyTodoSpecificDateResult,
                 selectedDate = today,
                 selectedChip = Chip.All,
-                filteredTodoList = listOf(), // todo
                 tooltipUiState = TooltipUiState(
                     isShowing = group.status == STATUS_D_DAY || group.status == STATUS_FINISHED,
                     stringId = when (group.status) {
