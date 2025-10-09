@@ -141,6 +141,15 @@ class HomeViewModel(
                     HomeUiEvent.Click.OnClickCreateTodo -> {
                         postEffect(HomeUiEffect.NavigateToCreateTodo)
                     }
+
+                    is HomeUiEvent.Click.OnClickCertificateTodo -> {
+                        postEffect(
+                            HomeUiEffect.NavigateToCertificateTodo(
+                                todoId = event.todoId,
+                                todoTitle = event.todoTitle
+                            )
+                        )
+                    }
                 }
             }
 

@@ -18,4 +18,6 @@ object Screen {
     const val SETTINGS = "settings"
     const val GROUP_MANAGEMENT = "group_management"
     const val CREATE_TODO = "create_todo"
+    const val CERTIFICATE_TODO = "certificate_todo"
+    const val CERTIFICATE_DESCRIPTION = "certificate_description"
 }

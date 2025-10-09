@@ -18,5 +18,7 @@ object ApiRoutes {
     const val STORE_LAST_SELECTED_GROUP_ID = "groups/last-selected"
     fun getMyTodoSpecificDate(groupId: Int): String = "challenge-groups/$groupId/my-todos"
     fun createMyTodos(groupId: Int): String = "challenge-groups/$groupId/todos"
+    const val GET_PRESIGNED_URLS = "s3/presigned-urls"
+    fun certifyTodo(dailyTodoId: Int): String = "todos/$dailyTodoId/certify"
 
 }

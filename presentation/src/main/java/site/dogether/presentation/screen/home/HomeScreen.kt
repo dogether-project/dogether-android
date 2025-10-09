@@ -21,8 +21,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -154,6 +154,13 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                             DATE_FORMAT_SHORT_YEAR
                         )
                     }"
+                )
+            }
+
+            // 투두 인증 페이지로 이동
+            is HomeUiEffect.NavigateToCertificateTodo -> {
+                navHostController.navigate(
+                    "${Screen.CERTIFICATE_TODO}/${uiEffect.todoId}/${uiEffect.todoTitle}"
                 )
             }
         }
@@ -491,12 +498,12 @@ private fun HomeScreenContents(
             status = uiState.selectedGroup.status,
             selectedDate = uiState.selectedDate,
             todoList = uiState.todoList,
-            isGoPrevDayPossible = uiState.isGoPrevDayPossible,
-            isGoNextDayPossible = uiState.isGoNextDayPossible,
             filteredTodoList = uiState.filteredTodoList,
             selectedChip = uiState.selectedChip,
             timerText = uiState.timerText,
             timerProgress = uiState.timerProgress,
+            isGoPrevDayPossible = uiState.isGoPrevDayPossible,
+            isGoNextDayPossible = uiState.isGoNextDayPossible,
             onEvent = onEvent
         )
     }
@@ -598,13 +605,13 @@ private fun AnchoredBottomSheet(
     connection: NestedScrollConnection,
     status: String,
     selectedDate: LocalDate,
-    isGoPrevDayPossible: Boolean,
-    isGoNextDayPossible: Boolean,
     todoList: List<Todo>,
     filteredTodoList: List<Todo>,
     selectedChip: Chip,
     timerText: String,
     timerProgress: Float,
+    isGoPrevDayPossible: Boolean,
+    isGoNextDayPossible: Boolean,
     onEvent: (UiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -856,7 +863,7 @@ private fun ColumnScope.TodoListContents(
             .clickable { onEvent(HomeUiEvent.Click.OnClickCreateTodo) },
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        filteredTodoList.forEach { todo -> TodoItem(todo) }
+        filteredTodoList.forEach { todo -> TodoItem(todo, onEvent) }
 
         Row(
             modifier = Modifier
@@ -967,15 +974,14 @@ private fun ChipItem(
 }
 
 @Composable
-private fun TodoItem(todo: Todo) {
+private fun TodoItem(todo: Todo, onEvent: (UiEvent) -> Unit) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .fillMaxWidth()
             .height(64.dp)
             .background(ColorBgSurface)
-            .padding(horizontal = 16.dp)
-            .clickableWithoutRipple { },
+            .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -1029,6 +1035,9 @@ private fun TodoItem(todo: Todo) {
                         horizontal = 12.dp,
                         vertical = (3.5).dp
                     )
+                    .clickable {
+                        onEvent(HomeUiEvent.Click.OnClickCertificateTodo(todo.id, todo.content))
+                    }
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),

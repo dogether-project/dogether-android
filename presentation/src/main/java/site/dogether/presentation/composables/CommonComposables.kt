@@ -589,7 +589,7 @@ private fun GroupItemPreview() {
 /**
  * 두게더 공용 스낵바(토스트)
  * snackbarHost 지정 필요
- * @see site.dogether.presentation.screen.todo.CreateTodoScreen
+ * @see site.dogether.presentation.screen.todo.create.CreateTodoScreen
  * */
 @Composable
 fun DogetherSnackbar(

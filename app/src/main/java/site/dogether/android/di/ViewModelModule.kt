@@ -19,7 +19,9 @@ import site.dogether.presentation.screen.on_boarding.OnBoardingViewModel
 import site.dogether.presentation.screen.participate_group.ParticipateGroupViewModel
 import site.dogether.presentation.screen.participation_method.ParticipationMethodViewModel
 import site.dogether.presentation.screen.splash.SplashViewModel
-import site.dogether.presentation.screen.todo.CreateTodoViewModel
+import site.dogether.presentation.screen.todo.certificate.CertificateDescriptionViewModel
+import site.dogether.presentation.screen.todo.certificate.CertificateTodoViewModel
+import site.dogether.presentation.screen.todo.create.CreateTodoViewModel
 
 val viewModelModule = module {
     viewModel {
@@ -63,6 +65,17 @@ val viewModelModule = module {
             getMyTodoSpecificDateUseCase = get(),
             createMyTodosUseCase = get(),
             savedStateHandle = get()
+        )
+    }
+    viewModel {
+        CertificateTodoViewModel(savedStateHandle = get())
+    }
+    viewModel {
+        CertificateDescriptionViewModel(
+            savedStateHandle = get(),
+            getPresignedUrlsUseCase = get(),
+            uploadImageToS3UseCase = get(),
+            certificateTodoUseCase = get()
         )
     }
 }

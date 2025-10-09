@@ -1,5 +1,6 @@
 package site.dogether.android.di
 
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import site.dogether.data.repository_impl.AppInfoRepositoryImpl
 import site.dogether.data.repository_impl.GroupRepositoryImpl
@@ -19,5 +20,10 @@ val repositoryModule = module {
     }
     single<AppInfoRepository> { AppInfoRepositoryImpl(httpClient = get()) }
     single<GroupRepository> { GroupRepositoryImpl(httpClient = get()) }
-    single<TodoRepository> { TodoRepositoryImpl(httpClient = get()) }
+    single<TodoRepository> {
+        TodoRepositoryImpl(
+            context = get(),
+            httpClient = get()
+        )
+    }
 }

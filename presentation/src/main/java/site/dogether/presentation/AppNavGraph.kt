@@ -5,9 +5,12 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import site.dogether.KEY_ENCODED_URI
 import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_JOIN_CODE
 import site.dogether.KEY_SELECTED_DATE
+import site.dogether.KEY_TODO_ID
+import site.dogether.KEY_TODO_TITLE
 import site.dogether.presentation.screen.create_group.CreateGroupScreen
 import site.dogether.presentation.screen.error.ErrorScreen
 import site.dogether.presentation.screen.force_update.ForceUpdateScreen
@@ -23,7 +26,9 @@ import site.dogether.presentation.screen.on_boarding.OnBoardingScreen
 import site.dogether.presentation.screen.participate_group.ParticipateGroupScreen
 import site.dogether.presentation.screen.participation_method.ParticipationMethodScreen
 import site.dogether.presentation.screen.splash.SplashScreen
-import site.dogether.presentation.screen.todo.CreateTodoScreen
+import site.dogether.presentation.screen.todo.certificate.CertificateDescriptionScreen
+import site.dogether.presentation.screen.todo.certificate.CertificateTodoScreen
+import site.dogether.presentation.screen.todo.create.CreateTodoScreen
 import site.dogether.presentation.utils.LocalNavHostController
 
 @Composable
@@ -60,5 +65,21 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
                 navArgument(KEY_SELECTED_DATE) { type = NavType.StringType }
             )
         ) { CreateTodoScreen() }
+        composable(
+            route = "${Screen.CERTIFICATE_TODO}/{${KEY_TODO_ID}}/{${KEY_TODO_TITLE}}",
+            arguments = listOf(
+                navArgument(KEY_TODO_ID) { type = NavType.IntType },
+                navArgument(KEY_TODO_TITLE) { type = NavType.StringType }
+            )
+        ) { CertificateTodoScreen() }
+        composable(
+            route = "${Screen.CERTIFICATE_DESCRIPTION}/{${KEY_TODO_ID}}/{${KEY_ENCODED_URI}}",
+            arguments = listOf(
+                navArgument(KEY_TODO_ID) { type = NavType.IntType },
+                navArgument(KEY_ENCODED_URI) { type = NavType.StringType }
+            )
+        ) {
+            CertificateDescriptionScreen()
+        }
     }
 }

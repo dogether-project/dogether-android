@@ -1,4 +1,4 @@
-package site.dogether.presentation.screen.todo
+package site.dogether.presentation.screen.todo.create
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -86,7 +87,7 @@ fun CreateTodoScreen(
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar(
                         message = sideEffect.text,
-                        duration = androidx.compose.material3.SnackbarDuration.Short
+                        duration = SnackbarDuration.Short
                     )
                 }
             }

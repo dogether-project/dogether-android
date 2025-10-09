@@ -1,4 +1,4 @@
-package site.dogether.presentation.screen.todo
+package site.dogether.presentation.screen.todo.create
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

@@ -166,4 +166,20 @@
     <string name="create_todo_dialog_title">투두를 저장하시겠습니까?</string>
     <string name="create_todo_dialog_body">한 번 저장한 투두는 수정과 삭제가 불가능합니다</string>
     <string name="create_todo_dialog_save">저장하기</string>
+
+    <!-- CertificateTodo Screen -->
+    <string name="certificate_todo_screen_title">인증 하기</string>
+    <string name="certificate_todo_upload_placeholder">인증 사진을 업로드 해주세요!</string>
+    <string name="certificate_todo_select_photo">사진 선택</string>
+    <string name="certificate_todo_take_photo">사진 촬영</string>
+    <string name="certificate_todo_next_button">다음</string>
+    <string name="certificate_todo_camera_error">카메라를 사용할 수 없습니다.</string>
+
+    <!-- CertificateDescription Screen -->
+    <string name="certificate_description_screen_title">인증 하기</string>
+    <string name="certificate_description_title">인증 내용을 보완해주세요!</string>
+    <string name="certificate_description_warning">한번 인증한 내용은 바꿀 수 없어요</string>
+    <string name="certificate_description_hint">팀원이 이해하기 쉽도록 인증에 대한 설명을 입력하세요.</string>
+    <string name="certificate_description_submit_button">인증하기</string>
+    <string name="certificate_description_success_message">인증을 완료했어요!</string>
 </resources>

@@ -6,8 +6,11 @@ import site.dogether.domain.use_case.group.CreateGroupUseCase
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.domain.use_case.group.ParticipateGroupUseCase
 import site.dogether.domain.use_case.group.StoreLastSelectedGroupIdUseCase
+import site.dogether.domain.use_case.todo.CertificateTodoUseCase
 import site.dogether.domain.use_case.todo.CreateMyTodosUseCase
 import site.dogether.domain.use_case.todo.GetMyTodoSpecificDateUseCase
+import site.dogether.domain.use_case.todo.GetPresignedUrlsUseCase
+import site.dogether.domain.use_case.todo.UploadImageToS3UseCase
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.GetUserInfoUseCase
 import site.dogether.domain.use_case.user.LoginWithKakaoUseCase
@@ -25,4 +28,7 @@ val useCaseModule = module {
     factory { StoreLastSelectedGroupIdUseCase(repository = get()) }
     factory { GetMyTodoSpecificDateUseCase(repository = get()) }
     factory { CreateMyTodosUseCase(repository = get()) }
+    factory { GetPresignedUrlsUseCase(repository = get()) }
+    factory { UploadImageToS3UseCase(repository = get()) }
+    factory { CertificateTodoUseCase(repository = get()) }
 }
