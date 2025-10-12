@@ -1,14 +1,17 @@
 package site.dogether.presentation.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -60,6 +63,7 @@ import site.dogether.presentation.theme.ColorBgDisabled
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgPrimary
 import site.dogether.presentation.theme.ColorBgSurface
+import site.dogether.presentation.theme.ColorBorderDefault
 import site.dogether.presentation.theme.ColorBorderDisabled
 import site.dogether.presentation.theme.ColorBorderPrimary
 import site.dogether.presentation.theme.ColorIconDefault
@@ -584,6 +588,34 @@ private fun GroupItemPreview() {
         isSelected = true,
         onClick = {}
     )
+}
+
+@Composable
+fun CertInfoRowItem(
+    isSelected: Boolean,
+    index: Int,
+    onClick: (Int) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .size(48.dp)
+            .background(ColorBgElevated.copy(alpha = 50f))
+            .border(
+                width = 1.dp,
+                color = if (isSelected) ColorBorderDefault else Color.Transparent,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .clickableWithoutRipple { onClick(index) }
+    ) {
+        Image(
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxSize(),
+            painter = painterResource(R.drawable.img_dosik_empty),
+            contentDescription = null
+        )
+    }
 }
 
 /**

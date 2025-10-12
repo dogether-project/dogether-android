@@ -10,6 +10,7 @@ import site.dogether.presentation.screen.force_update.ForceUpdateViewModel
 import site.dogether.presentation.screen.group_created.GroupCreatedViewModel
 import site.dogether.presentation.screen.group_participated.GroupParticipatedViewModel
 import site.dogether.presentation.screen.home.HomeViewModel
+import site.dogether.presentation.screen.my_cert_info.MyCertInfoViewModel
 import site.dogether.presentation.screen.my_page.MyPageViewModel
 import site.dogether.presentation.screen.my_page.screen.certification_list.CertificationListViewModel
 import site.dogether.presentation.screen.my_page.screen.group_management.GroupManagementViewModel
@@ -60,6 +61,7 @@ val viewModelModule = module {
     viewModel { CertificationListViewModel() }
     viewModel { SettingsViewModel() }
     viewModel { GroupManagementViewModel() }
+    viewModel { MyCertInfoViewModel() }
     viewModel {
         CreateTodoViewModel(
             getMyTodoSpecificDateUseCase = get(),

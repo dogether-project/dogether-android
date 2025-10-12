@@ -17,6 +17,7 @@ import site.dogether.presentation.screen.force_update.ForceUpdateScreen
 import site.dogether.presentation.screen.group_created.GroupCreatedScreen
 import site.dogether.presentation.screen.group_participated.GroupParticipatedScreen
 import site.dogether.presentation.screen.home.HomeScreen
+import site.dogether.presentation.screen.my_cert_info.MyCertInfoScreen
 import site.dogether.presentation.screen.my_page.MyPageScreen
 import site.dogether.presentation.screen.my_page.screen.certification_list.CertificationListScreen
 import site.dogether.presentation.screen.my_page.screen.group_management.GroupManagementScreen
@@ -32,7 +33,8 @@ import site.dogether.presentation.screen.todo.create.CreateTodoScreen
 import site.dogether.presentation.utils.LocalNavHostController
 
 @Composable
-fun AppNavGraph(startDestination: String = Screen.SPLASH) {
+//fun AppNavGraph(startDestination: String = Screen.SPLASH) {
+fun AppNavGraph(startDestination: String = Screen.MY_CERT_INFO) {
     val navHostController = LocalNavHostController.current
 
     NavHost(
@@ -58,6 +60,7 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
         composable(Screen.CERTIFICATION_LIST) { CertificationListScreen() }
         composable(Screen.SETTINGS) { SettingsScreen() }
         composable(Screen.GROUP_MANAGEMENT) { GroupManagementScreen() }
+        composable(Screen.MY_CERT_INFO) { MyCertInfoScreen() }
         composable(
             route = "${Screen.CREATE_TODO}/{${KEY_GROUP_ID}}/{${KEY_SELECTED_DATE}}",
             arguments = listOf(
