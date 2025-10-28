@@ -135,7 +135,7 @@
 
     <string name="notice_share">카카오톡, 문자 등을 통해 공유해보세요 !</string>
 
-    <string name="tooltip_last_day">마지막 인증일이에요!\n내일부터 인증이 불가능해요.</string>
+    <string name="tooltip_group_d_day">마지막 인증일이에요!\n내일부터 인증이 불가능해요.</string>
     <string name="tooltip_group_finished">그룹이 종료됐어요!</string>
 
     <string name="my_page_menu_certification_list">인증 목록</string>
@@ -156,4 +156,30 @@
     <string name="common_ascend_todo_completed">투두 완료일순</string>
 
     <string name="intent_title_share_join_code">참여 코드 공유</string>
+
+    <!-- CreateTodo Screen -->
+    <string name="create_todo_screen_title">투두 작성</string>
+    <string name="create_todo_add_count_prefix">추가 가능 투두 </string>
+    <string name="create_todo_input_hint">예) 30분 걷기, 책 20페이지 읽기</string>
+    <string name="create_todo_save_button">투두 저장</string>
+    <string name="create_todo_empty_message">아직 작성된 투두가 없어요</string>
+    <string name="create_todo_dialog_title">투두를 저장하시겠습니까?</string>
+    <string name="create_todo_dialog_body">한 번 저장한 투두는 수정과 삭제가 불가능합니다</string>
+    <string name="create_todo_dialog_save">저장하기</string>
+
+    <!-- CertificateTodo Screen -->
+    <string name="certificate_todo_screen_title">인증 하기</string>
+    <string name="certificate_todo_upload_placeholder">인증 사진을 업로드 해주세요!</string>
+    <string name="certificate_todo_select_photo">사진 선택</string>
+    <string name="certificate_todo_take_photo">사진 촬영</string>
+    <string name="certificate_todo_next_button">다음</string>
+    <string name="certificate_todo_camera_error">카메라를 사용할 수 없습니다.</string>
+
+    <!-- CertificateDescription Screen -->
+    <string name="certificate_description_screen_title">인증 하기</string>
+    <string name="certificate_description_title">인증 내용을 보완해주세요!</string>
+    <string name="certificate_description_warning">한번 인증한 내용은 바꿀 수 없어요</string>
+    <string name="certificate_description_hint">팀원이 이해하기 쉽도록 인증에 대한 설명을 입력하세요.</string>
+    <string name="certificate_description_submit_button">인증하기</string>
+    <string name="certificate_description_success_message">인증을 완료했어요!</string>
 </resources>

@@ -83,10 +83,11 @@ fun StatisticsScreen(viewModel: StatisticsViewModel = koinViewModel()) {
         SelectGroupBottomSheet(
             sheetState = selectGroupBottomSheetState,
             selectedGroup = uiState.selectedGroup,
-            groupList = uiState.groupList,
+            groups = uiState.groups,
             isAddButtonShowing = false,
             onDismissRequest = { onEvent(StatisticsUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
-            onClickGroupItem = { }
+            onClickGroupItem = { },
+            onClickAddGroup = { }
         )
     }
 }
@@ -129,7 +130,7 @@ private fun StatisticsContents(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = uiState.selectedGroup,
+                    text = uiState.selectedGroup.name,
                     style = Head1_B.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextPrimary
                 )

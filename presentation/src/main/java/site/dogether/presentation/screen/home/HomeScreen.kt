@@ -8,6 +8,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,8 +21,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -60,22 +61,29 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import java.time.LocalDate
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
+import site.dogether.domain.model.group.Group.Companion.STATUS_FINISHED
+import site.dogether.domain.model.group.Group.Companion.STATUS_READY
+import site.dogether.domain.model.group.Group.Companion.STATUS_RUNNING
+import site.dogether.domain.model.todo.Todo
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_APPROVE
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_CERTIFY_PENDING
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_REJECT
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.R
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.TopBar
-import site.dogether.presentation.model.Todo
-import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
-import site.dogether.presentation.model.Todo.Companion.STATUS_CERTIFY_PENDING
-import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
-import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 import site.dogether.presentation.screen.home.state.PersistentTooltipStateImpl
@@ -109,16 +117,17 @@ import site.dogether.presentation.theme.Small_S
 import site.dogether.presentation.theme.Yellow
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.DATE_FORMAT_FULL_YEAR
+import site.dogether.presentation.utils.DATE_FORMAT_SHORT_YEAR
+import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.alphaByProgress
 import site.dogether.presentation.utils.bottomSheetSnappable
 import site.dogether.presentation.utils.clickableWithoutRipple
+import site.dogether.presentation.utils.conditionedClickableWithoutRipple
 import site.dogether.presentation.utils.isPermissionGranted
 import site.dogether.presentation.utils.toDp
 import site.dogether.presentation.utils.toFormattedString
 import site.dogether.presentation.utils.today
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,6 +135,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
     val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
+    val navHostController = LocalNavHostController.current
 
     viewModel.CollectEffect<HomeUiEffect> { uiEffect ->
         when (uiEffect) {
@@ -135,6 +145,24 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             )
 
             is HomeUiEffect.NavigateToNotificationSettings -> navigateToNotificationSetting(context)
+
+            // 투두 생성 페이지로 이동
+            HomeUiEffect.NavigateToCreateTodo -> {
+                navHostController.navigate(
+                    "${Screen.CREATE_TODO}/${uiState.selectedGroup.id}/${
+                        uiState.selectedDate.toFormattedString(
+                            DATE_FORMAT_SHORT_YEAR
+                        )
+                    }"
+                )
+            }
+
+            // 투두 인증 페이지로 이동
+            is HomeUiEffect.NavigateToCertificateTodo -> {
+                navHostController.navigate(
+                    "${Screen.CERTIFICATE_TODO}/${uiEffect.todoId}/${uiEffect.todoTitle}"
+                )
+            }
         }
     }
 
@@ -148,10 +176,11 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
         SelectGroupBottomSheet(
             sheetState = selectGroupBottomSheetState,
             selectedGroup = uiState.selectedGroup,
-            groupList = uiState.groupList,
+            groups = uiState.groups,
             isAddButtonShowing = true,
             onDismissRequest = { onEvent(HomeUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
-            onClickGroupItem = { }
+            onClickGroupItem = { group -> onEvent(HomeUiEvent.Click.OnClickGroup(group)) },
+            onClickAddGroup = { onEvent(HomeUiEvent.Click.OnClickAddGroup) }
         )
     }
 
@@ -204,7 +233,11 @@ private fun HomeScreenContents(
                 return Offset.Zero
             }
 
-            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
                 if (available.y > 0f && anchoredBottomSheetState.sheetOffsetY.value < anchoredBottomSheetState.lowerAnchorY) {
                     val before = anchoredBottomSheetState.sheetOffsetY.value
                     scope.launch {
@@ -282,19 +315,19 @@ private fun HomeScreenContents(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Row(
-                        modifier = Modifier.padding(top = 6.dp),
+                        modifier = Modifier
+                            .padding(top = 6.dp)
+                            .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickSelectGroup) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "DND 작심삼일 탈출러",
+                            text = uiState.selectedGroup.name,
                             style = Head1_B.copy(lineHeightStyle = LineHeightStyle.Default),
                             color = ColorTextPrimary
                         )
 
                         Icon(
-                            modifier = Modifier
-                                .padding(start = 4.dp)
-                                .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickSelectGroup) },
+                            modifier = Modifier.padding(start = 4.dp),
                             painter = painterResource(R.drawable.ic_arrow_down),
                             tint = ColorIconElevated,
                             contentDescription = "icon_arrow_down"
@@ -305,25 +338,35 @@ private fun HomeScreenContents(
                         modifier = Modifier
                             .alphaByProgress(anchoredBottomSheetState.expandingProgress)
                             .padding(top = 12.dp)
-                            .onLayoutRectChanged { bounds -> anchoredBottomSheetState.upperAnchorY = bounds.positionInWindow.y },
+                            .onLayoutRectChanged { bounds ->
+                                anchoredBottomSheetState.upperAnchorY = bounds.positionInWindow.y
+                            },
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         GroupInfoColumn(
                             title = stringResource(R.string.info_group_member_count),
-                            value = "6/10",
+                            value = "${uiState.selectedGroup.currentMemberCount}/${uiState.selectedGroup.maximumMemberCount}",
                         )
 
                         Column(modifier = Modifier.padding(start = 16.dp)) {
                             Text(
                                 text = stringResource(R.string.info_join_code),
-                                style = Body2_R.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+                                style = Body2_R.copy(
+                                    lineHeightStyle = LineHeightStyle.Default.copy(
+                                        trim = LineHeightStyle.Trim.None
+                                    )
+                                ),
                                 color = ColorTextSecondary
                             )
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "12345678",
-                                    style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+                                    text = uiState.selectedGroup.joinCode,
+                                    style = Body1_S.copy(
+                                        lineHeightStyle = LineHeightStyle.Default.copy(
+                                            trim = LineHeightStyle.Trim.None
+                                        )
+                                    ),
                                     color = ColorTextDefault
                                 )
 
@@ -337,7 +380,7 @@ private fun HomeScreenContents(
 
                         GroupInfoColumn(
                             title = stringResource(R.string.info_end_date),
-                            value = "25.02.22"
+                            value = uiState.selectedGroup.endAt
                         )
                     }
                 }
@@ -347,8 +390,9 @@ private fun HomeScreenContents(
                     tooltip = {
                         DosikTooltip(
                             modifier = Modifier.alphaByProgress(anchoredBottomSheetState.expandingProgress),
-                            text = uiState.tooltipUiState.stringId?.let { stringResource(it) }.orEmpty(),
-                            onClickDismiss = { }
+                            text = uiState.tooltipUiState.stringId?.let { stringResource(it) }
+                                .orEmpty(),
+                            onClickDismiss = { onEvent(HomeUiEvent.Click.OnClickDismissTooltip) }
                         )
                     },
                     state = tooltipState,
@@ -378,7 +422,7 @@ private fun HomeScreenContents(
                 )
 
                 Text(
-                    text = "(n${stringResource(R.string.unit_day_passed)})",
+                    text = "(${uiState.selectedGroup.progressDay}${stringResource(R.string.unit_day_passed)})",
                     style = Small_R.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextSecondary
                 )
@@ -393,7 +437,7 @@ private fun HomeScreenContents(
                 ) {
                     Box(
                         modifier = Modifier
-                            .width(64.dp)
+                            .fillMaxWidth(uiState.selectedGroup.progressRate)
                             .height(8.dp)
                             .background(ColorBgPrimary)
                     )
@@ -441,13 +485,26 @@ private fun HomeScreenContents(
                     .onLayoutRectChanged(
                         throttleMillis = 50L,
                         debounceMillis = 0L
-                    ) { bounds -> anchoredBottomSheetState.lowerAnchorY = bounds.positionInWindow.y + bounds.height }
+                    ) { bounds ->
+                        anchoredBottomSheetState.lowerAnchorY =
+                            bounds.positionInWindow.y + bounds.height
+                    }
             )
         }
 
         AnchoredBottomSheet(
             sheetState = anchoredBottomSheetState,
-            connection = connection
+            connection = connection,
+            status = uiState.selectedGroup.status,
+            selectedDate = uiState.selectedDate,
+            todoList = uiState.todoList,
+            filteredTodoList = uiState.filteredTodoList,
+            selectedChip = uiState.selectedChip,
+            timerText = uiState.timerText,
+            timerProgress = uiState.timerProgress,
+            isGoPrevDayPossible = uiState.isGoPrevDayPossible,
+            isGoNextDayPossible = uiState.isGoNextDayPossible,
+            onEvent = onEvent
         )
     }
 }
@@ -546,6 +603,16 @@ private fun DosikTooltip(
 private fun AnchoredBottomSheet(
     sheetState: AnchoredBottomSheetState,
     connection: NestedScrollConnection,
+    status: String,
+    selectedDate: LocalDate,
+    todoList: List<Todo>,
+    filteredTodoList: List<Todo>,
+    selectedChip: Chip,
+    timerText: String,
+    timerProgress: Float,
+    isGoPrevDayPossible: Boolean,
+    isGoNextDayPossible: Boolean,
+    onEvent: (UiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -584,17 +651,18 @@ private fun AnchoredBottomSheet(
                     .clip(RoundedCornerShape(8.dp))
                     .size(24.dp)
                     .background(ColorBgSurface)
+                    .conditionedClickableWithoutRipple(isGoPrevDayPossible) { onEvent(HomeUiEvent.Click.OnClickPrevDay) }
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.Center),
                     painter = painterResource(R.drawable.ic_brace_left),
-                    tint = ColorIconDisabled,
+                    tint = if (isGoPrevDayPossible) ColorIconElevated else ColorIconDisabled,
                     contentDescription = "icon_brace_left"
                 )
             }
 
             Text(
-                text = today.toFormattedString(DATE_FORMAT_FULL_YEAR),
+                text = selectedDate.toFormattedString(DATE_FORMAT_FULL_YEAR),
                 style = Head2_B.copy(lineHeightStyle = LineHeightStyle.Default),
                 color = ColorTextDefault
             )
@@ -604,35 +672,50 @@ private fun AnchoredBottomSheet(
                     .clip(RoundedCornerShape(8.dp))
                     .size(24.dp)
                     .background(ColorBgSurface)
+                    .conditionedClickableWithoutRipple(isGoNextDayPossible) { onEvent(HomeUiEvent.Click.OnClickNextDay) }
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.Center),
                     painter = painterResource(R.drawable.ic_brace_right),
-                    tint = ColorIconDisabled,
+                    tint = if (isGoNextDayPossible) ColorIconElevated else ColorIconDisabled,
                     contentDescription = "icon_brace_right"
                 )
             }
         }
 
-//            LaunchFromTomorrowContents(
-//                uiState = uiState,
-//                onEvent = onEvent
-//            )
+        when (status) {
+            STATUS_READY -> {
+                LaunchFromTomorrowContents(
+                    timerText = timerText,
+                    timerProgress = timerProgress,
+                    onEvent = onEvent
+                )
+            }
 
-//            TodoContents(
-//                uiState = uiState,
-//                onEvent = onEvent
-//            )
+            STATUS_RUNNING -> {
+                if (selectedDate != today && todoList.isEmpty()) {
+                    NoTodoContents()
+                } else {
+                    TodoContents(
+                        todoList = todoList,
+                        filteredTodoList = filteredTodoList,
+                        selectedChip = selectedChip,
+                        onEvent = onEvent
+                    )
+                }
+            }
 
-//            NoTodoContents()
-
-//            FinishedContents()
+            STATUS_FINISHED -> {
+                FinishedContents()
+            }
+        }
     }
 }
 
 @Composable
 private fun LaunchFromTomorrowContents(
-    uiState: HomeUiState,
+    timerText: String,
+    timerProgress: Float,
     onEvent: (UiEvent) -> Unit,
 ) {
     Column(
@@ -659,7 +742,7 @@ private fun LaunchFromTomorrowContents(
                 drawArc(
                     brush = SolidColor(ColorBgPrimary),
                     startAngle = -90f,
-                    sweepAngle = uiState.timerProgress * 360f,
+                    sweepAngle = timerProgress * 360f,
                     useCenter = false,
                     style = Stroke(
                         width = strokeWidth,
@@ -679,7 +762,7 @@ private fun LaunchFromTomorrowContents(
 
                 Text(
                     modifier = Modifier.padding(top = 2.dp),
-                    text = uiState.timerText,
+                    text = timerText,
                     style = Head1_B.copy(fontFeatureSettings = "tnum"),
                     color = ColorTextDefault
                 )
@@ -704,27 +787,33 @@ private fun LaunchFromTomorrowContents(
 
 @Composable
 private fun TodoContents(
-    uiState: HomeUiState,
+    todoList: List<Todo>,
+    filteredTodoList: List<Todo>,
+    selectedChip: Chip,
     onEvent: (UiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (uiState.todoList.isNotEmpty()) {
+        if (todoList.isNotEmpty()) {
             TodoListContents(
-                uiState = uiState,
+                todoList = todoList,
+                filteredTodoList = filteredTodoList,
+                selectedChip = selectedChip,
                 onEvent = onEvent
             )
         } else {
-            EmptyTodoListContents()
+            EmptyTodoListContents(onEvent = onEvent)
         }
     }
 }
 
 @Composable
 private fun ColumnScope.TodoListContents(
-    uiState: HomeUiState,
+    todoList: List<Todo>,
+    filteredTodoList: List<Todo>,
+    selectedChip: Chip,
     onEvent: (UiEvent) -> Unit,
 ) {
     Row(
@@ -735,7 +824,7 @@ private fun ColumnScope.TodoListContents(
     ) {
         ChipItem(
             chip = Chip.All,
-            isSelected = Chip.All == uiState.selectedChip,
+            isSelected = Chip.All == selectedChip,
             color = ColorBgPrimary,
             onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.All)) }
         )
@@ -743,7 +832,7 @@ private fun ColumnScope.TodoListContents(
         ChipItem(
             chip = Chip.ReviewPending,
             icon = painterResource(R.drawable.ic_review_pending),
-            isSelected = Chip.ReviewPending == uiState.selectedChip,
+            isSelected = Chip.ReviewPending == selectedChip,
             color = Yellow,
             onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.ReviewPending)) }
         )
@@ -751,7 +840,7 @@ private fun ColumnScope.TodoListContents(
         ChipItem(
             chip = Chip.Approve,
             icon = painterResource(R.drawable.ic_approve),
-            isSelected = Chip.Approve == uiState.selectedChip,
+            isSelected = Chip.Approve == selectedChip,
             color = ColorBgPrimary,
             onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.Approve)) }
         )
@@ -759,7 +848,7 @@ private fun ColumnScope.TodoListContents(
         ChipItem(
             chip = Chip.Reject,
             icon = painterResource(R.drawable.ic_reject),
-            isSelected = Chip.Reject == uiState.selectedChip,
+            isSelected = Chip.Reject == selectedChip,
             color = Red400,
             onClick = { onEvent(HomeUiEvent.Click.OnClickChip(Chip.Reject)) }
         )
@@ -770,10 +859,11 @@ private fun ColumnScope.TodoListContents(
     Column(
         modifier = Modifier
             .weight(1f)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .clickable { onEvent(HomeUiEvent.Click.OnClickCreateTodo) },
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        uiState.filteredTodoList.forEach { todo -> TodoItem(todo) }
+        filteredTodoList.forEach { todo -> TodoItem(todo, onEvent) }
 
         Row(
             modifier = Modifier
@@ -791,7 +881,7 @@ private fun ColumnScope.TodoListContents(
 
             Text(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(R.string.cta_button_add_todo) + " (${uiState.todoList.size}/$MaxDailyTodoCount)",
+                text = stringResource(R.string.cta_button_add_todo) + " (${todoList.size}/$MaxDailyTodoCount)",
                 style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
                 color = ColorTextSubtle
             )
@@ -800,7 +890,9 @@ private fun ColumnScope.TodoListContents(
 }
 
 @Composable
-private fun ColumnScope.EmptyTodoListContents() {
+private fun ColumnScope.EmptyTodoListContents(
+    onEvent: (UiEvent) -> Unit,
+) {
     Column(
         modifier = Modifier.weight(1f),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -834,7 +926,7 @@ private fun ColumnScope.EmptyTodoListContents() {
             .height(50.dp),
         radius = 8.dp,
         text = stringResource(R.string.cta_button_create_todo),
-        onClick = {}
+        onClick = { onEvent(HomeUiEvent.Click.OnClickCreateTodo) }
     )
 }
 
@@ -882,15 +974,14 @@ private fun ChipItem(
 }
 
 @Composable
-private fun TodoItem(todo: Todo) {
+private fun TodoItem(todo: Todo, onEvent: (UiEvent) -> Unit) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .fillMaxWidth()
             .height(64.dp)
             .background(ColorBgSurface)
-            .padding(horizontal = 16.dp)
-            .clickableWithoutRipple { },
+            .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -944,6 +1035,9 @@ private fun TodoItem(todo: Todo) {
                         horizontal = 12.dp,
                         vertical = (3.5).dp
                     )
+                    .clickable {
+                        onEvent(HomeUiEvent.Click.OnClickCertificateTodo(todo.id, todo.content))
+                    }
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),

@@ -14,4 +14,11 @@ object ApiRoutes {
     const val CHECK_PARTICIPATING = "groups/participating"
     const val CREATE_GROUP = "groups"
     const val PARTICIPATE_GROUP = "groups/join"
+    const val GET_JOINING_GROUPS = "groups/my"
+    const val STORE_LAST_SELECTED_GROUP_ID = "groups/last-selected"
+    fun getMyTodoSpecificDate(groupId: Int): String = "challenge-groups/$groupId/my-todos"
+    fun createMyTodos(groupId: Int): String = "challenge-groups/$groupId/todos"
+    const val GET_PRESIGNED_URLS = "s3/presigned-urls"
+    fun certifyTodo(dailyTodoId: Int): String = "todos/$dailyTodoId/certify"
+
 }

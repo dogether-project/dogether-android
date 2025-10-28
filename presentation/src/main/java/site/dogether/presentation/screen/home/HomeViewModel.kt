@@ -2,24 +2,45 @@ package site.dogether.presentation.screen.home
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import site.dogether.common.HoursPerDay
 import site.dogether.common.MinutesPerHour
 import site.dogether.common.SecondsPerMinute
+import site.dogether.domain.model.group.Group
+import site.dogether.domain.model.group.Group.Companion.STATUS_D_DAY
+import site.dogether.domain.model.group.Group.Companion.STATUS_FINISHED
+import site.dogether.domain.model.todo.Todo
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_APPROVE
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_REJECT
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_REVIEW_PENDING
+import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
+import site.dogether.domain.use_case.group.StoreLastSelectedGroupIdUseCase
+import site.dogether.domain.use_case.todo.GetMyTodoSpecificDateUseCase
+import site.dogether.presentation.R
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
-import site.dogether.presentation.model.Todo.Companion.STATUS_APPROVE
-import site.dogether.presentation.model.Todo.Companion.STATUS_REJECT
-import site.dogether.presentation.model.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.screen.home.model.Chip
+import site.dogether.presentation.screen.home.state.TooltipUiState
+import site.dogether.presentation.utils.DATE_FORMAT_FULL_YEAR
+import site.dogether.presentation.utils.toFormattedString
 import site.dogether.presentation.utils.today
+import site.dogether.presentation.utils.todayWithTime
 import site.dogether.presentation.utils.tomorrowMidnight
 import java.time.Duration.between
+import java.time.LocalDate
 
 class HomeViewModel(
     private val defaultDispatcher: CoroutineDispatcher,
+    private val getJoiningGroups: GetJoiningGroupsUseCase,
+    private val storeLastSelectedGroupId: StoreLastSelectedGroupIdUseCase,
+    private val getMyTodoSpecificDate: GetMyTodoSpecificDateUseCase
 ) : BaseViewModel<HomeUiState>(HomeUiState()) {
+
+    private lateinit var timerJob: Job
 
     override fun onEvent(event: UiEvent) {
         super.onEvent(event)
@@ -28,6 +49,16 @@ class HomeViewModel(
             is HomeUiEvent.Lifecycle -> {
                 when (event) {
                     is HomeUiEvent.Lifecycle.OnFirstComposition -> {
+                        viewModelScope.launch {
+                            val getJoiningGroupsResult = getJoiningGroups().getOrElse {
+                                // handle exception
+                                return@launch
+                            }
+
+                            updateState { it.copy(groups = getJoiningGroupsResult.groups) }
+                            selectGroup(getJoiningGroupsResult.groups[getJoiningGroupsResult.lastSelectedGroupIndex])
+                        }
+
                         postEffect(HomeUiEffect.CheckNotificationPermission)
                     }
                 }
@@ -36,19 +67,7 @@ class HomeViewModel(
             is HomeUiEvent.Click -> {
                 when (event) {
                     is HomeUiEvent.Click.OnClickChip -> {
-                        updateState {
-                            it.copy(
-                                selectedChip = event.chip,
-                                filteredTodoList = it.todoList.filter { todo ->
-                                    when (event.chip) {
-                                        Chip.All -> true
-                                        Chip.Approve -> todo.status == STATUS_APPROVE
-                                        Chip.Reject -> todo.status == STATUS_REJECT
-                                        Chip.ReviewPending -> todo.status == STATUS_REVIEW_PENDING
-                                    }
-                                }
-                            )
-                        }
+                        updateState { it.copy(selectedChip = event.chip) }
                     }
 
                     is HomeUiEvent.Click.OnClickSelectGroup -> {
@@ -62,6 +81,74 @@ class HomeViewModel(
                     is HomeUiEvent.Click.OnClickPermissionDialogPositive -> {
                         updateState { it.copy(permissionDialogState = it.permissionDialogState.copy(isShowing = false)) }
                         postEffect(HomeUiEffect.NavigateToNotificationSettings)
+                    }
+
+                    is HomeUiEvent.Click.OnClickGroup -> {
+                        viewModelScope.launch {
+                            selectGroup(group = event.group)
+                        }
+                    }
+
+                    is HomeUiEvent.Click.OnClickAddGroup -> {
+                        updateState { it.copy(isSelectGroupBottomSheetShowing = false) }
+                        postEffect(UiEffect.NavigateTo(Screen.PARTICIPATION_METHOD))
+                    }
+
+                    is HomeUiEvent.Click.OnClickPrevDay -> {
+                        viewModelScope.launch {
+                            val date = uiState.selectedDate.minusDays(1)
+                            val getMyTodoSpecificDateResult = getMyTodoSpecificDate(
+                                groupId = uiState.selectedGroup.id,
+                                date = date.toFormattedString(DATE_FORMAT_FULL_YEAR)
+                            ).getOrElse {
+                                // handle exception
+                                return@launch
+                            }.todos
+
+                            updateState {
+                                it.copy(
+                                    selectedDate = date,
+                                    todoList = getMyTodoSpecificDateResult
+                                )
+                            }
+                        }
+                    }
+
+                    is HomeUiEvent.Click.OnClickNextDay -> {
+                        viewModelScope.launch {
+                            val date = uiState.selectedDate.plusDays(1)
+                            val getMyTodoSpecificDateResult = getMyTodoSpecificDate(
+                                groupId = uiState.selectedGroup.id,
+                                date = date.toFormattedString(DATE_FORMAT_FULL_YEAR)
+                            ).getOrElse {
+                                // handle exception
+                                return@launch
+                            }.todos
+
+                            updateState {
+                                it.copy(
+                                    selectedDate = date,
+                                    todoList = getMyTodoSpecificDateResult
+                                )
+                            }
+                        }
+                    }
+
+                    is HomeUiEvent.Click.OnClickDismissTooltip -> {
+                        updateState { it.copy(tooltipUiState = it.tooltipUiState.copy(isShowing = false)) }
+                    }
+
+                    HomeUiEvent.Click.OnClickCreateTodo -> {
+                        postEffect(HomeUiEffect.NavigateToCreateTodo)
+                    }
+
+                    is HomeUiEvent.Click.OnClickCertificateTodo -> {
+                        postEffect(
+                            HomeUiEffect.NavigateToCertificateTodo(
+                                todoId = event.todoId,
+                                todoTitle = event.todoTitle
+                            )
+                        )
                     }
                 }
             }
@@ -86,9 +173,9 @@ class HomeViewModel(
 
     private fun launchTomorrowTimer() {
         val totalSecondsInDay = HoursPerDay * MinutesPerHour * SecondsPerMinute
-        var remainingSeconds = between(today, tomorrowMidnight).seconds
+        var remainingSeconds = between(todayWithTime, tomorrowMidnight).seconds
 
-        viewModelScope.launch(defaultDispatcher) {
+        timerJob = viewModelScope.launch(defaultDispatcher) {
             while (remainingSeconds > 0) {
                 delay(1000L)
                 remainingSeconds--
@@ -107,6 +194,46 @@ class HomeViewModel(
                     )
                 }
             }
+        }
+    }
+
+    private suspend fun selectGroup(group: Group) {
+        if (uiState.selectedGroup.progressDay == 0) {
+            launchTomorrowTimer()
+        } else {
+            if (::timerJob.isInitialized) {
+                timerJob.cancel()
+            }
+        }
+
+        val getMyTodoSpecificDateResult = getMyTodoSpecificDate(
+            groupId = group.id,
+            date = today.toFormattedString(DATE_FORMAT_FULL_YEAR)
+        ).getOrElse {
+            // handle exception
+            return
+        }.todos
+
+        storeLastSelectedGroupId(group.id).getOrElse {
+            // handle exception
+        }
+
+        updateState {
+            it.copy(
+                selectedGroup = group,
+                todoList = getMyTodoSpecificDateResult,
+                selectedDate = today,
+                selectedChip = Chip.All,
+                tooltipUiState = TooltipUiState(
+                    isShowing = group.status == STATUS_D_DAY || group.status == STATUS_FINISHED,
+                    stringId = when (group.status) {
+                        STATUS_D_DAY -> R.string.tooltip_group_d_day
+                        STATUS_FINISHED -> R.string.tooltip_group_finished
+                        else -> null
+                    }
+                ),
+                isSelectGroupBottomSheetShowing = false
+            )
         }
     }
 }

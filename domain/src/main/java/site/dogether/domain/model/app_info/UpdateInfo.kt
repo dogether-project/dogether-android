@@ -1,4 +1,4 @@
-package site.dogether.domain.model.app_invo
+package site.dogether.domain.model.app_info
 
 import site.dogether.domain.model.DomainModel
 

@@ -66,4 +66,7 @@ dependencies {
 
     // Compose debug
     implementation(libs.bundles.compose.debug)
+    
+    // Permission handling
+    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
 }

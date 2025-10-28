@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -47,6 +49,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import site.dogether.domain.model.group.Group
 import site.dogether.presentation.R
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
@@ -68,6 +71,8 @@ import site.dogether.presentation.theme.ColorTextDisabled
 import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
+import site.dogether.presentation.theme.Grey0
+import site.dogether.presentation.theme.Grey900
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Small_S
@@ -366,7 +371,9 @@ fun GroupInfoBoard(
 
             InfoRow(
                 title = stringResource(R.string.info_launch_date),
-                value = if (isLaunchFromToday) today.toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.toFormattedString(DATE_FORMAT_SHORT_YEAR)
+                value = if (isLaunchFromToday) today.toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.toFormattedString(
+                    DATE_FORMAT_SHORT_YEAR
+                )
             )
 
             InfoRow(
@@ -457,11 +464,12 @@ private fun GroupInfoColumnPreview() {
 @Composable
 fun SelectGroupBottomSheet(
     sheetState: SheetState,
-    selectedGroup: String,
-    groupList: List<String>,
+    selectedGroup: Group,
+    groups: List<Group>,
     isAddButtonShowing: Boolean,
     onDismissRequest: () -> Unit,
-    onClickGroupItem: (String) -> Unit,
+    onClickGroupItem: (Group) -> Unit,
+    onClickAddGroup: () -> Unit
 ) {
     ModalBottomSheet(
         sheetState = sheetState,
@@ -504,7 +512,7 @@ fun SelectGroupBottomSheet(
                 )
             }
 
-            groupList.forEach {
+            groups.forEach {
                 GroupItem(
                     group = it,
                     isSelected = it == selectedGroup,
@@ -516,7 +524,8 @@ fun SelectGroupBottomSheet(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp),
+                        .height(50.dp)
+                        .clickableWithoutRipple { onClickAddGroup() },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -539,7 +548,7 @@ fun SelectGroupBottomSheet(
 
 @Composable
 private fun GroupItem(
-    group: String,
+    group: Group,
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -552,7 +561,7 @@ private fun GroupItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = group,
+            text = group.name,
             style = Body1_B.copy(lineHeightStyle = LineHeightStyle.Default),
             color = if (isSelected) ColorTextPrimary else ColorTextDisabled
         )
@@ -571,8 +580,70 @@ private fun GroupItem(
 @Composable
 private fun GroupItemPreview() {
     GroupItem(
-        group = "Group",
+        group = Group(),
         isSelected = true,
         onClick = {}
+    )
+}
+
+/**
+ * 두게더 공용 스낵바(토스트)
+ * snackbarHost 지정 필요
+ * @see site.dogether.presentation.screen.todo.create.CreateTodoScreen
+ * */
+@Composable
+fun DogetherSnackbar(
+    message: String,
+    onDismiss: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 20.dp, vertical = 16.dp)
+            .background(
+                color = Grey900,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .clickableWithoutRipple { onDismiss() }
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Check icon
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .background(
+                        color = ColorIconPrimary,
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_check),
+                    contentDescription = "success",
+                    tint = ColorTextDefault,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+
+            // Message text
+            Text(
+                text = message,
+                style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                color = Grey0,
+            )
+        }
+    }
+}
+
+@Preview(backgroundColor = 0xFFFFFF, showBackground = true)
+@Composable
+private fun DogetherSnackbarPreview() {
+    DogetherSnackbar(
+        message = "텍스트",
+        onDismiss = {}
     )
 }

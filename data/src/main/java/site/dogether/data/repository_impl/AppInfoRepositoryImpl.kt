@@ -5,7 +5,7 @@ import site.dogether.data.remote.ApiRoutes
 import site.dogether.data.remote.model.res.app_info.CheckUpdateRequiredMapper
 import site.dogether.data.remote.model.res.app_info.CheckUpdateRequiredRes
 import site.dogether.data.utils.safeGet
-import site.dogether.domain.model.app_invo.UpdateInfo
+import site.dogether.domain.model.app_info.UpdateInfo
 import site.dogether.domain.repository.AppInfoRepository
 
 class AppInfoRepositoryImpl(val httpClient: HttpClient) : AppInfoRepository {

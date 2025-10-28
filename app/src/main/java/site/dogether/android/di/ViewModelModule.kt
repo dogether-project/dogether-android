@@ -19,6 +19,9 @@ import site.dogether.presentation.screen.on_boarding.OnBoardingViewModel
 import site.dogether.presentation.screen.participate_group.ParticipateGroupViewModel
 import site.dogether.presentation.screen.participation_method.ParticipationMethodViewModel
 import site.dogether.presentation.screen.splash.SplashViewModel
+import site.dogether.presentation.screen.todo.certificate.CertificateDescriptionViewModel
+import site.dogether.presentation.screen.todo.certificate.CertificateTodoViewModel
+import site.dogether.presentation.screen.todo.create.CreateTodoViewModel
 
 val viewModelModule = module {
     viewModel {
@@ -45,11 +48,34 @@ val viewModelModule = module {
     viewModel { GroupParticipatedViewModel() }
     viewModel { ErrorViewModel() }
     viewModel {
-        HomeViewModel(defaultDispatcher = get(named(DefaultDispatcher)))
+        HomeViewModel(
+            defaultDispatcher = get(named(DefaultDispatcher)),
+            getJoiningGroups = get(),
+            storeLastSelectedGroupId = get(),
+            getMyTodoSpecificDate = get()
+        )
     }
     viewModel { MyPageViewModel() }
     viewModel { StatisticsViewModel() }
     viewModel { CertificationListViewModel() }
     viewModel { SettingsViewModel() }
     viewModel { GroupManagementViewModel() }
+    viewModel {
+        CreateTodoViewModel(
+            getMyTodoSpecificDateUseCase = get(),
+            createMyTodosUseCase = get(),
+            savedStateHandle = get()
+        )
+    }
+    viewModel {
+        CertificateTodoViewModel(savedStateHandle = get())
+    }
+    viewModel {
+        CertificateDescriptionViewModel(
+            savedStateHandle = get(),
+            getPresignedUrlsUseCase = get(),
+            uploadImageToS3UseCase = get(),
+            certificateTodoUseCase = get()
+        )
+    }
 }

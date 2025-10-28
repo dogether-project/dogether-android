@@ -1,6 +1,7 @@
 package site.dogether.domain.repository
 
 import site.dogether.domain.model.group.CreatedGroupInfo
+import site.dogether.domain.model.group.JoiningGroups
 import site.dogether.domain.model.group.ParticipateGroupInfo
 
 interface GroupRepository {
@@ -13,4 +14,8 @@ interface GroupRepository {
     ): Result<CreatedGroupInfo>
 
     suspend fun participateGroup(joinCode: String): Result<ParticipateGroupInfo>
+
+    suspend fun getJoiningGroups(): Result<JoiningGroups>
+
+    suspend fun storeLastSelectedGroupId(groupId: Int): Result<Unit>
 }

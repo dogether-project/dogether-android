@@ -5,6 +5,7 @@
 ### Android ###
 # Gradle 빌드 산출물
 .gradle/
+.kotlin/
 **/build/
 !src/**/build/   # src 내부 build 폴더는 무시하지 않음
 
