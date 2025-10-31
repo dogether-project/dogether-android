@@ -9,6 +9,7 @@ import site.dogether.domain.use_case.group.StoreLastSelectedGroupIdUseCase
 import site.dogether.domain.use_case.todo.CertificateTodoUseCase
 import site.dogether.domain.use_case.todo.CreateMyTodosUseCase
 import site.dogether.domain.use_case.todo.GetMyTodoSpecificDateUseCase
+import site.dogether.domain.use_case.todo.GetMyTodosByDateUseCase
 import site.dogether.domain.use_case.todo.GetPresignedUrlsUseCase
 import site.dogether.domain.use_case.todo.UploadImageToS3UseCase
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
@@ -31,4 +32,5 @@ val useCaseModule = module {
     factory { GetPresignedUrlsUseCase(repository = get()) }
     factory { UploadImageToS3UseCase(repository = get()) }
     factory { CertificateTodoUseCase(repository = get()) }
+    factory { GetMyTodosByDateUseCase(repository = get()) }
 }

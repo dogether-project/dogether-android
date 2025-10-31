@@ -61,7 +61,12 @@ val viewModelModule = module {
     viewModel { CertificationListViewModel() }
     viewModel { SettingsViewModel() }
     viewModel { GroupManagementViewModel() }
-    viewModel { MyCertInfoViewModel() }
+    viewModel {
+        MyCertInfoViewModel(
+            getMyTodoListByDate = get(),
+            savedStateHandle = get(),
+        )
+    }
     viewModel {
         CreateTodoViewModel(
             getMyTodoSpecificDateUseCase = get(),

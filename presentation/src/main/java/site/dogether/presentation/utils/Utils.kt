@@ -2,14 +2,15 @@ package site.dogether.presentation.utils
 
 import android.content.Context
 import android.content.pm.PackageManager
+import site.dogether.common.exception.NetworkFailureException
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import site.dogether.common.exception.NetworkFailureException
 
 val DATE_FORMAT_SHORT_YEAR: DateTimeFormatter = DateTimeFormatter.ofPattern("yy.MM.dd")
 val DATE_FORMAT_FULL_YEAR: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
-val today: LocalDate = LocalDate.now()
+val DATE_FORMAT_FULL_YEAR_DASHED: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+val today: LocalDate get() = LocalDate.now()
 val todayWithTime: LocalDateTime = LocalDateTime.now()
 val tomorrow: LocalDate = today.plusDays(1)
 val tomorrowMidnight: LocalDateTime = today.plusDays(1).atStartOfDay()

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -53,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import site.dogether.domain.model.group.Group
+import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.R
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
@@ -473,7 +473,7 @@ fun SelectGroupBottomSheet(
     isAddButtonShowing: Boolean,
     onDismissRequest: () -> Unit,
     onClickGroupItem: (Group) -> Unit,
-    onClickAddGroup: () -> Unit
+    onClickAddGroup: () -> Unit,
 ) {
     ModalBottomSheet(
         sheetState = sheetState,
@@ -594,7 +594,8 @@ private fun GroupItemPreview() {
 fun CertInfoRowItem(
     isSelected: Boolean,
     index: Int,
-    onClick: (Int) -> Unit
+    todo: Todo,
+    onClick: (Int) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -626,7 +627,7 @@ fun CertInfoRowItem(
 @Composable
 fun DogetherSnackbar(
     message: String,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     Box(
         modifier = Modifier

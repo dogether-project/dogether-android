@@ -99,10 +99,11 @@ private fun MyCertInfoScreenContents(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 state = lazyListState
             ) {
-                itemsIndexed(uiState.items) { index, item -> // todo
+                itemsIndexed(uiState.todos) { index, todo ->
                     CertInfoRowItem(
                         index = index,
                         isSelected = index == uiState.selectedItemIndex,
+                        todo = todo,
                         onClick = { clickedItemIndex ->
                             onEvent(MyCertInfoUiEvent.Click.OnClickItem(clickedItemIndex))
                         }
@@ -180,12 +181,14 @@ private fun MyCertInfoScreenContents(
                     )
                 }
 
-                Text(
-                    modifier = Modifier.padding(top = 12.dp),
-                    text = uiState.title,
-                    style = Head1_B,
-                    color = ColorTextDefault
-                )
+                if (uiState.todos.size > uiState.selectedItemIndex) {
+                    Text(
+                        modifier = Modifier.padding(top = 12.dp),
+                        text = uiState.todos[uiState.selectedItemIndex].content,
+                        style = Head1_B,
+                        color = ColorTextDefault
+                    )
+                }
             }
         }
     }
