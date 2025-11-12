@@ -153,6 +153,7 @@
     <string name="common_approve">인정</string>
     <string name="common_reject">노인정</string>
     <string name="common_achieved">달성</string>
+    <string name="common_certify_pending">미인증</string>
 
     <string name="common_ascend_group_created">그룹 생성일순</string>
     <string name="common_ascend_todo_completed">투두 완료일순</string>

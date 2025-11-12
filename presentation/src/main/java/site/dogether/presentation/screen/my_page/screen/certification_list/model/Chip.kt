@@ -28,5 +28,5 @@ enum class Chip(
         stringId = R.string.common_review_pending,
         iconId = R.drawable.ic_review_pending,
         color = Red400
-    ),
+    )
 }

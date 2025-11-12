@@ -37,6 +37,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -51,6 +53,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import site.dogether.domain.model.group.Group
 import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.R
@@ -597,6 +601,7 @@ fun CertInfoRowItem(
     todo: Todo,
     onClick: (Int) -> Unit,
 ) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
@@ -609,13 +614,26 @@ fun CertInfoRowItem(
             )
             .clickableWithoutRipple { onClick(index) }
     ) {
-        Image(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxSize(),
-            painter = painterResource(R.drawable.img_dosik_empty),
-            contentDescription = null
-        )
+        if (todo.certificationMediaUrl.isNotEmpty()) {
+            AsyncImage(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .fillMaxSize(),
+                model = ImageRequest.Builder(context)
+                    .data(todo.certificationMediaUrl)
+                    .build(),
+                contentScale = ContentScale.Inside,
+                contentDescription = null
+            )
+        } else {
+            Image(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxSize(),
+                painter = painterResource(R.drawable.img_dosik_empty),
+                contentDescription = null
+            )
+        }
     }
 }
 

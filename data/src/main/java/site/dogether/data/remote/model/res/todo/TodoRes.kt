@@ -12,7 +12,8 @@ data class TodoRes(
     val content: String? = "",
     val status: String? = "",
     val certificationContent: String? = "",
-    val certificationMediaUrl: String? = ""
+    val certificationMediaUrl: String? = "",
+    val reviewFeedback: String? = "",
 ) : DataModel
 
 object TodoResMapper : DataMapper<TodoRes, Todo> {
@@ -22,7 +23,12 @@ object TodoResMapper : DataMapper<TodoRes, Todo> {
             content = content.orEmpty(),
             status = status.orEmpty(),
             certificationContent = certificationContent.orEmpty(),
-            certificationMediaUrl = certificationMediaUrl.orEmpty()
+            certificationMediaUrl = try {
+                certificationMediaUrl?.split("?")[0] ?: ""
+            } catch (e: Exception) {
+                ""
+            },
+            reviewFeedback = reviewFeedback.orEmpty()
         )
     }
 }

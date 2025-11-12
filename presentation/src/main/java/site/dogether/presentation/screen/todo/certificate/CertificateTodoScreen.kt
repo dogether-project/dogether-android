@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -43,11 +44,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import java.io.File
-import java.net.URLEncoder
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -66,11 +62,16 @@ import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.clickableWithoutRipple
+import java.io.File
+import java.net.URLEncoder
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CertificateTodoScreen(
-    viewModel: CertificateTodoViewModel = koinViewModel()
+    viewModel: CertificateTodoViewModel = koinViewModel(),
 ) {
     val uiState = viewModel.collectAsState().value
     val snackbarHostState = remember { SnackbarHostState() }
@@ -211,7 +212,7 @@ private fun CertificateTodoScreenContents(
     uiState: CertificateTodoUiState = CertificateTodoUiState(),
     onEvent: (CertificateTodoUiEvent) -> Unit = {},
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    context: Context = LocalContext.current
+    context: Context = LocalContext.current,
 ) {
     Column(
         modifier = Modifier
@@ -301,7 +302,7 @@ private fun CertificateTodoScreenContents(
 private fun PhotoUploadArea(
     modifier: Modifier = Modifier,
     imageUri: Uri?,
-    context: Context
+    context: Context,
 ) {
     Box(
         modifier = modifier
@@ -318,7 +319,9 @@ private fun PhotoUploadArea(
     ) {
         imageUri?.let {
             Image(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .fillMaxSize(),
                 painter = rememberAsyncImagePainter(model = imageUri),
                 contentDescription = "certification_image",
                 contentScale = ContentScale.FillWidth
@@ -354,7 +357,7 @@ private fun ActionButton(
     icon: Int,
     text: String,
     isEnabled: Boolean = true,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = modifier

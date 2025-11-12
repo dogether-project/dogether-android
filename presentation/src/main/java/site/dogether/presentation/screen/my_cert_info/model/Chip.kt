@@ -6,13 +6,13 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
 import site.dogether.presentation.R
 import site.dogether.presentation.theme.ColorBgPrimary
-import site.dogether.presentation.theme.ColorIconPrimary
+import site.dogether.presentation.theme.ColorIconElevated
 import site.dogether.presentation.theme.Red400
 import site.dogether.presentation.theme.Yellow
 
 enum class Chip(
     @field:StringRes val stringId: Int,
-    @field:DrawableRes val iconId: Int,
+    @field:DrawableRes val iconId: Int?,
     @field:ColorRes val color: Color,
 ) {
     Approve(
@@ -30,4 +30,9 @@ enum class Chip(
         iconId = R.drawable.ic_review_pending,
         color = Yellow
     ),
+    CertifyPending(
+        stringId = R.string.common_certify_pending,
+        iconId = null,
+        color = ColorIconElevated
+    )
 }
