@@ -20,5 +20,6 @@ object ApiRoutes {
     fun createMyTodos(groupId: Int): String = "challenge-groups/$groupId/todos"
     const val GET_PRESIGNED_URLS = "s3/presigned-urls"
     fun certifyTodo(dailyTodoId: Int): String = "todos/$dailyTodoId/certify"
+    fun getMyTodosByDate(groupId: Int) = "challenge-groups/$groupId/my-todos"
 
 }

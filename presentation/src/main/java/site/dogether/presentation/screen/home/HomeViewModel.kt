@@ -11,10 +11,6 @@ import site.dogether.common.SecondsPerMinute
 import site.dogether.domain.model.group.Group
 import site.dogether.domain.model.group.Group.Companion.STATUS_D_DAY
 import site.dogether.domain.model.group.Group.Companion.STATUS_FINISHED
-import site.dogether.domain.model.todo.Todo
-import site.dogether.domain.model.todo.Todo.Companion.STATUS_APPROVE
-import site.dogether.domain.model.todo.Todo.Companion.STATUS_REJECT
-import site.dogether.domain.model.todo.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.domain.use_case.group.StoreLastSelectedGroupIdUseCase
 import site.dogether.domain.use_case.todo.GetMyTodoSpecificDateUseCase
@@ -31,13 +27,12 @@ import site.dogether.presentation.utils.today
 import site.dogether.presentation.utils.todayWithTime
 import site.dogether.presentation.utils.tomorrowMidnight
 import java.time.Duration.between
-import java.time.LocalDate
 
 class HomeViewModel(
     private val defaultDispatcher: CoroutineDispatcher,
     private val getJoiningGroups: GetJoiningGroupsUseCase,
     private val storeLastSelectedGroupId: StoreLastSelectedGroupIdUseCase,
-    private val getMyTodoSpecificDate: GetMyTodoSpecificDateUseCase
+    private val getMyTodoSpecificDate: GetMyTodoSpecificDateUseCase,
 ) : BaseViewModel<HomeUiState>(HomeUiState()) {
 
     private lateinit var timerJob: Job
@@ -147,6 +142,15 @@ class HomeViewModel(
                             HomeUiEffect.NavigateToCertificateTodo(
                                 todoId = event.todoId,
                                 todoTitle = event.todoTitle
+                            )
+                        )
+                    }
+
+                    is HomeUiEvent.Click.OnClickTodo -> {
+                        postEffect(
+                            HomeUiEffect.NavigateToMyCertInfo(
+                                groupId = uiState.selectedGroup.id,
+                                todoIndex = event.todoIndex
                             )
                         )
                     }

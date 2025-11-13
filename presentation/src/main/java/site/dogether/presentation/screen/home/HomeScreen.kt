@@ -21,8 +21,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -61,9 +61,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import java.time.LocalDate
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -128,6 +125,9 @@ import site.dogether.presentation.utils.isPermissionGranted
 import site.dogether.presentation.utils.toDp
 import site.dogether.presentation.utils.toFormattedString
 import site.dogether.presentation.utils.today
+import java.time.LocalDate
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -161,6 +161,13 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             is HomeUiEffect.NavigateToCertificateTodo -> {
                 navHostController.navigate(
                     "${Screen.CERTIFICATE_TODO}/${uiEffect.todoId}/${uiEffect.todoTitle}"
+                )
+            }
+
+            // 나의 인증 정보 페이지로 이동
+            is HomeUiEffect.NavigateToMyCertInfo -> {
+                navHostController.navigate(
+                    "${Screen.MY_CERT_INFO}/${uiEffect.groupId}/${uiEffect.todoIndex}"
                 )
             }
         }
@@ -236,7 +243,7 @@ private fun HomeScreenContents(
             override fun onPostScroll(
                 consumed: Offset,
                 available: Offset,
-                source: NestedScrollSource
+                source: NestedScrollSource,
             ): Offset {
                 if (available.y > 0f && anchoredBottomSheetState.sheetOffsetY.value < anchoredBottomSheetState.lowerAnchorY) {
                     val before = anchoredBottomSheetState.sheetOffsetY.value
@@ -452,7 +459,8 @@ private fun HomeScreenContents(
                     .fillMaxWidth()
                     .height(48.dp)
                     .background(ColorBgSurface)
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .clickableWithoutRipple { },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -863,7 +871,13 @@ private fun ColumnScope.TodoListContents(
             .clickable { onEvent(HomeUiEvent.Click.OnClickCreateTodo) },
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        filteredTodoList.forEach { todo -> TodoItem(todo, onEvent) }
+        filteredTodoList.forEachIndexed { index, todo ->
+            TodoItem(
+                todo = todo,
+                index = index,
+                onEvent = onEvent
+            )
+        }
 
         Row(
             modifier = Modifier
@@ -974,14 +988,19 @@ private fun ChipItem(
 }
 
 @Composable
-private fun TodoItem(todo: Todo, onEvent: (UiEvent) -> Unit) {
+private fun TodoItem(
+    todo: Todo,
+    index: Int,
+    onEvent: (UiEvent) -> Unit,
+) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .fillMaxWidth()
             .height(64.dp)
             .background(ColorBgSurface)
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .clickable { onEvent(HomeUiEvent.Click.OnClickTodo(index)) },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

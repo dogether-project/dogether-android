@@ -2,11 +2,12 @@ package site.dogether.domain.repository
 
 import site.dogether.domain.model.certificate.PresignedUrlData
 import site.dogether.domain.model.todo.GetMyTodoSpecificDateInfo
+import site.dogether.domain.model.todo.Todo
 
 interface TodoRepository {
     suspend fun getMyTodoSpecificDate(
         groupId: Int,
-        date: String
+        date: String,
     ): Result<GetMyTodoSpecificDateInfo>
 
     suspend fun createMyTodo(groupId: Int, todos: List<String>): Result<Unit>
@@ -36,6 +37,16 @@ interface TodoRepository {
     suspend fun certifyTodo(
         dailyTodoId: Int,
         content: String,
-        mediaUrl: String
+        mediaUrl: String,
     ): Result<Unit>
+
+    /**
+     * 데일리 투두 전체 조회
+     * @param groupId 조회할 그룹 ID
+     * @param date 조회할 투두 생성일 (yyyy-MM-dd)
+     */
+    suspend fun getMyTodosByDate(
+        groupId: Int,
+        date: String,
+    ): Result<List<Todo>>
 }

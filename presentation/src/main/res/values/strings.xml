@@ -35,6 +35,7 @@
     <string name="title_sorting_method">정렬</string>
     <string name="title_settings">설정</string>
     <string name="title_group_management">그룹 관리</string>
+    <string name="title_my_cert_info">나의 인증 정보</string>
 
     <string name="body_force_update">두게더가 유저분들의 의견을 반영하여\n더 편하게 사용하도록 사용성을 개선했어요.\n지금 바로 업데이트하고 인증하러 가요!</string>
     <string name="body_on_boarding_0">목표만 세우면 끝?! 인증까지 해야 진짜 실천이에요</string>
@@ -57,6 +58,7 @@
     <string name="body_certification_list_exist_0">대단해요 !</string>
     <string name="body_certification_list_exist_1">의 투두를 달성했어요</string>
     <string name="body_certification_list_not_exist">오늘 하루 이루고 싶은 목표를 입력해보세요!</string>
+    <string name="body_my_cert_info_not_certified">아직 열심히 진행중이에요</string>
 
     <string name="dialog_title_permission">알림 권한이 꺼져 있어요.</string>
     <string name="dialog_title_duplicated_name">동일한 이름의 그룹이\n이미 존재합니다.</string>
@@ -151,6 +153,7 @@
     <string name="common_approve">인정</string>
     <string name="common_reject">노인정</string>
     <string name="common_achieved">달성</string>
+    <string name="common_certify_pending">미인증</string>
 
     <string name="common_ascend_group_created">그룹 생성일순</string>
     <string name="common_ascend_todo_completed">투두 완료일순</string>

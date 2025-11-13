@@ -10,6 +10,7 @@ import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_JOIN_CODE
 import site.dogether.KEY_SELECTED_DATE
 import site.dogether.KEY_TODO_ID
+import site.dogether.KEY_TODO_INDEX
 import site.dogether.KEY_TODO_TITLE
 import site.dogether.presentation.screen.create_group.CreateGroupScreen
 import site.dogether.presentation.screen.error.ErrorScreen
@@ -17,6 +18,7 @@ import site.dogether.presentation.screen.force_update.ForceUpdateScreen
 import site.dogether.presentation.screen.group_created.GroupCreatedScreen
 import site.dogether.presentation.screen.group_participated.GroupParticipatedScreen
 import site.dogether.presentation.screen.home.HomeScreen
+import site.dogether.presentation.screen.my_cert_info.MyCertInfoScreen
 import site.dogether.presentation.screen.my_page.MyPageScreen
 import site.dogether.presentation.screen.my_page.screen.certification_list.CertificationListScreen
 import site.dogether.presentation.screen.my_page.screen.group_management.GroupManagementScreen
@@ -58,6 +60,13 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
         composable(Screen.CERTIFICATION_LIST) { CertificationListScreen() }
         composable(Screen.SETTINGS) { SettingsScreen() }
         composable(Screen.GROUP_MANAGEMENT) { GroupManagementScreen() }
+        composable(
+            route = "${Screen.MY_CERT_INFO}/{${KEY_GROUP_ID}}/{${KEY_TODO_INDEX}}",
+            arguments = listOf(
+                navArgument(KEY_GROUP_ID) { type = NavType.IntType },
+                navArgument(KEY_TODO_INDEX) { type = NavType.IntType }
+            )
+        ) { MyCertInfoScreen() }
         composable(
             route = "${Screen.CREATE_TODO}/{${KEY_GROUP_ID}}/{${KEY_SELECTED_DATE}}",
             arguments = listOf(

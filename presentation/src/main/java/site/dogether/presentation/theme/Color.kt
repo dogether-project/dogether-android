@@ -1,5 +1,6 @@
 package site.dogether.presentation.theme
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val Grey0 = Color(0xFFFFFFFF)
@@ -59,3 +60,16 @@ val ColorShadow = Grey900.copy(alpha = 0.3f)
 val ColorKakaoYellow = Color(0xFFFEE500)
 val ColorKakaoLogo = Color(0xFF000000)
 val ColorKakaoLabel = Color(0xD9000000)
+
+val ColorReadFilter = Grey800.copy(alpha = 0.8f)
+
+val BrushVignetteBottom = Brush.verticalGradient(
+    colors = listOf(
+        Color.Transparent,
+        Color.Transparent,
+        Color.Transparent,
+        Color.Transparent,
+        ColorBgDefault
+    ),
+    startY = 300f
+)

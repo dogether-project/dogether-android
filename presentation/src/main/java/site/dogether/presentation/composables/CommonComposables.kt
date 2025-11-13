@@ -1,11 +1,13 @@
 package site.dogether.presentation.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,6 +37,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,7 +53,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import site.dogether.domain.model.group.Group
+import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.R
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
@@ -60,6 +67,7 @@ import site.dogether.presentation.theme.ColorBgDisabled
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgPrimary
 import site.dogether.presentation.theme.ColorBgSurface
+import site.dogether.presentation.theme.ColorBorderDefault
 import site.dogether.presentation.theme.ColorBorderDisabled
 import site.dogether.presentation.theme.ColorBorderPrimary
 import site.dogether.presentation.theme.ColorIconDefault
@@ -469,7 +477,7 @@ fun SelectGroupBottomSheet(
     isAddButtonShowing: Boolean,
     onDismissRequest: () -> Unit,
     onClickGroupItem: (Group) -> Unit,
-    onClickAddGroup: () -> Unit
+    onClickAddGroup: () -> Unit,
 ) {
     ModalBottomSheet(
         sheetState = sheetState,
@@ -586,6 +594,49 @@ private fun GroupItemPreview() {
     )
 }
 
+@Composable
+fun CertInfoRowItem(
+    isSelected: Boolean,
+    index: Int,
+    todo: Todo,
+    onClick: (Int) -> Unit,
+) {
+    val context = LocalContext.current
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .size(48.dp)
+            .background(ColorBgElevated.copy(alpha = 50f))
+            .border(
+                width = 1.dp,
+                color = if (isSelected) ColorBorderDefault else Color.Transparent,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .clickableWithoutRipple { onClick(index) }
+    ) {
+        if (todo.certificationMediaUrl.isNotEmpty()) {
+            AsyncImage(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .fillMaxSize(),
+                model = ImageRequest.Builder(context)
+                    .data(todo.certificationMediaUrl)
+                    .build(),
+                contentScale = ContentScale.Inside,
+                contentDescription = null
+            )
+        } else {
+            Image(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxSize(),
+                painter = painterResource(R.drawable.img_dosik_empty),
+                contentDescription = null
+            )
+        }
+    }
+}
+
 /**
  * 두게더 공용 스낵바(토스트)
  * snackbarHost 지정 필요
@@ -594,7 +645,7 @@ private fun GroupItemPreview() {
 @Composable
 fun DogetherSnackbar(
     message: String,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     Box(
         modifier = Modifier

@@ -8,6 +8,7 @@ import site.dogether.data.remote.model.req.todo.CreateTodoReq
 import site.dogether.data.remote.model.req.todo.certificate.CertificateTodoReq
 import site.dogether.data.remote.model.req.todo.certificate.PresignedUrlReq
 import site.dogether.data.remote.model.res.todo.GetMyTodoSpecificDateResMapper
+import site.dogether.data.remote.model.res.todo.TodosResMapper
 import site.dogether.data.remote.model.res.todo.certificate.PresignedUrlResMapper
 import site.dogether.data.utils.safeGet
 import site.dogether.data.utils.safePost
@@ -15,15 +16,16 @@ import site.dogether.data.utils.safePostWithoutRes
 import site.dogether.data.utils.safePutToS3
 import site.dogether.domain.model.certificate.PresignedUrlData
 import site.dogether.domain.model.todo.GetMyTodoSpecificDateInfo
+import site.dogether.domain.model.todo.Todo
 import site.dogether.domain.repository.TodoRepository
 
 class TodoRepositoryImpl(
     private val context: Context,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
 ) : TodoRepository {
     override suspend fun getMyTodoSpecificDate(
         groupId: Int,
-        date: String
+        date: String,
     ): Result<GetMyTodoSpecificDateInfo> {
         return httpClient.safeGet(
             apiRoute = ApiRoutes.getMyTodoSpecificDate(groupId),
@@ -45,7 +47,7 @@ class TodoRepositoryImpl(
      * */
     override suspend fun getPresignedUrls(
         dailyTodoId: Int,
-        fileCount: Int
+        fileCount: Int,
     ): Result<PresignedUrlData> {
         return httpClient.safePost(
             apiRoute = ApiRoutes.GET_PRESIGNED_URLS,
@@ -62,7 +64,7 @@ class TodoRepositoryImpl(
      * */
     override suspend fun uploadImageToS3(
         presignedUrl: String,
-        imageUri: String
+        imageUri: String,
     ): Result<Unit> {
         return safePutToS3(
             presignedUrl = presignedUrl,
@@ -74,7 +76,7 @@ class TodoRepositoryImpl(
     override suspend fun certifyTodo(
         dailyTodoId: Int,
         content: String,
-        mediaUrl: String
+        mediaUrl: String,
     ): Result<Unit> {
         return httpClient.safePostWithoutRes(
             apiRoute = ApiRoutes.certifyTodo(dailyTodoId),
@@ -83,5 +85,16 @@ class TodoRepositoryImpl(
                 mediaUrl = mediaUrl
             )
         )
+    }
+
+    override suspend fun getMyTodosByDate(
+        groupId: Int,
+        date: String,
+    ): Result<List<Todo>> {
+        return httpClient.safeGet(
+            apiRoute = ApiRoutes.getMyTodosByDate(groupId),
+            params = mapOf("date" to date),
+            mapper = TodosResMapper
+        ).map { it.todos }
     }
 }
