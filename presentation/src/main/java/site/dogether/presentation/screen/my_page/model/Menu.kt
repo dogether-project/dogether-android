@@ -12,7 +12,7 @@ enum class Menu(
         stringId = R.string.my_page_menu_certification_list,
         iconId = R.drawable.ic_certification_list
     ),
-    GroupManager(
+    GroupManagement(
         stringId = R.string.my_page_menu_group_management,
         iconId = R.drawable.ic_group_management
     ),

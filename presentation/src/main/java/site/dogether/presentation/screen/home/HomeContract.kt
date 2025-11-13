@@ -73,6 +73,8 @@ sealed interface HomeUiEvent : UiEvent {
         data class OnClickCertificateTodo(val todoId: Long, val todoTitle: String) : Click
 
         data class OnClickTodo(val todoIndex: Int) : Click
+
+        data object OnClickMyPage : Click
     }
 
     sealed interface Callback : HomeUiEvent {
@@ -97,4 +99,6 @@ sealed interface HomeUiEffect : UiEffect {
         val groupId: Int,
         val todoIndex: Int,
     ) : HomeUiEffect
+
+    data object NavigateToMyPage : HomeUiEffect
 }

@@ -9,7 +9,25 @@ class MyPageViewModel : BaseViewModel<MyPageUiState>(MyPageUiState()) {
         super.onEvent(event)
 
         when (event) {
-            else -> Unit
+            is MyPageUiEvent.Click -> {
+                when (event) {
+                    is MyPageUiEvent.Click.OnClickStatistics -> {
+                        postEffect(MyPageUiEffect.NavigateToStatistics)
+                    }
+
+                    is MyPageUiEvent.Click.OnClickCertificationList -> {
+                        postEffect(MyPageUiEffect.NavigateToCertificationList)
+                    }
+
+                    is MyPageUiEvent.Click.OnClickGroupManagement -> {
+                        postEffect(MyPageUiEffect.NavigateToGroupManagement)
+                    }
+
+                    is MyPageUiEvent.Click.OnClickSettings -> {
+                        postEffect(MyPageUiEffect.NavigateToSettings)
+                    }
+                }
+            }
         }
     }
 }

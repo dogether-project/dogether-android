@@ -154,6 +154,10 @@ class HomeViewModel(
                             )
                         )
                     }
+
+                    is HomeUiEvent.Click.OnClickMyPage -> {
+                        postEffect(HomeUiEffect.NavigateToMyPage)
+                    }
                 }
             }
 

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
@@ -31,12 +32,13 @@ import site.dogether.presentation.screen.my_page.model.Menu
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.ColorBorderDisabled
-import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorIconElevated
 import site.dogether.presentation.theme.ColorIconPrimary
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head2_B
+import site.dogether.presentation.utils.CollectEffect
+import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 
@@ -44,6 +46,20 @@ private val MENU_LIST: List<Menu> = Menu.entries
 
 @Composable
 fun MyPageScreen(viewModel: MyPageViewModel = koinViewModel()) {
+    val navHostController = LocalNavHostController.current
+
+    viewModel.CollectEffect<MyPageUiEffect> { uiEffect ->
+        when (uiEffect) {
+            is MyPageUiEffect.NavigateToStatistics -> navHostController.navigate(Screen.STATISTICS)
+
+            is MyPageUiEffect.NavigateToCertificationList -> navHostController.navigate(Screen.CERTIFICATION_LIST)
+
+            is MyPageUiEffect.NavigateToGroupManagement -> navHostController.navigate(Screen.GROUP_MANAGEMENT)
+
+            is MyPageUiEffect.NavigateToSettings -> navHostController.navigate(Screen.SETTINGS)
+        }
+    }
+
     MyPageScreenContents(
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
@@ -120,7 +136,7 @@ private fun MyPageScreenContents(
                         .height(50.dp),
                     radius = 8.dp,
                     text = stringResource(R.string.cta_button_navigate_to_statistics),
-                    onClick = { }
+                    onClick = { onEvent(MyPageUiEvent.Click.OnClickStatistics) }
                 )
             }
 
@@ -133,7 +149,15 @@ private fun MyPageScreenContents(
                         Menu.CertificationList -> ColorIconPrimary
                         else -> ColorIconElevated
                     },
-                    onClick = {}
+                    onClick = {
+                        onEvent(
+                            when (menu) {
+                                Menu.CertificationList -> MyPageUiEvent.Click.OnClickCertificationList
+                                Menu.GroupManagement -> MyPageUiEvent.Click.OnClickGroupManagement
+                                Menu.Settings -> MyPageUiEvent.Click.OnClickSettings
+                            }
+                        )
+                    }
                 )
             }
         }
@@ -146,6 +170,12 @@ private fun MenuItem(
     tint: Color,
     onClick: () -> Unit,
 ) {
+    when (menu) {
+        Menu.CertificationList -> Unit
+        Menu.GroupManagement -> Unit
+        Menu.Settings -> Unit
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
