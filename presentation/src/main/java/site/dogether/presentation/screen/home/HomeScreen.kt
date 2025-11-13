@@ -170,6 +170,10 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                     "${Screen.MY_CERT_INFO}/${uiEffect.groupId}/${uiEffect.todoIndex}"
                 )
             }
+
+            is HomeUiEffect.NavigateToMyPage -> {
+                navHostController.navigate(Screen.MY_PAGE)
+            }
         }
     }
 
@@ -308,6 +312,7 @@ private fun HomeScreenContents(
                 },
                 end = {
                     Icon(
+                        modifier = Modifier.clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickMyPage) },
                         painter = painterResource(R.drawable.ic_my),
                         tint = ColorIconDefault,
                         contentDescription = "icon_my"

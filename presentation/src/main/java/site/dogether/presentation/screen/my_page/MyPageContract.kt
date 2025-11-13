@@ -10,9 +10,23 @@ data class MyPageUiState(
 )
 
 sealed interface MyPageUiEvent : UiEvent {
+    sealed interface Click : MyPageUiEvent {
+        data object OnClickStatistics : Click
 
+        data object OnClickCertificationList : Click
+
+        data object OnClickGroupManagement : Click
+
+        data object OnClickSettings : Click
+    }
 }
 
 sealed interface MyPageUiEffect : UiEffect {
+    data object NavigateToStatistics : MyPageUiEffect
 
+    data object NavigateToCertificationList : MyPageUiEffect
+
+    data object NavigateToGroupManagement : MyPageUiEffect
+
+    data object NavigateToSettings : MyPageUiEffect
 }
