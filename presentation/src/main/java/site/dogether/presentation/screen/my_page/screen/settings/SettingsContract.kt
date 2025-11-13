@@ -2,7 +2,7 @@ package site.dogether.presentation.screen.my_page.screen.settings
 
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
-import site.dogether.presentation.model.DialogState
+import site.dogether.presentation.model.dialog_state.DialogState
 
 data class SettingsUiState(
     val logoutDialogState: DialogState = DialogState(),

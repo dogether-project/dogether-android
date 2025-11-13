@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import site.dogether.domain.model.group.Group
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
@@ -76,12 +78,13 @@ private fun GroupManagementScreenContents(
             modifier = Modifier
                 .padding(top = 4.dp)
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(1f),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item {
+            items(uiState.groups) { group ->
                 GroupItem(
-                    group = "DND 작심삼일 탈출러",
-                    onClickWithdraw = { group -> onEvent(GroupManagementUiEvent.Click.OnClickWithdraw(group)) }
+                    group = group,
+                    onClickWithdraw = { groupId -> onEvent(GroupManagementUiEvent.Click.OnClickWithdraw(groupId)) }
                 )
             }
         }
@@ -93,7 +96,7 @@ private fun InitDialog(
     uiState: GroupManagementUiState,
     onEvent: (UiEvent) -> Unit,
 ) {
-    if (uiState.withdrawDialogState.isShowing) {
+    if (uiState.withdrawGroupDialogState.isShowing) {
         ActionDialog(
             title = stringResource(R.string.dialog_title_withdraw_group),
             body = stringResource(R.string.dialog_body_withdraw_group),
@@ -109,8 +112,8 @@ private fun InitDialog(
 
 @Composable
 private fun GroupItem(
-    group: String,
-    onClickWithdraw: (String) -> Unit,
+    group: Group,
+    onClickWithdraw: (Int) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -128,7 +131,7 @@ private fun GroupItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = group,
+                text = group.name,
                 style = Head2_B.copy(lineHeightStyle = LineHeightStyle.Default),
                 color = ColorTextDefault
             )
@@ -141,7 +144,7 @@ private fun GroupItem(
                         horizontal = 12.dp,
                         vertical = 4.dp
                     )
-                    .clickableWithoutRipple { onClickWithdraw(group) },
+                    .clickableWithoutRipple { onClickWithdraw(group.id) },
                 text = stringResource(R.string.cta_button_withdraw),
                 style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
                 color = ColorTextDefault
@@ -160,7 +163,7 @@ private fun GroupItem(
 
             Text(
                 modifier = Modifier.padding(start = 4.dp),
-                text = "6/10",
+                text = "${group.currentMemberCount}/${group.maximumMemberCount}",
                 style = Small_R,
                 color = ColorTextDefault
             )
@@ -174,7 +177,7 @@ private fun GroupItem(
 
             Text(
                 modifier = Modifier.padding(start = 4.dp),
-                text = "25.08.20",
+                text = group.endAt,
                 style = Small_R,
                 color = ColorTextDefault
             )
@@ -192,7 +195,7 @@ private fun GroupItem(
 
             Text(
                 modifier = Modifier.padding(start = 4.dp),
-                text = "12345678",
+                text = group.joinCode,
                 style = Small_R,
                 color = ColorTextDefault
             )
