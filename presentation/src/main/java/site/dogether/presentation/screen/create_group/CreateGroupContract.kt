@@ -2,7 +2,7 @@ package site.dogether.presentation.screen.create_group
 
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
-import site.dogether.presentation.model.DialogState
+import site.dogether.presentation.model.dialog_state.DialogState
 
 const val MinimumMemberCount = 2
 const val MaximumMemberCount = 20

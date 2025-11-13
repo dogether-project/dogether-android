@@ -18,4 +18,6 @@ interface GroupRepository {
     suspend fun getJoiningGroups(): Result<JoiningGroups>
 
     suspend fun storeLastSelectedGroupId(groupId: Int): Result<Unit>
+
+    suspend fun withdrawGroup(groupId: Int): Result<Unit>
 }

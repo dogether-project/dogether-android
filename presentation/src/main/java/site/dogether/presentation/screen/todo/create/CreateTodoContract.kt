@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter
 import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
-import site.dogether.presentation.model.DialogState
+import site.dogether.presentation.model.dialog_state.DialogState
 
 data class CreateTodoUiState(
     val todoItems: List<Todo> = emptyList(),

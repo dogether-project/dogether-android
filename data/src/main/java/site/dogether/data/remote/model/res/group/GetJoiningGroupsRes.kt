@@ -8,7 +8,7 @@ import site.dogether.domain.model.group.JoiningGroups
 
 @Serializable
 data class GetJoiningGroupsRes(
-    val lastSelectedGroupIndex: Int,
+    val lastSelectedGroupIndex: Int = -1,
     val joiningChallengeGroups: List<GroupInfoRes>,
 ) : DataModel
 

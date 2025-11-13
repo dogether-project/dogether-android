@@ -8,6 +8,7 @@ import site.dogether.data.remote.model.req.group.StoreLastSelectedGroupIdReq
 import site.dogether.data.remote.model.res.group.CreateGroupResMapper
 import site.dogether.data.remote.model.res.group.GetJoiningGroupsResMapper
 import site.dogether.data.remote.model.res.group.ParticipateGroupResMapper
+import site.dogether.data.utils.safeDeleteWithoutRes
 import site.dogether.data.utils.safeGet
 import site.dogether.data.utils.safePost
 import site.dogether.data.utils.safePostWithoutRes
@@ -56,5 +57,9 @@ class GroupRepositoryImpl(private val httpClient: HttpClient) : GroupRepository 
             apiRoute = ApiRoutes.STORE_LAST_SELECTED_GROUP_ID,
             body = StoreLastSelectedGroupIdReq(groupId)
         )
+    }
+
+    override suspend fun withdrawGroup(groupId: Int): Result<Unit> {
+        return httpClient.safeDeleteWithoutRes(ApiRoutes.leaveGroup(groupId))
     }
 }

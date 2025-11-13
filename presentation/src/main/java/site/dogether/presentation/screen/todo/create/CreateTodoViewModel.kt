@@ -11,7 +11,7 @@ import site.dogether.domain.use_case.todo.CreateMyTodosUseCase
 import site.dogether.domain.use_case.todo.GetMyTodoSpecificDateUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEvent
-import site.dogether.presentation.model.DialogState
+import site.dogether.presentation.model.dialog_state.DialogState
 import site.dogether.presentation.utils.DATE_FORMAT_FULL_YEAR
 import site.dogether.presentation.utils.DATE_FORMAT_SHORT_YEAR
 import site.dogether.presentation.utils.toFormattedString

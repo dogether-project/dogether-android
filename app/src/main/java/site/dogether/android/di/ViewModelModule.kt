@@ -60,7 +60,12 @@ val viewModelModule = module {
     viewModel { StatisticsViewModel() }
     viewModel { CertificationListViewModel() }
     viewModel { SettingsViewModel() }
-    viewModel { GroupManagementViewModel() }
+    viewModel {
+        GroupManagementViewModel(
+            getJoiningGroups = get(),
+            withdrawGroup = get()
+        )
+    }
     viewModel {
         MyCertInfoViewModel(
             getMyTodoListByDate = get(),

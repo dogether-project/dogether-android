@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
@@ -84,7 +85,7 @@ suspend inline fun safeApiCallWithoutRes(
 suspend inline fun <reified Req, reified Res : DataModel, Domain : DomainModel> HttpClient.safePost(
     apiRoute: String,
     body: Req,
-    mapper: DataMapper<Res, Domain>
+    mapper: DataMapper<Res, Domain>,
 ): Result<Domain> {
     return safeApiCall<Res> {
         post(apiRoute) {
@@ -127,6 +128,12 @@ suspend fun HttpClient.safeGetWithoutRes(
     }
 }
 
+suspend fun HttpClient.safeDeleteWithoutRes(apiRoute: String): Result<Unit> {
+    return safeApiCallWithoutRes {
+        delete(apiRoute)
+    }
+}
+
 /**
  * S3 업로드를 위한 PUT 요청 (Presigned URL 사용)
  * Content-Type 헤더만 사용 (Presigned URL의 SignedHeaders에 맞춤)
@@ -138,7 +145,7 @@ suspend fun HttpClient.safeGetWithoutRes(
 suspend fun safePutToS3(
     presignedUrl: String,
     imageUri: Uri,
-    context: Context
+    context: Context,
 ): Result<Unit> {
     return try {
         // 1. 이미지 데이터 읽기
