@@ -32,5 +32,5 @@ sealed interface SettingsUiEvent : UiEvent {
 }
 
 sealed interface SettingsUiEffect : UiEffect {
-
+    data object WithdrawWithKakao : SettingsUiEffect
 }

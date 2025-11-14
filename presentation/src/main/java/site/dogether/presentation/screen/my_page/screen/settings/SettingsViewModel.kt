@@ -48,6 +48,16 @@ class SettingsViewModel(
                     }
 
                     is SettingsUiEvent.Click.OnClickWithdrawDialogPositive -> {
+                        viewModelScope.launch {
+                            logout()
+                        }
+                        postEffect(SettingsUiEffect.WithdrawWithKakao)
+                        postEffect(
+                            UiEffect.NavigateTo(
+                                screen = Screen.ON_BOARDING,
+                                clearBackStack = true
+                            )
+                        )
                         dismissWithdrawDialog()
                     }
                 }

@@ -106,4 +106,8 @@ class UserRepositoryImpl(
         dataStoreManager.deleteString(PreferenceKey.USER_NAME).getOrThrow()
         dataStoreManager.deleteString(PreferenceKey.USER_TOKEN).getOrThrow()
     }
+
+    override suspend fun withdraw(): Result<Unit> {
+        return Result.success(Unit)
+    }
 }

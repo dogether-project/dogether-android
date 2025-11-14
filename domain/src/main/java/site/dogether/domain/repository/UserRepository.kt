@@ -20,4 +20,6 @@ interface UserRepository {
     ): Result<UserInfo>
 
     suspend fun clearUserInfo()
+
+    suspend fun withdraw(): Result<Unit>
 }

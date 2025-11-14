@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
+import com.kakao.sdk.user.UserApiClient
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
@@ -38,7 +39,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 
     viewModel.CollectEffect<SettingsUiEffect> { uiEffect ->
         when (uiEffect) {
-            else -> Unit
+            is SettingsUiEffect.WithdrawWithKakao -> UserApiClient.instance.unlink { }
         }
     }
 
