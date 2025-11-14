@@ -25,7 +25,7 @@ class UserRepositoryImpl(
 
     override suspend fun storeUserInfo(
         name: String,
-        accessToken: String
+        accessToken: String,
     ): Result<Unit> {
         return dataStoreManager.storeString(
             key = PreferenceKey.USER_NAME,
@@ -100,5 +100,10 @@ class UserRepositoryImpl(
         val payload = json.decodeFromString<JwtPayload>(payloadJson)
 
         return payload.sub
+    }
+
+    override suspend fun clearUserInfo() {
+        dataStoreManager.deleteString(PreferenceKey.USER_NAME).getOrThrow()
+        dataStoreManager.deleteString(PreferenceKey.USER_TOKEN).getOrThrow()
     }
 }

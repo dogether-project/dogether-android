@@ -28,12 +28,19 @@ import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.ColorIconElevated
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.Red400
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
+
+    viewModel.CollectEffect<SettingsUiEffect> { uiEffect ->
+        when (uiEffect) {
+            else -> Unit
+        }
+    }
 
     SettingsScreenContents(
         uiState = viewModel.collectAsState().value,
