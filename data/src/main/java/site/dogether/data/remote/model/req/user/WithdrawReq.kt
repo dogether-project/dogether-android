@@ -4,8 +4,6 @@ import kotlinx.serialization.Serializable
 import site.dogether.data.utils.LOGIN_TYPE
 
 @Serializable
-data class KakaoLoginReq(
-    val loginType: String = LOGIN_TYPE,
-    val name: String,
-    val providerId: String,
+data class WithdrawReq(
+    val loginType: String = LOGIN_TYPE
 )

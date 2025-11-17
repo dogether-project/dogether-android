@@ -1,9 +1,18 @@
 package site.dogether.presentation.screen.my_page.screen.settings
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import site.dogether.domain.use_case.user.LogoutUseCase
+import site.dogether.domain.use_case.user.WithdrawUseCase
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 
-class SettingsViewModel : BaseViewModel<SettingsUiState>(SettingsUiState()) {
+class SettingsViewModel(
+    private val logout: LogoutUseCase,
+    private val withdraw: WithdrawUseCase
+) : BaseViewModel<SettingsUiState>(SettingsUiState()) {
 
     override fun onEvent(event: UiEvent) {
         super.onEvent(event)
@@ -20,6 +29,15 @@ class SettingsViewModel : BaseViewModel<SettingsUiState>(SettingsUiState()) {
                     }
 
                     is SettingsUiEvent.Click.OnClickLogoutDialogPositive -> {
+                        viewModelScope.launch {
+                            logout()
+                            postEffect(
+                                UiEffect.NavigateTo(
+                                    screen = Screen.ON_BOARDING,
+                                    clearBackStack = true
+                                )
+                            )
+                        }
                         dismissLogoutDialog()
                     }
 
@@ -32,7 +50,23 @@ class SettingsViewModel : BaseViewModel<SettingsUiState>(SettingsUiState()) {
                     }
 
                     is SettingsUiEvent.Click.OnClickWithdrawDialogPositive -> {
-                        dismissWithdrawDialog()
+                        viewModelScope.launch {
+                            updateState { it.copy(isLoading = true) }
+                            withdraw().onSuccess {
+                                postEffect(SettingsUiEffect.WithdrawWithKakao)
+                                postEffect(
+                                    UiEffect.NavigateTo(
+                                        screen = Screen.ON_BOARDING,
+                                        clearBackStack = true
+                                    )
+                                )
+                                dismissWithdrawDialog()
+                            }.onFailure {
+                                // handle error
+                            }
+                        }.invokeOnCompletion {
+                            updateState { it.copy(isLoading = false) }
+                        }
                     }
                 }
             }

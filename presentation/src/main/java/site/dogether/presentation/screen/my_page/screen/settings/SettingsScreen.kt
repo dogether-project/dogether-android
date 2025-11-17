@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
+import com.kakao.sdk.user.UserApiClient
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
@@ -28,12 +29,19 @@ import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.ColorIconElevated
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.Red400
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
+
+    viewModel.CollectEffect<SettingsUiEffect> { uiEffect ->
+        when (uiEffect) {
+            is SettingsUiEffect.WithdrawWithKakao -> UserApiClient.instance.unlink { }
+        }
+    }
 
     SettingsScreenContents(
         uiState = viewModel.collectAsState().value,

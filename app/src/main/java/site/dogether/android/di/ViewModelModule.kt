@@ -59,7 +59,12 @@ val viewModelModule = module {
     viewModel { MyPageViewModel() }
     viewModel { StatisticsViewModel() }
     viewModel { CertificationListViewModel() }
-    viewModel { SettingsViewModel() }
+    viewModel {
+        SettingsViewModel(
+            logout = get(),
+            withdraw = get()
+        )
+    }
     viewModel {
         GroupManagementViewModel(
             getJoiningGroups = get(),

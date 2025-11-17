@@ -5,6 +5,7 @@ import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.dialog_state.DialogState
 
 data class SettingsUiState(
+    val isLoading: Boolean = false,
     val logoutDialogState: DialogState = DialogState(),
     val withdrawDialogState: DialogState = DialogState(),
 )
@@ -32,5 +33,5 @@ sealed interface SettingsUiEvent : UiEvent {
 }
 
 sealed interface SettingsUiEffect : UiEffect {
-
+    data object WithdrawWithKakao : SettingsUiEffect
 }

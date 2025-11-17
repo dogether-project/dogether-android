@@ -22,4 +22,5 @@ object ApiRoutes {
     fun certifyTodo(dailyTodoId: Int): String = "todos/$dailyTodoId/certify"
     fun getMyTodosByDate(groupId: Int) = "challenge-groups/$groupId/my-todos"
     fun leaveGroup(groupId: Int) = "groups/$groupId/leave"
+    const val WITHDRAW = "auth/withdraw"
 }

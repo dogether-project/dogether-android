@@ -128,9 +128,14 @@ suspend fun HttpClient.safeGetWithoutRes(
     }
 }
 
-suspend fun HttpClient.safeDeleteWithoutRes(apiRoute: String): Result<Unit> {
+suspend inline fun <reified Req> HttpClient.safeDeleteWithoutRes(
+    apiRoute: String,
+    body: Req,
+): Result<Unit> {
     return safeApiCallWithoutRes {
-        delete(apiRoute)
+        delete(apiRoute) {
+            setBody(body)
+        }
     }
 }
 

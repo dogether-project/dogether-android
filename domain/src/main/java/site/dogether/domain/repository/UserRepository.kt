@@ -7,7 +7,7 @@ interface UserRepository {
 
     suspend fun storeUserInfo(
         name: String,
-        accessToken: String
+        accessToken: String,
     ): Result<Unit>
 
     suspend fun getUserInfo(): Result<UserInfo>
@@ -18,4 +18,8 @@ interface UserRepository {
         name: String,
         idToken: String,
     ): Result<UserInfo>
+
+    suspend fun clearUserInfo()
+
+    suspend fun withdraw(): Result<Unit>
 }
