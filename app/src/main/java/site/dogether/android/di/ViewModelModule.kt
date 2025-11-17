@@ -62,8 +62,8 @@ val viewModelModule = module {
     viewModel {
         SettingsViewModel(
             logout = get(),
-
-            )
+            withdraw = get()
+        )
     }
     viewModel {
         GroupManagementViewModel(

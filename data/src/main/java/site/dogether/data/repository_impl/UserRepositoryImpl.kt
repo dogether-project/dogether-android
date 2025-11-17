@@ -8,9 +8,12 @@ import site.dogether.data.local.PreferenceKey
 import site.dogether.data.model.JwtPayload
 import site.dogether.data.remote.ApiRoutes
 import site.dogether.data.remote.model.req.user.KakaoLoginReq
+import site.dogether.data.remote.model.req.user.WithdrawReq
 import site.dogether.data.remote.model.res.user.CheckParticipatingResMapper
 import site.dogether.data.remote.model.res.user.UserInfoRes
 import site.dogether.data.remote.model.res.user.UserInfoResMapper
+import site.dogether.data.utils.LOGIN_TYPE
+import site.dogether.data.utils.safeDeleteWithoutRes
 import site.dogether.data.utils.safeGet
 import site.dogether.data.utils.safePost
 import site.dogether.domain.model.user.ParticipatingInfo
@@ -77,7 +80,7 @@ class UserRepositoryImpl(
         return httpClient.safePost<KakaoLoginReq, UserInfoRes, UserInfo>(
             apiRoute = ApiRoutes.KAKAO_LOGIN,
             body = KakaoLoginReq(
-                loginType = "KAKAO",
+                loginType = LOGIN_TYPE,
                 name = name,
                 providerId = extractUserIdFromJwt(idToken)
             ),
@@ -108,6 +111,16 @@ class UserRepositoryImpl(
     }
 
     override suspend fun withdraw(): Result<Unit> {
-        return Result.success(Unit)
+        return httpClient.safeDeleteWithoutRes(
+            apiRoute = ApiRoutes.WITHDRAW,
+            body = WithdrawReq()
+        ).fold(
+            onSuccess = {
+                runCatching { clearUserInfo() }
+            },
+            onFailure = { e ->
+                Result.failure(e)
+            }
+        )
     }
 }

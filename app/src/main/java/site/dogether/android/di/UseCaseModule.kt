@@ -18,6 +18,7 @@ import site.dogether.domain.use_case.user.GetUserInfoUseCase
 import site.dogether.domain.use_case.user.LoginWithKakaoUseCase
 import site.dogether.domain.use_case.user.LogoutUseCase
 import site.dogether.domain.use_case.user.StoreUserInfoUseCase
+import site.dogether.domain.use_case.user.WithdrawUseCase
 
 val useCaseModule = module {
     factory { LoginWithKakaoUseCase(repository = get()) }
@@ -37,4 +38,5 @@ val useCaseModule = module {
     factory { GetMyTodosByDateUseCase(repository = get()) }
     factory { WithdrawGroupUseCase(repository = get()) }
     factory { LogoutUseCase(repository = get()) }
+    factory { WithdrawUseCase(repository = get()) }
 }

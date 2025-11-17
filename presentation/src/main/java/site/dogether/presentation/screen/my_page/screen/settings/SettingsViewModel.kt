@@ -3,13 +3,15 @@ package site.dogether.presentation.screen.my_page.screen.settings
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.user.LogoutUseCase
+import site.dogether.domain.use_case.user.WithdrawUseCase
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 
 class SettingsViewModel(
-    private val logout: LogoutUseCase
+    private val logout: LogoutUseCase,
+    private val withdraw: WithdrawUseCase
 ) : BaseViewModel<SettingsUiState>(SettingsUiState()) {
 
     override fun onEvent(event: UiEvent) {
@@ -49,16 +51,22 @@ class SettingsViewModel(
 
                     is SettingsUiEvent.Click.OnClickWithdrawDialogPositive -> {
                         viewModelScope.launch {
-                            logout()
+                            updateState { it.copy(isLoading = true) }
+                            withdraw().onSuccess {
+                                postEffect(SettingsUiEffect.WithdrawWithKakao)
+                                postEffect(
+                                    UiEffect.NavigateTo(
+                                        screen = Screen.ON_BOARDING,
+                                        clearBackStack = true
+                                    )
+                                )
+                                dismissWithdrawDialog()
+                            }.onFailure {
+                                // handle error
+                            }
+                        }.invokeOnCompletion {
+                            updateState { it.copy(isLoading = false) }
                         }
-                        postEffect(SettingsUiEffect.WithdrawWithKakao)
-                        postEffect(
-                            UiEffect.NavigateTo(
-                                screen = Screen.ON_BOARDING,
-                                clearBackStack = true
-                            )
-                        )
-                        dismissWithdrawDialog()
                     }
                 }
             }
