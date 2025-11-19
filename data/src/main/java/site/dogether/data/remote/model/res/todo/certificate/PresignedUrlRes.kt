@@ -18,6 +18,6 @@ data class PresignedUrlRes(
  */
 object PresignedUrlResMapper : DataMapper<PresignedUrlRes, PresignedUrlData> {
     override fun PresignedUrlRes.toDomainModel(): PresignedUrlData {
-        return PresignedUrlData(presignedUrls = presignedUrls)
+        return PresignedUrlData(presignedUrls = presignedUrls.map { it.split("?")[0] })
     }
 }

@@ -9,6 +9,7 @@ import site.dogether.domain.use_case.group.StoreLastSelectedGroupIdUseCase
 import site.dogether.domain.use_case.group.WithdrawGroupUseCase
 import site.dogether.domain.use_case.todo.CertificateTodoUseCase
 import site.dogether.domain.use_case.todo.CreateMyTodosUseCase
+import site.dogether.domain.use_case.todo.GetMyActivityUseCase
 import site.dogether.domain.use_case.todo.GetMyTodoSpecificDateUseCase
 import site.dogether.domain.use_case.todo.GetMyTodosByDateUseCase
 import site.dogether.domain.use_case.todo.GetPresignedUrlsUseCase
@@ -39,4 +40,5 @@ val useCaseModule = module {
     factory { WithdrawGroupUseCase(repository = get()) }
     factory { LogoutUseCase(repository = get()) }
     factory { WithdrawUseCase(repository = get()) }
+    factory { GetMyActivityUseCase(repository = get()) }
 }

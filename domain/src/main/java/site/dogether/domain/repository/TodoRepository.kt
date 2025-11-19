@@ -2,6 +2,7 @@ package site.dogether.domain.repository
 
 import site.dogether.domain.model.certificate.PresignedUrlData
 import site.dogether.domain.model.todo.GetMyTodoSpecificDateInfo
+import site.dogether.domain.model.todo.MyActivity
 import site.dogether.domain.model.todo.Todo
 
 interface TodoRepository {
@@ -49,4 +50,16 @@ interface TodoRepository {
         groupId: Int,
         date: String,
     ): Result<List<Todo>>
+
+    /**
+     * 활동 통계 및 작성한 인증 목록 전체 조회
+     * @param sortBy 정렬 방식
+     * @param status 데일리 투두 상태
+     * @page page
+     */
+    suspend fun getMyActivity(
+        sortBy: String,
+        status: String?,
+        page: Int
+    ): Result<MyActivity>
 }

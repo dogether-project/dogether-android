@@ -5,6 +5,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_SELECTED_DATE
+import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_FULL_YEAR
+import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_SHORT_YEAR
+import site.dogether.common.utils.DateTimeUtils.toFormattedString
+import site.dogether.common.utils.DateTimeUtils.toLocalDate
 import site.dogether.common.utils.orZero
 import site.dogether.domain.model.todo.Todo
 import site.dogether.domain.use_case.todo.CreateMyTodosUseCase
@@ -12,10 +16,6 @@ import site.dogether.domain.use_case.todo.GetMyTodoSpecificDateUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.dialog_state.DialogState
-import site.dogether.presentation.utils.DATE_FORMAT_FULL_YEAR
-import site.dogether.presentation.utils.DATE_FORMAT_SHORT_YEAR
-import site.dogether.presentation.utils.toFormattedString
-import site.dogether.presentation.utils.toLocalDate
 
 class CreateTodoViewModel(
     private val getMyTodoSpecificDateUseCase: GetMyTodoSpecificDateUseCase,

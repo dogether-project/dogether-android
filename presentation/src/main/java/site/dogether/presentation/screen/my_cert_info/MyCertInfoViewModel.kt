@@ -5,15 +5,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_TODO_INDEX
+import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_FULL_YEAR_DASHED
+import site.dogether.common.utils.DateTimeUtils.toFormattedString
+import site.dogether.common.utils.DateTimeUtils.today
 import site.dogether.common.utils.orZero
 import site.dogether.domain.use_case.todo.GetMyTodosByDateUseCase
 import site.dogether.domain.use_case.user.GetUserInfoUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEvent
-import site.dogether.presentation.screen.home.HomeUiEffect
-import site.dogether.presentation.utils.DATE_FORMAT_FULL_YEAR_DASHED
-import site.dogether.presentation.utils.toFormattedString
-import site.dogether.presentation.utils.today
 
 class MyCertInfoViewModel(
     private val getMyTodoListByDate: GetMyTodosByDateUseCase,

@@ -8,6 +8,7 @@ import site.dogether.data.remote.model.req.todo.CreateTodoReq
 import site.dogether.data.remote.model.req.todo.certificate.CertificateTodoReq
 import site.dogether.data.remote.model.req.todo.certificate.PresignedUrlReq
 import site.dogether.data.remote.model.res.todo.GetMyTodoSpecificDateResMapper
+import site.dogether.data.remote.model.res.todo.MyActivityResMapper
 import site.dogether.data.remote.model.res.todo.TodosResMapper
 import site.dogether.data.remote.model.res.todo.certificate.PresignedUrlResMapper
 import site.dogether.data.utils.safeGet
@@ -16,6 +17,7 @@ import site.dogether.data.utils.safePostWithoutRes
 import site.dogether.data.utils.safePutToS3
 import site.dogether.domain.model.certificate.PresignedUrlData
 import site.dogether.domain.model.todo.GetMyTodoSpecificDateInfo
+import site.dogether.domain.model.todo.MyActivity
 import site.dogether.domain.model.todo.Todo
 import site.dogether.domain.repository.TodoRepository
 
@@ -96,5 +98,21 @@ class TodoRepositoryImpl(
             params = mapOf("date" to date),
             mapper = TodosResMapper
         ).map { it.todos }
+    }
+
+    override suspend fun getMyActivity(
+        sortBy: String,
+        status: String?,
+        page: Int
+    ): Result<MyActivity> {
+        return httpClient.safeGet(
+            apiRoute = ApiRoutes.MY_ACTIVITY,
+            params = mapOf(
+                "sortBy" to sortBy,
+                "status" to status.orEmpty(),
+                "page" to page
+            ),
+            mapper = MyActivityResMapper
+        )
     }
 }

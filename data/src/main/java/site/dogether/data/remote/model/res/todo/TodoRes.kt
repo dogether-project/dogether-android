@@ -24,7 +24,7 @@ object TodoResMapper : DataMapper<TodoRes, Todo> {
             status = status.orEmpty(),
             certificationContent = certificationContent.orEmpty(),
             certificationMediaUrl = try {
-                certificationMediaUrl?.split("?")[0] ?: ""
+                certificationMediaUrl.orEmpty()
             } catch (e: Exception) {
                 ""
             },
