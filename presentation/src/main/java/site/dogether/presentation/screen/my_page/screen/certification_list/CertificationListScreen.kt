@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +35,8 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -211,17 +214,20 @@ private fun ColumnScope.CertificationListContents(
         }
     }
 
-    if (certificationsGroupedByGroupCreatedAt.isNotEmpty()) {
-        LazyVerticalGrid(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth()
-                .weight(1f),
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
+    val gridState = rememberLazyGridState()
+
+    LazyVerticalGrid(
+        modifier = Modifier
+            .padding(top = 8.dp)
+            .fillMaxWidth()
+            .weight(1f),
+        state = gridState,
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        if (certificationsGroupedByGroupCreatedAt.isNotEmpty()) {
             certificationsGroupedByGroupCreatedAt.forEach { list ->
                 item(
                     key = list.groupName,
@@ -246,19 +252,8 @@ private fun ColumnScope.CertificationListContents(
                 }
             }
         }
-    }
 
-    if (certificationsGroupedByTodoCreatedAt.isNotEmpty()) {
-        LazyVerticalGrid(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth()
-                .weight(1f),
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
+        if (certificationsGroupedByTodoCreatedAt.isNotEmpty()) {
             certificationsGroupedByTodoCreatedAt.forEach { group ->
                 item(
                     key = group.createdAt,
@@ -283,6 +278,18 @@ private fun ColumnScope.CertificationListContents(
                 }
             }
         }
+    }
+
+    LaunchedEffect(gridState, uiState.myActivity.pageInfo, uiState.isLoading) {
+        snapshotFlow { gridState.layoutInfo }
+            .collect { layoutInfo ->
+                val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                val totalItemCount = layoutInfo.totalItemsCount
+
+                if (lastVisibleItemIndex >= totalItemCount - 4 && !uiState.isLoading && pageInfo.hasNext) {
+                    onEvent(CertificationListUiEvent.Callback.OnScrollReachedBottom)
+                }
+            }
     }
 }
 

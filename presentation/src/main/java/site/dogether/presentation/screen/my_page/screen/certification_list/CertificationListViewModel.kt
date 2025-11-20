@@ -9,16 +9,16 @@ import site.dogether.domain.use_case.todo.GetMyActivityUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.Chip
+import kotlin.collections.addAll
 
 class CertificationListViewModel(
     private val getMyActivity: GetMyActivityUseCase
 ) : BaseViewModel<CertificationListUiState>(CertificationListUiState()) {
 
     init {
-        loadMyActivityData(
+        loadNewMyActivityData(
             sortBy = uiState.selectedSortingMethod.serverString,
-            status = null,
-            page = 0
+            status = null
         )
     }
 
@@ -40,15 +40,9 @@ class CertificationListViewModel(
                             )
                         }
 
-                        loadMyActivityData(
+                        loadNewMyActivityData(
                             sortBy = event.sortingMethod.serverString,
-                            status = when (uiState.selectedChip) {
-                                Chip.ReviewPending -> STATUS_REVIEW_PENDING
-                                Chip.Approve -> STATUS_APPROVE
-                                Chip.Reject -> STATUS_REJECT
-                                else -> null
-                            },
-                            page = 0
+                            status = chipToStatus(uiState.selectedChip)
                         )
                     }
 
@@ -56,16 +50,10 @@ class CertificationListViewModel(
                         updateState {
                             it.copy(selectedChip = event.chip)
                         }
-                        
-                        loadMyActivityData(
+
+                        loadNewMyActivityData(
                             sortBy = uiState.selectedSortingMethod.serverString,
-                            status = when (event.chip) {
-                                Chip.ReviewPending -> STATUS_REVIEW_PENDING
-                                Chip.Approve -> STATUS_APPROVE
-                                Chip.Reject -> STATUS_REJECT
-                                else -> null
-                            },
-                            page = 0
+                            status = chipToStatus(event.chip)
                         )
                     }
                 }
@@ -76,15 +64,82 @@ class CertificationListViewModel(
                     is CertificationListUiEvent.Callback.OnSelectSortingMethodBottomSheetDismissRequested -> {
                         updateState { it.copy(isSelectSortingMethodBottomSheetShowing = false) }
                     }
+
+                    is CertificationListUiEvent.Callback.OnScrollReachedBottom -> {
+                        updateState { it.copy(isLoading = true) }
+
+                        viewModelScope.launch {
+                            getMyActivity(
+                                sortBy = uiState.selectedSortingMethod.serverString,
+                                status = chipToStatus(uiState.selectedChip),
+                                page = uiState.myActivity.pageInfo.recentPageNumber + 1
+                            ).onSuccess { myActivity ->
+                                if (myActivity.certificationsGroupedByTodoCompletedAt.isNotEmpty()) {
+                                    val newList = myActivity.certificationsGroupedByTodoCompletedAt
+                                    val existingList = uiState.myActivity.certificationsGroupedByTodoCompletedAt.toMutableList()
+
+                                    if (existingList.isNotEmpty() && newList.isNotEmpty() &&
+                                        existingList.last().createdAt == newList.first().createdAt
+                                    ) {
+                                        val lastItem = existingList.last()
+                                        val updatedCertifications = lastItem.certificationInfo + newList.first().certificationInfo
+                                        existingList[existingList.size - 1] = lastItem.copy(certificationInfo = updatedCertifications)
+
+                                        existingList.addAll(newList.drop(1))
+                                    } else {
+                                        existingList.addAll(newList)
+                                    }
+
+                                    updateState {
+                                        it.copy(
+                                            myActivity = uiState.myActivity.copy(
+                                                certificationsGroupedByTodoCompletedAt = existingList,
+                                                pageInfo = myActivity.pageInfo
+                                            )
+                                        )
+                                    }
+                                }
+
+                                if (myActivity.certificationsGroupedByGroupCreatedAt.isNotEmpty()) {
+                                    val newList = myActivity.certificationsGroupedByGroupCreatedAt
+                                    val existingList = uiState.myActivity.certificationsGroupedByGroupCreatedAt.toMutableList()
+
+                                    if (existingList.isNotEmpty() && newList.isNotEmpty() &&
+                                        existingList.last().groupName == newList.first().groupName
+                                    ) {
+                                        val lastItem = existingList.last()
+                                        val updatedCertifications = lastItem.certificationInfo + newList.first().certificationInfo
+                                        existingList[existingList.size - 1] = lastItem.copy(certificationInfo = updatedCertifications)
+
+                                        existingList.addAll(newList.drop(1))
+                                    } else {
+                                        existingList.addAll(newList)
+                                    }
+
+                                    updateState {
+                                        it.copy(
+                                            myActivity = uiState.myActivity.copy(
+                                                certificationsGroupedByGroupCreatedAt = existingList,
+                                                pageInfo = myActivity.pageInfo
+                                            )
+                                        )
+                                    }
+                                }
+                            }.onFailure {
+
+                            }
+                        }.invokeOnCompletion {
+                            updateState { it.copy(isLoading = false) }
+                        }
+                    }
                 }
             }
         }
     }
 
-    private fun loadMyActivityData(
+    private fun loadNewMyActivityData(
         sortBy: String,
-        status: String? = null,
-        page: Int
+        status: String? = null
     ) {
         updateState { it.copy(isLoading = true) }
 
@@ -92,7 +147,7 @@ class CertificationListViewModel(
             getMyActivity(
                 sortBy = sortBy,
                 status = status,
-                page = page
+                page = 0
             ).onSuccess { myActivity ->
                 updateState { it.copy(myActivity = myActivity) }
             }.onFailure {
@@ -101,5 +156,12 @@ class CertificationListViewModel(
         }.invokeOnCompletion {
             updateState { it.copy(isLoading = false) }
         }
+    }
+
+    private fun chipToStatus(chip: Chip?): String? = when (chip) {
+        Chip.ReviewPending -> STATUS_REVIEW_PENDING
+        Chip.Approve -> STATUS_APPROVE
+        Chip.Reject -> STATUS_REJECT
+        else -> null
     }
 }

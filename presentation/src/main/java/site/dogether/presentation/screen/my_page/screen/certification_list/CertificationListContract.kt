@@ -26,6 +26,8 @@ sealed interface CertificationListUiEvent : UiEvent {
 
     sealed interface Callback : CertificationListUiEvent {
         data object OnSelectSortingMethodBottomSheetDismissRequested : Callback
+
+        data object OnScrollReachedBottom : Callback
     }
 }
 
