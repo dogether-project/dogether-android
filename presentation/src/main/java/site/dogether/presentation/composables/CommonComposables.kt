@@ -55,6 +55,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_SHORT_YEAR
+import site.dogether.common.utils.DateTimeUtils.toFormattedString
+import site.dogether.common.utils.DateTimeUtils.today
+import site.dogether.common.utils.DateTimeUtils.tomorrow
 import site.dogether.domain.model.group.Group
 import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.R
@@ -84,12 +88,8 @@ import site.dogether.presentation.theme.Grey900
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Small_S
-import site.dogether.presentation.utils.DATE_FORMAT_SHORT_YEAR
 import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.conditionedClickableWithoutRipple
-import site.dogether.presentation.utils.toFormattedString
-import site.dogether.presentation.utils.today
-import site.dogether.presentation.utils.tomorrow
 
 @Composable
 fun CTAButton(

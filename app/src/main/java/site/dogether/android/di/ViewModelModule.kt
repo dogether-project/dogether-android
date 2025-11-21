@@ -58,7 +58,11 @@ val viewModelModule = module {
     }
     viewModel { MyPageViewModel() }
     viewModel { StatisticsViewModel() }
-    viewModel { CertificationListViewModel() }
+    viewModel {
+        CertificationListViewModel(
+            getMyActivity = get()
+        )
+    }
     viewModel {
         SettingsViewModel(
             logout = get(),

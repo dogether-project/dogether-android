@@ -1,8 +1,10 @@
 package site.dogether.presentation.screen.my_page.screen.certification_list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,8 +20,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,11 +36,15 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -41,8 +52,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import site.dogether.domain.model.certificate.CertificationInfo
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_APPROVE
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_REJECT
+import site.dogether.domain.model.todo.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
@@ -55,7 +71,6 @@ import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.Body2_S
 import site.dogether.presentation.theme.ColorBgDefault
 import site.dogether.presentation.theme.ColorBgDim
-import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgSurface
 import site.dogether.presentation.theme.ColorBorderSecondary
 import site.dogether.presentation.theme.ColorIconElevated
@@ -108,7 +123,7 @@ private fun CertificationListScreenContents(
             centerText = stringResource(R.string.title_certification_list)
         )
 
-        if (uiState.certificationList.isNotEmpty()) {
+        if (uiState.myActivity.dailyTodoStats.totalCertificatedCount > 0) {
             CertificationListContents(
                 uiState = uiState,
                 onEvent = onEvent
@@ -119,11 +134,14 @@ private fun CertificationListScreenContents(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ColumnScope.CertificationListContents(
     uiState: CertificationListUiState,
     onEvent: (UiEvent) -> Unit,
 ) {
+    val (dailyTodoStats, certificationsGroupedByTodoCreatedAt, certificationsGroupedByGroupCreatedAt, pageInfo) = uiState.myActivity
+
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
             modifier = Modifier.padding(top = 16.dp),
@@ -136,7 +154,7 @@ private fun ColumnScope.CertificationListContents(
                 }
 
                 withStyle(SpanStyle(color = ColorTextPrimary)) {
-                    append("100")
+                    append("${dailyTodoStats.totalCertificatedCount}")
                     append(stringResource(R.string.unit_each))
                 }
 
@@ -155,21 +173,21 @@ private fun ColumnScope.CertificationListContents(
                 icon = painterResource(R.drawable.ic_achieved),
                 tint = ColorIconElevated,
                 title = stringResource(R.string.common_achieved),
-                value = 5
+                value = dailyTodoStats.totalCertificatedCount
             )
 
             CertificationCountItem(
                 icon = painterResource(R.drawable.ic_approve_summary),
                 tint = ColorIconPrimary,
                 title = stringResource(R.string.common_approve),
-                value = 5
+                value = dailyTodoStats.totalApprovedCount
             )
 
             CertificationCountItem(
                 icon = painterResource(R.drawable.ic_reject_summary),
                 tint = ColorIconError,
                 title = stringResource(R.string.common_reject),
-                value = 5
+                value = dailyTodoStats.totalRejectedCount
             )
         }
     }
@@ -189,43 +207,90 @@ private fun ColumnScope.CertificationListContents(
         }
 
         items(uiState.chips) { chip ->
-            when (chip) {
-                else -> ChipItem(
-                    chip = chip,
-                    isSelected = uiState.selectedChip == chip,
-                    onClick = { onEvent(CertificationListUiEvent.Click.OnClickChip(chip)) }
-                )
+            ChipItem(
+                chip = chip,
+                isSelected = uiState.selectedChip == chip,
+                onClick = { onEvent(CertificationListUiEvent.Click.OnClickChip(if (uiState.selectedChip == chip) null else chip)) }
+            )
+        }
+    }
+
+    val gridState = rememberLazyGridState()
+
+    LazyVerticalGrid(
+        modifier = Modifier
+            .padding(top = 8.dp)
+            .fillMaxWidth()
+            .weight(1f),
+        state = gridState,
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        if (certificationsGroupedByGroupCreatedAt.isNotEmpty()) {
+            certificationsGroupedByGroupCreatedAt.forEach { list ->
+                item(
+                    key = list.groupName,
+                    span = { GridItemSpan(maxLineSpan) }
+                ) {
+                    Text(
+                        modifier = Modifier.padding(top = 12.dp),
+                        text = list.groupName,
+                        style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                        color = ColorTextSubtle
+                    )
+                }
+
+                items(
+                    items = list.certificationInfo,
+                    key = { it.id }
+                ) { certificationInfo ->
+                    CertificationItem(
+                        certificationInfo = certificationInfo,
+                        onClick = { }
+                    )
+                }
+            }
+        }
+
+        if (certificationsGroupedByTodoCreatedAt.isNotEmpty()) {
+            certificationsGroupedByTodoCreatedAt.forEach { group ->
+                item(
+                    key = group.createdAt,
+                    span = { GridItemSpan(maxLineSpan) }
+                ) {
+                    Text(
+                        modifier = Modifier.padding(top = 12.dp),
+                        text = "${group.createdAt}(${group.dayOfWeek})",
+                        style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                        color = ColorTextSubtle
+                    )
+                }
+
+                itemsIndexed(
+                    items = group.certificationInfo,
+                    key = { _, certificationInfo -> certificationInfo.id }
+                ) { index, certificationInfo ->
+                    CertificationItem(
+                        certificationInfo = certificationInfo,
+                        onClick = { onEvent(CertificationListUiEvent.Click.OnClickCertificationInfo(index)) }
+                    )
+                }
             }
         }
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .padding(
-                top = 8.dp,
-                start = 16.dp,
-                end = 16.dp
-            )
-            .fillMaxWidth()
-            .weight(1f)
-    ) {
-        // group / dtae forEach
+    LaunchedEffect(gridState, uiState.myActivity.pageInfo, uiState.isLoading) {
+        snapshotFlow { gridState.layoutInfo }
+            .collect { layoutInfo ->
+                val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                val totalItemCount = layoutInfo.totalItemsCount
 
-        item {
-            Text(
-                text = "Group or Date",
-                style = Body1_S,
-                color = ColorTextSubtle
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        item {
-            CertificationRow()
-        }
+                if (lastVisibleItemIndex >= totalItemCount - 4 && !uiState.isLoading && pageInfo.hasNext) {
+                    onEvent(CertificationListUiEvent.Callback.OnScrollReachedBottom)
+                }
+            }
     }
 }
 
@@ -339,13 +404,13 @@ private fun ChipItem(
     modifier: Modifier = Modifier,
     chip: Chip,
     isSelected: Boolean,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
 ) {
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(50.dp))
             .background(if (isSelected) chip.color else Color.Transparent)
-            .clickableWithoutRipple { onClick() }
+            .clickableWithoutRipple { onClick?.invoke() }
             .border(
                 width = 1.dp,
                 color = if (isSelected) Color.Transparent else ColorBorderSecondary,
@@ -461,34 +526,38 @@ private fun SortingMethodItem(
 }
 
 @Composable
-private fun CertificationRow() {
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        CertificationItem()
-        CertificationItem()
-    }
-}
-
-@Composable
-private fun RowScope.CertificationItem() {
+private fun CertificationItem(
+    certificationInfo: CertificationInfo,
+    onClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
-            .weight(1f)
             .aspectRatio(1f)
-            .background(ColorBgElevated)
+            .clickable(onClick = onClick)
     ) {
-        Image(
-            painter = painterResource(R.drawable.img_dosik_main),
-            contentDescription = "image_certification_item"
+        AsyncImage(
+            model = certificationInfo.certificationMediaUrl,
+            contentDescription = "certification_image",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+            placeholder = ColorPainter(ColorBgSurface),
+            error = ColorPainter(ColorBgSurface)
         )
+
+        val chip = when (certificationInfo.status) {
+            STATUS_REVIEW_PENDING -> Chip.ReviewPending
+            STATUS_APPROVE -> Chip.Approve
+            STATUS_REJECT -> Chip.Reject
+            else -> Chip.ReviewPending
+        }
 
         ChipItem(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(12.dp),
-            chip = Chip.Approve,
-            isSelected = true,
-            onClick = {}
+                .padding(8.dp),
+            chip = chip,
+            isSelected = true
         )
     }
 }

@@ -62,7 +62,7 @@ class SettingsViewModel(
                                 )
                                 dismissWithdrawDialog()
                             }.onFailure {
-                                // handle error
+                                // handle exception
                             }
                         }.invokeOnCompletion {
                             updateState { it.copy(isLoading = false) }

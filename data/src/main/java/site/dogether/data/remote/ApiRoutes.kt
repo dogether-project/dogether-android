@@ -23,4 +23,5 @@ object ApiRoutes {
     fun getMyTodosByDate(groupId: Int) = "challenge-groups/$groupId/my-todos"
     fun leaveGroup(groupId: Int) = "groups/$groupId/leave"
     const val WITHDRAW = "auth/withdraw"
+    const val MY_ACTIVITY = "my/activity"
 }

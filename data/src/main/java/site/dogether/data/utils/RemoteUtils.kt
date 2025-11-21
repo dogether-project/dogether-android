@@ -96,7 +96,7 @@ suspend inline fun <reified Req, reified Res : DataModel, Domain : DomainModel> 
 
 suspend inline fun <reified Res : DataModel, Domain : DomainModel> HttpClient.safeGet(
     apiRoute: String,
-    params: Map<String, String> = emptyMap(),
+    params: Map<String, Any> = emptyMap(),
     mapper: DataMapper<Res, Domain>,
 ): Result<Domain> {
     return safeApiCall<Res> {

@@ -5,6 +5,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import site.dogether.KEY_DATE
 import site.dogether.KEY_ENCODED_URI
 import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_JOIN_CODE
@@ -61,10 +62,11 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
         composable(Screen.SETTINGS) { SettingsScreen() }
         composable(Screen.GROUP_MANAGEMENT) { GroupManagementScreen() }
         composable(
-            route = "${Screen.MY_CERT_INFO}/{${KEY_GROUP_ID}}/{${KEY_TODO_INDEX}}",
+            route = "${Screen.MY_CERT_INFO}/{${KEY_GROUP_ID}}/{${KEY_TODO_INDEX}}/{${KEY_DATE}}",
             arguments = listOf(
                 navArgument(KEY_GROUP_ID) { type = NavType.IntType },
-                navArgument(KEY_TODO_INDEX) { type = NavType.IntType }
+                navArgument(KEY_TODO_INDEX) { type = NavType.IntType },
+                navArgument(KEY_DATE) { type = NavType.StringType }
             )
         ) { MyCertInfoScreen() }
         composable(
