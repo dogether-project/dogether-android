@@ -73,3 +73,10 @@ val BrushVignetteBottom = Brush.verticalGradient(
     ),
     startY = 300f
 )
+val BrushProfileBorder = Brush.verticalGradient(
+    colors = listOf(
+        Color(0xFF56A5FF),
+        Color(0xFFEDD16F),
+        Color(0xFFFB5171)
+    )
+)

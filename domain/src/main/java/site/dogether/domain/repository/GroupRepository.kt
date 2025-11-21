@@ -3,6 +3,7 @@ package site.dogether.domain.repository
 import site.dogether.domain.model.group.CreatedGroupInfo
 import site.dogether.domain.model.group.JoiningGroups
 import site.dogether.domain.model.group.ParticipateGroupInfo
+import site.dogether.domain.model.user.RankingMembers
 
 interface GroupRepository {
 
@@ -20,4 +21,6 @@ interface GroupRepository {
     suspend fun storeLastSelectedGroupId(groupId: Int): Result<Unit>
 
     suspend fun withdrawGroup(groupId: Int): Result<Unit>
+
+    suspend fun getRanking(groupId: Int): Result<RankingMembers>
 }

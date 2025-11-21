@@ -24,4 +24,5 @@ object ApiRoutes {
     fun leaveGroup(groupId: Int) = "groups/$groupId/leave"
     const val WITHDRAW = "auth/withdraw"
     const val MY_ACTIVITY = "my/activity"
+    fun getRanking(groupId: Int): String = "groups/${groupId}/ranking"
 }

@@ -4,6 +4,7 @@ import org.koin.dsl.module
 import site.dogether.domain.use_case.app_info.CheckUpdateRequiredUseCase
 import site.dogether.domain.use_case.group.CreateGroupUseCase
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
+import site.dogether.domain.use_case.group.GetRankingUseCase
 import site.dogether.domain.use_case.group.ParticipateGroupUseCase
 import site.dogether.domain.use_case.group.StoreLastSelectedGroupIdUseCase
 import site.dogether.domain.use_case.group.WithdrawGroupUseCase
@@ -41,4 +42,5 @@ val useCaseModule = module {
     factory { LogoutUseCase(repository = get()) }
     factory { WithdrawUseCase(repository = get()) }
     factory { GetMyActivityUseCase(repository = get()) }
+    factory { GetRankingUseCase(repository = get()) }
 }

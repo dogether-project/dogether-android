@@ -36,6 +36,7 @@
     <string name="title_settings">설정</string>
     <string name="title_group_management">그룹 관리</string>
     <string name="title_my_cert_info">나의 인증 정보</string>
+    <string name="title_ranking">순위</string>
 
     <string name="body_force_update">두게더가 유저분들의 의견을 반영하여\n더 편하게 사용하도록 사용성을 개선했어요.\n지금 바로 업데이트하고 인증하러 가요!</string>
     <string name="body_on_boarding_0">목표만 세우면 끝?! 인증까지 해야 진짜 실천이에요</string>
@@ -59,6 +60,7 @@
     <string name="body_certification_list_exist_1">의 투두를 달성했어요</string>
     <string name="body_certification_list_not_exist">오늘 하루 이루고 싶은 목표를 입력해보세요!</string>
     <string name="body_my_cert_info_not_certified">아직 열심히 진행중이에요</string>
+    <string name="body_ranking">달성률은 인증, 인정, 참여 기간을 기준으로 계산돼요.</string>
 
     <string name="dialog_title_permission">알림 권한이 꺼져 있어요.</string>
     <string name="dialog_title_duplicated_name">동일한 이름의 그룹이\n이미 존재합니다.</string>
@@ -89,7 +91,7 @@
     <string name="cta_button_retry">다시 시도</string>
     <string name="cta_button_go_back">뒤로 가기</string>
     <string name="cta_button_create_new_group">새로운 그룹 생성</string>
-    <string name="cta_button_group_navigate_to_activity_summary">그룹 활동 한눈에 보기 !</string>
+    <string name="cta_button_group_navigate_to_ranking">그룹 활동 한눈에 보기 !</string>
     <string name="cta_button_create_todo">투두 작성하기</string>
     <string name="cta_button_certificate">인증하기</string>
     <string name="cta_button_add_todo">투두 추가하기</string>
@@ -124,6 +126,7 @@
     <string name="unit_postfix_total">중</string>
     <string name="unit_rank">등</string>
     <string name="unit_each">개</string>
+    <string name="unit_achieve_ratio">달성률 %d%%</string>
 
     <string name="info_duration">활동 기간</string>
     <string name="info_group_member_count">그룹원</string>
