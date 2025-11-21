@@ -3,11 +3,9 @@ package site.dogether.presentation.screen.my_cert_info
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import site.dogether.KEY_DATE
 import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_TODO_INDEX
-import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_FULL_YEAR_DASHED
-import site.dogether.common.utils.DateTimeUtils.toFormattedString
-import site.dogether.common.utils.DateTimeUtils.today
 import site.dogether.common.utils.orZero
 import site.dogether.domain.use_case.todo.GetMyTodosByDateUseCase
 import site.dogether.domain.use_case.user.GetUserInfoUseCase
@@ -28,6 +26,10 @@ class MyCertInfoViewModel(
         savedStateHandle.get<Int>(KEY_TODO_INDEX).orZero()
     }
 
+    private val date: String by lazy {
+        savedStateHandle.get<String>(KEY_DATE).orEmpty()
+    }
+
     init {
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }
@@ -42,7 +44,7 @@ class MyCertInfoViewModel(
 
             getMyTodoListByDate(
                 groupId = groupId,
-                date = today.toFormattedString(DATE_FORMAT_FULL_YEAR_DASHED)
+                date = date
             ).onSuccess { todos ->
                 updateState {
                     it.copy(

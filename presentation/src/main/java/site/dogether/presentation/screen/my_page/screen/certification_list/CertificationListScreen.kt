@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -267,13 +268,13 @@ private fun ColumnScope.CertificationListContents(
                     )
                 }
 
-                items(
+                itemsIndexed(
                     items = group.certificationInfo,
-                    key = { it.id }
-                ) { certificationInfo ->
+                    key = { _, certificationInfo -> certificationInfo.id }
+                ) { index, certificationInfo ->
                     CertificationItem(
                         certificationInfo = certificationInfo,
-                        onClick = { }
+                        onClick = { onEvent(CertificationListUiEvent.Click.OnClickCertificationInfo(index)) }
                     )
                 }
             }

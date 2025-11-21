@@ -167,7 +167,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             // 나의 인증 정보 페이지로 이동
             is HomeUiEffect.NavigateToMyCertInfo -> {
                 navHostController.navigate(
-                    "${Screen.MY_CERT_INFO}/${uiEffect.groupId}/${uiEffect.todoIndex}"
+                    "${Screen.MY_CERT_INFO}/${uiEffect.groupId}/${uiEffect.todoIndex}/${uiEffect.date}"
                 )
             }
 
@@ -175,6 +175,10 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                 navHostController.navigate(Screen.MY_PAGE)
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        onEvent(HomeUiEvent.Lifecycle.OnFirstComposition)
     }
 
     HomeScreenContents(
@@ -199,10 +203,6 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
         uiState = uiState,
         onEvent = onEvent
     )
-
-    LaunchedEffect(Unit) {
-        onEvent(HomeUiEvent.Lifecycle.OnFirstComposition)
-    }
 }
 
 private fun checkNotificationPermission(

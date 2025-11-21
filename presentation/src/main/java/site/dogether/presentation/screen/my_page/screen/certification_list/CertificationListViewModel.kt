@@ -9,7 +9,6 @@ import site.dogether.domain.use_case.todo.GetMyActivityUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.Chip
-import kotlin.collections.addAll
 
 class CertificationListViewModel(
     private val getMyActivity: GetMyActivityUseCase
@@ -55,6 +54,15 @@ class CertificationListViewModel(
                             sortBy = uiState.selectedSortingMethod.serverString,
                             status = chipToStatus(event.chip)
                         )
+                    }
+
+                    is CertificationListUiEvent.Click.OnClickCertificationInfo -> {
+//                        postEffect(
+//                            HomeUiEffect.NavigateToMyCertInfo(
+//                                groupId = uiState.selectedGroup.id,
+//                                todoIndex = event.todoIndex
+//                            )
+//                        )
                     }
                 }
             }

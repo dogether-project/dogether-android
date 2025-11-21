@@ -98,6 +98,7 @@ sealed interface HomeUiEffect : UiEffect {
     data class NavigateToMyCertInfo(
         val groupId: Int,
         val todoIndex: Int,
+        val date: String
     ) : HomeUiEffect
 
     data object NavigateToMyPage : HomeUiEffect

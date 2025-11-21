@@ -9,6 +9,7 @@ import site.dogether.common.HoursPerDay
 import site.dogether.common.MinutesPerHour
 import site.dogether.common.SecondsPerMinute
 import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_FULL_YEAR
+import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_FULL_YEAR_DASHED
 import site.dogether.common.utils.DateTimeUtils.toFormattedString
 import site.dogether.common.utils.DateTimeUtils.today
 import site.dogether.common.utils.DateTimeUtils.todayWithTime
@@ -150,7 +151,8 @@ class HomeViewModel(
                         postEffect(
                             HomeUiEffect.NavigateToMyCertInfo(
                                 groupId = uiState.selectedGroup.id,
-                                todoIndex = event.todoIndex
+                                todoIndex = event.todoIndex,
+                                date = uiState.selectedDate.toFormattedString(DATE_FORMAT_FULL_YEAR_DASHED)
                             )
                         )
                     }

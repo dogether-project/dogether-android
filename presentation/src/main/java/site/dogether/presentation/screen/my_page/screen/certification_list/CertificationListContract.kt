@@ -22,6 +22,8 @@ sealed interface CertificationListUiEvent : UiEvent {
         data class OnClickSortingMethod(val sortingMethod: SortingMethod) : Click
 
         data class OnClickChip(val chip: Chip?) : Click
+
+        data class OnClickCertificationInfo(val index: Int) : Click
     }
 
     sealed interface Callback : CertificationListUiEvent {
