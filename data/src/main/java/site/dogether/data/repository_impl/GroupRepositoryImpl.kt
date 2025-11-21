@@ -8,6 +8,7 @@ import site.dogether.data.remote.model.req.group.StoreLastSelectedGroupIdReq
 import site.dogether.data.remote.model.req.user.WithdrawReq
 import site.dogether.data.remote.model.res.group.CreateGroupResMapper
 import site.dogether.data.remote.model.res.group.GetJoiningGroupsResMapper
+import site.dogether.data.remote.model.res.group.GetRankingResMapper
 import site.dogether.data.remote.model.res.group.ParticipateGroupResMapper
 import site.dogether.data.utils.safeDeleteWithoutRes
 import site.dogether.data.utils.safeGet
@@ -16,6 +17,7 @@ import site.dogether.data.utils.safePostWithoutRes
 import site.dogether.domain.model.group.CreatedGroupInfo
 import site.dogether.domain.model.group.JoiningGroups
 import site.dogether.domain.model.group.ParticipateGroupInfo
+import site.dogether.domain.model.user.RankingMembers
 import site.dogether.domain.repository.GroupRepository
 
 class GroupRepositoryImpl(private val httpClient: HttpClient) : GroupRepository {
@@ -64,6 +66,13 @@ class GroupRepositoryImpl(private val httpClient: HttpClient) : GroupRepository 
         return httpClient.safeDeleteWithoutRes(
             apiRoute = ApiRoutes.leaveGroup(groupId),
             body = WithdrawReq()
+        )
+    }
+
+    override suspend fun getRanking(groupId: Int): Result<RankingMembers> {
+        return httpClient.safeGet(
+            apiRoute = ApiRoutes.getRanking(groupId),
+            mapper = GetRankingResMapper
         )
     }
 }

@@ -160,6 +160,10 @@ class HomeViewModel(
                     is HomeUiEvent.Click.OnClickMyPage -> {
                         postEffect(HomeUiEffect.NavigateToMyPage)
                     }
+
+                    is HomeUiEvent.Click.OnClickRanking -> {
+                        postEffect(HomeUiEffect.NavigateToRanking(uiState.selectedGroup.id))
+                    }
                 }
             }
 

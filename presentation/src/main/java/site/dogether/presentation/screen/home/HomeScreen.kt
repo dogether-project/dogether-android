@@ -171,8 +171,14 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                 )
             }
 
+            // 마이페이지로 이동
             is HomeUiEffect.NavigateToMyPage -> {
                 navHostController.navigate(Screen.MY_PAGE)
+            }
+
+            // 랭킹 페이지로 이동
+            is HomeUiEffect.NavigateToRanking -> {
+                navHostController.navigate("${Screen.RANKING}/${uiEffect.groupId}")
             }
         }
     }
@@ -465,7 +471,7 @@ private fun HomeScreenContents(
                     .height(48.dp)
                     .background(ColorBgSurface)
                     .padding(horizontal = 16.dp)
-                    .clickableWithoutRipple { },
+                    .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickRanking) },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -478,7 +484,7 @@ private fun HomeScreenContents(
 
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
-                        text = stringResource(R.string.cta_button_group_navigate_to_activity_summary),
+                        text = stringResource(R.string.cta_button_group_navigate_to_ranking),
                         style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
                         color = ColorTextSubtle
                     )

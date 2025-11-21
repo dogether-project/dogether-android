@@ -28,6 +28,7 @@ import site.dogether.presentation.screen.my_page.screen.statistics.StatisticsScr
 import site.dogether.presentation.screen.on_boarding.OnBoardingScreen
 import site.dogether.presentation.screen.participate_group.ParticipateGroupScreen
 import site.dogether.presentation.screen.participation_method.ParticipationMethodScreen
+import site.dogether.presentation.screen.ranking.RankingScreen
 import site.dogether.presentation.screen.splash.SplashScreen
 import site.dogether.presentation.screen.todo.certificate.CertificateDescriptionScreen
 import site.dogether.presentation.screen.todo.certificate.CertificateTodoScreen
@@ -91,6 +92,14 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
             )
         ) {
             CertificateDescriptionScreen()
+        }
+        composable(
+            route = "${Screen.RANKING}/{${KEY_GROUP_ID}}",
+            arguments = listOf(
+                navArgument(KEY_GROUP_ID) { type = NavType.IntType }
+            )
+        ) {
+            RankingScreen()
         }
     }
 }

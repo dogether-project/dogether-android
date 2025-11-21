@@ -19,6 +19,7 @@ import site.dogether.presentation.screen.my_page.screen.statistics.StatisticsVie
 import site.dogether.presentation.screen.on_boarding.OnBoardingViewModel
 import site.dogether.presentation.screen.participate_group.ParticipateGroupViewModel
 import site.dogether.presentation.screen.participation_method.ParticipationMethodViewModel
+import site.dogether.presentation.screen.ranking.RankingViewModel
 import site.dogether.presentation.screen.splash.SplashViewModel
 import site.dogether.presentation.screen.todo.certificate.CertificateDescriptionViewModel
 import site.dogether.presentation.screen.todo.certificate.CertificateTodoViewModel
@@ -98,6 +99,12 @@ val viewModelModule = module {
             getPresignedUrlsUseCase = get(),
             uploadImageToS3UseCase = get(),
             certificateTodoUseCase = get()
+        )
+    }
+    viewModel {
+        RankingViewModel(
+            savedStateHandle = get(),
+            getRanking = get()
         )
     }
 }
