@@ -523,7 +523,7 @@ fun SelectGroupBottomSheet(
             groups.forEach {
                 GroupItem(
                     group = it,
-                    isSelected = it == selectedGroup,
+                    isSelected = it.id == selectedGroup.id,
                     onClick = { onClickGroupItem(it) }
                 )
             }
