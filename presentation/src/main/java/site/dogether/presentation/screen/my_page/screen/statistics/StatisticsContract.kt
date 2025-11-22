@@ -1,6 +1,7 @@
 package site.dogether.presentation.screen.my_page.screen.statistics
 
 import site.dogether.domain.model.group.Group
+import site.dogether.domain.model.user.GroupStatistics
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 
@@ -9,11 +10,14 @@ data class StatisticsUiState(
     val groups: List<Group> = emptyList(),
     val selectedGroup: Group = Group(),
     val isSelectGroupBottomSheetShowing: Boolean = false,
+    val groupStatistics: GroupStatistics = GroupStatistics()
 )
 
 sealed interface StatisticsUiEvent : UiEvent {
     sealed interface Click : StatisticsUiEvent {
         data object OnClickSelectGroup : Click
+
+        data class OnClickGroupItem(val group: Group) : Click
     }
 
     sealed interface Callback : StatisticsUiEvent {

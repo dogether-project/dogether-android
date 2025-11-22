@@ -58,7 +58,12 @@ val viewModelModule = module {
         )
     }
     viewModel { MyPageViewModel() }
-    viewModel { StatisticsViewModel() }
+    viewModel {
+        StatisticsViewModel(
+            getJoiningGroupsUseCase = get(),
+            getGroupStatisticsUseCase = get()
+        )
+    }
     viewModel {
         CertificationListViewModel(
             getMyActivity = get()

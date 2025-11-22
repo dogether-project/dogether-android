@@ -10,12 +10,14 @@ import site.dogether.data.remote.ApiRoutes
 import site.dogether.data.remote.model.req.user.KakaoLoginReq
 import site.dogether.data.remote.model.req.user.WithdrawReq
 import site.dogether.data.remote.model.res.user.CheckParticipatingResMapper
+import site.dogether.data.remote.model.res.user.GetGroupStatisticsResMapper
 import site.dogether.data.remote.model.res.user.UserInfoRes
 import site.dogether.data.remote.model.res.user.UserInfoResMapper
 import site.dogether.data.utils.LOGIN_TYPE
 import site.dogether.data.utils.safeDeleteWithoutRes
 import site.dogether.data.utils.safeGet
 import site.dogether.data.utils.safePost
+import site.dogether.domain.model.user.GroupStatistics
 import site.dogether.domain.model.user.ParticipatingInfo
 import site.dogether.domain.model.user.UserInfo
 import site.dogether.domain.repository.UserRepository
@@ -121,6 +123,13 @@ class UserRepositoryImpl(
             onFailure = { e ->
                 Result.failure(e)
             }
+        )
+    }
+
+    override suspend fun getGroupStatistics(groupId: Int): Result<GroupStatistics> {
+        return httpClient.safeGet(
+            apiRoute = ApiRoutes.getGroupStatistics(groupId),
+            mapper = GetGroupStatisticsResMapper
         )
     }
 }

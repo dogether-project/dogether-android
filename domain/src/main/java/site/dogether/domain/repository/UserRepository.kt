@@ -1,5 +1,7 @@
 package site.dogether.domain.repository
 
+import site.dogether.domain.model.group.Group
+import site.dogether.domain.model.user.GroupStatistics
 import site.dogether.domain.model.user.ParticipatingInfo
 import site.dogether.domain.model.user.UserInfo
 
@@ -22,4 +24,6 @@ interface UserRepository {
     suspend fun clearUserInfo()
 
     suspend fun withdraw(): Result<Unit>
+
+    suspend fun getGroupStatistics(groupId: Int): Result<GroupStatistics>
 }

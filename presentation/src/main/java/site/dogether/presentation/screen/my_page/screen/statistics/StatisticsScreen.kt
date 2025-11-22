@@ -65,6 +65,7 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,7 +87,7 @@ fun StatisticsScreen(viewModel: StatisticsViewModel = koinViewModel()) {
             groups = uiState.groups,
             isAddButtonShowing = false,
             onDismissRequest = { onEvent(StatisticsUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
-            onClickGroupItem = { },
+            onClickGroupItem = { onEvent(StatisticsUiEvent.Click.OnClickGroupItem(it)) },
             onClickAddGroup = { }
         )
     }
@@ -123,6 +124,8 @@ private fun StatisticsContents(
     uiState: StatisticsUiState,
     onEvent: (UiEvent) -> Unit,
 ) {
+    val (group, certificationPeriods, ranking, stats) = uiState.groupStatistics
+
     Box(modifier = Modifier.fillMaxWidth()) {
         Column {
             Row(
@@ -130,7 +133,7 @@ private fun StatisticsContents(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = uiState.selectedGroup.name,
+                    text = group.name,
                     style = Head1_B.copy(lineHeightStyle = LineHeightStyle.Default),
                     color = ColorTextPrimary
                 )
@@ -151,17 +154,17 @@ private fun StatisticsContents(
             ) {
                 GroupInfoColumn(
                     title = stringResource(R.string.info_group_member_count),
-                    value = "6/10",
+                    value = "${group.currentMemberCount}/${group.maximumMemberCount}",
                 )
 
                 GroupInfoColumn(
                     title = stringResource(R.string.info_join_code),
-                    value = "12345678"
+                    value = group.joinCode
                 )
 
                 GroupInfoColumn(
                     title = stringResource(R.string.info_end_date),
-                    value = "25.02.22"
+                    value = group.endAt
                 )
             }
         }
@@ -222,24 +225,19 @@ private fun StatisticsContents(
                     }
                 }
 
-                Row(modifier = Modifier.padding(top = 6.dp)) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Box(
-                            modifier = Modifier
-                                .clip(
-                                    RoundedCornerShape(
-                                        topStart = 10.dp,
-                                        topEnd = 10.dp
-                                    )
-                                )
-                                .width(50.dp)
-                                .height(180.dp)
-                                .background(Grey600)
-                                .hatch(Grey500)
-                        ) {
+                Row(
+                    modifier = Modifier
+                        .padding(top = 6.dp)
+                        .weight(1f),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    val graphHeight = 180
+                    val heightPerPercent = graphHeight / 100f
+
+                    certificationPeriods.forEachIndexed { index, certificationStatistics ->
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Box(
                                 modifier = Modifier
-                                    .align(Alignment.BottomCenter)
                                     .clip(
                                         RoundedCornerShape(
                                             topStart = 10.dp,
@@ -247,17 +245,32 @@ private fun StatisticsContents(
                                         )
                                     )
                                     .width(50.dp)
-                                    .height(60.dp)
-                                    .background(ColorBgPrimary)
+                                    .height(graphHeight.dp)
+                                    .background(Grey600)
+                                    .hatch(Grey500)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .clip(
+                                            RoundedCornerShape(
+                                                topStart = 10.dp,
+                                                topEnd = 10.dp
+                                            )
+                                        )
+                                        .width(50.dp)
+                                        .height((certificationStatistics.certificationRate / heightPerPercent).roundToInt().dp)
+                                        .background(ColorBgPrimary)
+                                )
+                            }
+
+                            Text(
+                                modifier = Modifier.padding(top = 10.dp),
+                                text = "${certificationPeriods[index].day}${stringResource(R.string.unit_day_passed)}",
+                                style = Body2_S,
+                                color = ColorTextDefault
                             )
                         }
-
-                        Text(
-                            modifier = Modifier.padding(top = 10.dp),
-                            text = "1${stringResource(R.string.unit_day_passed)}",
-                            style = Body2_S,
-                            color = ColorTextDefault
-                        )
                     }
                 }
             }
@@ -319,13 +332,13 @@ private fun StatisticsContents(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "10" + stringResource(R.string.unit_member) + " " + stringResource(R.string.unit_postfix_total),
+                    text = ranking.totalMemberCount.toString() + stringResource(R.string.unit_member) + " " + stringResource(R.string.unit_postfix_total),
                     style = Body1_S,
                     color = ColorTextSubtle
                 )
 
                 Text(
-                    text = "2" + stringResource(R.string.unit_rank),
+                    text = ranking.myRank.toString() + stringResource(R.string.unit_rank),
                     style = Emphasis2_B,
                     color = ColorTextPrimary
                 )
@@ -369,21 +382,21 @@ private fun StatisticsContents(
                     icon = painterResource(R.drawable.ic_achieved),
                     tint = ColorIconElevated,
                     title = stringResource(R.string.common_achieved),
-                    value = 100
+                    value = stats.certificatedCount
                 )
 
                 SummaryItem(
                     icon = painterResource(R.drawable.ic_approve_summary),
                     tint = ColorIconPrimary,
                     title = stringResource(R.string.common_approve),
-                    value = 100
+                    value = stats.approvedCount
                 )
 
                 SummaryItem(
                     icon = painterResource(R.drawable.ic_reject_summary),
                     tint = ColorIconError,
                     title = stringResource(R.string.common_reject),
-                    value = 100
+                    value = stats.rejectedCount
                 )
             }
         }

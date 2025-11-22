@@ -25,4 +25,5 @@ object ApiRoutes {
     const val WITHDRAW = "auth/withdraw"
     const val MY_ACTIVITY = "my/activity"
     fun getRanking(groupId: Int): String = "groups/${groupId}/ranking"
+    fun getGroupStatistics(groupId: Int): String = "my/groups/${groupId}/activity"
 }
