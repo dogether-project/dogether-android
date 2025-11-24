@@ -61,6 +61,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import com.chottulink.lib.ChottuLink
+import java.time.LocalDate
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -69,6 +74,7 @@ import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_FULL_YEAR
 import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_SHORT_YEAR
 import site.dogether.common.utils.DateTimeUtils.toFormattedString
 import site.dogether.common.utils.DateTimeUtils.today
+import site.dogether.common.utils.DeeplinkUtil
 import site.dogether.domain.model.group.Group.Companion.STATUS_FINISHED
 import site.dogether.domain.model.group.Group.Companion.STATUS_READY
 import site.dogether.domain.model.group.Group.Companion.STATUS_RUNNING
@@ -125,9 +131,6 @@ import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.conditionedClickableWithoutRipple
 import site.dogether.presentation.utils.isPermissionGranted
 import site.dogether.presentation.utils.toDp
-import java.time.LocalDate
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -236,6 +239,7 @@ private fun HomeScreenContents(
     val scope = rememberCoroutineScope()
     val tooltipState = remember { PersistentTooltipStateImpl() }
     val density = LocalDensity.current
+    val context = LocalContext.current
     val anchoredBottomSheetState = remember { AnchoredBottomSheetState() }
     val connection = remember {
         object : NestedScrollConnection {
@@ -366,7 +370,17 @@ private fun HomeScreenContents(
                             value = "${uiState.selectedGroup.currentMemberCount}/${uiState.selectedGroup.maximumMemberCount}",
                         )
 
-                        Column(modifier = Modifier.padding(start = 16.dp)) {
+                        Column(
+                            modifier =
+                                Modifier
+                                    .padding(start = 16.dp)
+                                    .clickable {
+                                        copyInviteCode(
+                                            context = context,
+                                            inviteCode = uiState.selectedGroup.joinCode
+                                        )
+                                    }
+                        ) {
                             Text(
                                 text = stringResource(R.string.info_join_code),
                                 style = Body2_R.copy(
@@ -1147,6 +1161,41 @@ private fun FinishedContents() {
             color = ColorTextSecondary
         )
     }
+}
+
+private fun copyInviteCode(context: Context, inviteCode: String) {
+    ChottuLink.createDynamicLink()
+        .setLink(DeeplinkUtil.generateInviteDeeplink(inviteCode).toUri())
+        .setDomain(DeeplinkUtil.DEEPLINK_DOMAIN)
+        .build()
+        .addOnSuccessListener {
+            it?.let { result ->
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(
+                        Intent.EXTRA_SUBJECT,
+                        context.getString(R.string.intent_title_share_join_code)
+                    )
+                    putExtra(
+                        Intent.EXTRA_TEXT,
+                        DeeplinkUtil.generateInviteText(
+                            code = inviteCode,
+                            url = result.uri.toString()
+                        )
+                    )
+                    type = "text/plain"
+                }
+
+                val shareIntent = Intent.createChooser(
+                    sendIntent,
+                    context.getString(R.string.intent_title_share_join_code)
+                )
+                context.startActivity(shareIntent)
+            }
+        }
+        .addOnFailureListener { exception ->
+            exception.printStackTrace()
+        }
 }
 
 @ScreenPreview

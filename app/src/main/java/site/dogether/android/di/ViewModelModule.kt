@@ -27,93 +27,100 @@ import site.dogether.presentation.screen.todo.certificate.CertificateTodoViewMod
 import site.dogether.presentation.screen.todo.create.CreateTodoViewModel
 
 val viewModelModule = module {
-    viewModel {
-        SplashViewModel(
-            checkUpdateRequired = get(),
-            getUserInfo = get(),
-            checkParticipating = get()
-        )
-    }
-    viewModel { ForceUpdateViewModel() }
-    viewModel {
-        OnBoardingViewModel(
-            loginWithKakao = get(),
-            storeUserInfo = get(),
-            checkParticipating = get()
-        )
-    }
-    viewModel { ParticipationMethodViewModel() }
-    viewModel {
-        CreateGroupViewModel(createGroup = get())
-    }
-    viewModel { GroupCreatedViewModel(savedStateHandle = get()) }
-    viewModel { ParticipateGroupViewModel(participateGroup = get()) }
-    viewModel { GroupParticipatedViewModel() }
-    viewModel { ErrorViewModel() }
-    viewModel {
-        HomeViewModel(
-            defaultDispatcher = get(named(DefaultDispatcher)),
-            getJoiningGroups = get(),
-            storeLastSelectedGroupId = get(),
-            getMyTodoSpecificDate = get()
-        )
-    }
-    viewModel { MyPageViewModel() }
-    viewModel {
-        StatisticsViewModel(
-            getJoiningGroupsUseCase = get(),
-            getGroupStatisticsUseCase = get()
-        )
-    }
-    viewModel {
-        CertificationListViewModel(
-            getMyActivity = get()
-        )
-    }
-    viewModel {
-        SettingsViewModel(
-            logout = get(),
-            withdraw = get()
-        )
-    }
-    viewModel {
-        GroupManagementViewModel(
-            getJoiningGroups = get(),
-            withdrawGroup = get()
-        )
-    }
-    viewModel {
-        MyCertInfoViewModel(
-            getMyTodoListByDate = get(),
-            getUserInfo = get(),
-            savedStateHandle = get(),
-        )
-    }
-    viewModel {
-        CreateTodoViewModel(
-            getMyTodoSpecificDateUseCase = get(),
-            createMyTodosUseCase = get(),
-            savedStateHandle = get()
-        )
-    }
-    viewModel {
-        CertificateTodoViewModel(savedStateHandle = get())
-    }
-    viewModel {
-        CertificateDescriptionViewModel(
-            savedStateHandle = get(),
-            getPresignedUrlsUseCase = get(),
-            uploadImageToS3UseCase = get(),
-            certificateTodoUseCase = get()
-        )
-    }
-    viewModel {
-        RankingViewModel(
-            savedStateHandle = get(),
-            getRanking = get()
-        )
-    }
-    viewModel {
-        CertificationHistoryViewModel()
+    try {
+        viewModel {
+            SplashViewModel(
+                checkUpdateRequired = get(),
+                getUserInfo = get(),
+                checkParticipating = get(),
+                storeGroupJoinCodeUseCase = get()
+            )
+        }
+        viewModel { ForceUpdateViewModel() }
+        viewModel {
+            OnBoardingViewModel(
+                loginWithKakao = get(),
+                storeUserInfo = get(),
+                checkParticipating = get(),
+                getGroupJoinCodeUseCase = get(),
+                storeGroupJoinCodeUseCase = get()
+            )
+        }
+        viewModel { ParticipationMethodViewModel() }
+        viewModel {
+            CreateGroupViewModel(createGroup = get())
+        }
+        viewModel { GroupCreatedViewModel(savedStateHandle = get()) }
+        viewModel { ParticipateGroupViewModel(participateGroup = get(), savedStateHandle = get()) }
+        viewModel { GroupParticipatedViewModel() }
+        viewModel { ErrorViewModel() }
+        viewModel {
+            HomeViewModel(
+                defaultDispatcher = get(named(DefaultDispatcher)),
+                getJoiningGroups = get(),
+                storeLastSelectedGroupId = get(),
+                getMyTodoSpecificDate = get()
+            )
+        }
+        viewModel { MyPageViewModel() }
+        viewModel {
+            StatisticsViewModel(
+                getJoiningGroupsUseCase = get(),
+                getGroupStatisticsUseCase = get()
+            )
+        }
+        viewModel {
+            CertificationListViewModel(
+                getMyActivity = get()
+            )
+        }
+        viewModel {
+            SettingsViewModel(
+                logout = get(),
+                withdraw = get()
+            )
+        }
+        viewModel {
+            GroupManagementViewModel(
+                getJoiningGroups = get(),
+                withdrawGroup = get()
+            )
+        }
+        viewModel {
+            MyCertInfoViewModel(
+                getMyTodoListByDate = get(),
+                getUserInfo = get(),
+                savedStateHandle = get(),
+            )
+        }
+        viewModel {
+            CreateTodoViewModel(
+                getMyTodoSpecificDateUseCase = get(),
+                createMyTodosUseCase = get(),
+                savedStateHandle = get()
+            )
+        }
+        viewModel {
+            CertificateTodoViewModel(savedStateHandle = get())
+        }
+        viewModel {
+            CertificateDescriptionViewModel(
+                savedStateHandle = get(),
+                getPresignedUrlsUseCase = get(),
+                uploadImageToS3UseCase = get(),
+                certificateTodoUseCase = get()
+            )
+        }
+        viewModel {
+            RankingViewModel(
+                savedStateHandle = get(),
+                getRanking = get()
+            )
+        }
+        viewModel {
+            CertificationHistoryViewModel()
+        }
+    } catch (e: Exception) {
+        TODO("Not yet implemented")
     }
 }

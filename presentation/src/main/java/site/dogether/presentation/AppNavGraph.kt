@@ -55,6 +55,12 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
             )
         ) { GroupCreatedScreen() }
         composable(Screen.PARTICIPATE_GROUP) { ParticipateGroupScreen() }
+        composable(
+            route = "${Screen.PARTICIPATE_GROUP}/{${KEY_JOIN_CODE}}",
+            arguments = listOf(
+                navArgument(KEY_JOIN_CODE) { type = NavType.StringType }
+            )
+        ) { ParticipateGroupScreen() }
         composable(Screen.GROUP_PARTICIPATED) { GroupParticipatedScreen() }
         composable(Screen.ERROR) { ErrorScreen() }
         composable(Screen.HOME) { HomeScreen() }

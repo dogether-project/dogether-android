@@ -1,11 +1,12 @@
 package site.dogether.domain.repository
 
-import site.dogether.domain.model.group.Group
 import site.dogether.domain.model.user.GroupStatistics
 import site.dogether.domain.model.user.ParticipatingInfo
 import site.dogether.domain.model.user.UserInfo
 
 interface UserRepository {
+
+    var joinCode: String?
 
     suspend fun storeUserInfo(
         name: String,

@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -18,6 +19,7 @@ import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
+import site.dogether.presentation.utils.LocalDeeplinkInfo
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 
@@ -27,13 +29,27 @@ fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
     val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
     val navHostController = LocalNavHostController.current
+    val deeplinkInfo = LocalDeeplinkInfo.current
+
+    // 딥링크 정보가 있으면 ViewModel에 전달
+    LaunchedEffect(deeplinkInfo) {
+        deeplinkInfo?.let { deeplink ->
+            onEvent(SplashUiEvent.Deeplink.OnDeeplinkReceived(deeplink))
+        }
+    }
 
     viewModel.CollectEffect<SplashUiEffect> { uiEffect ->
         when (uiEffect) {
             is SplashUiEffect.GetAppVersion -> {
                 getAppVersion(
                     context = context,
-                    onSuccess = { appVersion -> onEvent(SplashUiEvent.Callback.OnGetAppVersion(appVersion)) },
+                    onSuccess = { appVersion ->
+                        onEvent(
+                            SplashUiEvent.Callback.OnGetAppVersion(
+                                appVersion
+                            )
+                        )
+                    },
                     onFailure = {}
                 )
             }
@@ -42,7 +58,13 @@ fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
 
             is SplashUiEffect.NavigateToHome -> navigateToHome(navHostController)
 
-            is SplashUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(navHostController)
+            is SplashUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(
+                navHostController
+            )
+
+            is SplashUiEffect.NavigateToParticipateGroup -> {
+                navHostController.navigate("${Screen.PARTICIPATE_GROUP}/${uiEffect.joinCode}")
+            }
         }
     }
 

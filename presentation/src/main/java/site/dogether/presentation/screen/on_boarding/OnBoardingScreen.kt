@@ -87,6 +87,10 @@ fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
             is OnBoardingUiEffect.NavigateToHome -> navigateToHome(navHostController)
 
             is OnBoardingUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(navHostController)
+
+            is OnBoardingUiEffect.NavigateToParticipateGroup -> {
+                navHostController.navigate("${Screen.PARTICIPATE_GROUP}/${uiEffect.joinCode}")
+            }
         }
     }
 

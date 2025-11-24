@@ -1,4 +1,5 @@
 [versions]
+accompanistPermissions = "0.37.3"
 agp = "8.11.1"
 kotlin = "2.2.0"
 ksp = "2.2.0-2.0.2"
@@ -40,8 +41,12 @@ kakao = "2.21.6"
 # Datastore
 datastore = "1.1.7"
 
+#Chottulink
+chottuLink = "1.0.9"
+
 [libraries]
 # AndroidX / Compose
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -84,6 +89,9 @@ ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref =
 
 # Konsist
 konsist = { group = "com.lemonappdev", name = "konsist", version.ref = "konsist" }
+
+# Chottulink
+chottulink-sdk = { module = "com.chottulink:android-sdk", version.ref = "chottuLink" }
 
 # Ktor
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
