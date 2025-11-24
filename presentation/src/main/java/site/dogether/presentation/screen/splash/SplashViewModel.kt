@@ -57,6 +57,7 @@ class SplashViewModel(
 
                             val checkParticipatingResult = checkParticipating().getOrElse {
                                 // handle exception
+                                postEffect(SplashUiEffect.NavigateToOnBoarding)
                                 return@launch
                             }
 
