@@ -45,11 +45,15 @@ import site.dogether.presentation.theme.ColorIconSecondary
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextDisabled
 import site.dogether.presentation.theme.ColorTextPrimary
+import site.dogether.presentation.Screen
 import site.dogether.presentation.utils.CollectEffect
+import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
+import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
+    val navHostController = LocalNavHostController.current
 
     viewModel.CollectEffect<RankingUiEffect> { uiEffect ->
         when (uiEffect) {
@@ -59,14 +63,18 @@ fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
 
     RankingScreenContents(
         uiState = viewModel.collectAsState().value,
-        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) },
+        onNavigateToMemberCertInfo = { groupId, memberId ->
+            navHostController.navigate("${Screen.MEMBER_CERT_INFO}/$groupId/$memberId")
+        }
     )
 }
 
 @Composable
 private fun RankingScreenContents(
     uiState: RankingUiState,
-    onEvent: (UiEvent) -> Unit
+    onEvent: (UiEvent) -> Unit,
+    onNavigateToMemberCertInfo: (groupId: Int, memberId: Int) -> Unit
 ) {
     if (!uiState.isLoading) {
         Column(
@@ -87,9 +95,30 @@ private fun RankingScreenContents(
             ) {
                 val inRankMembers = uiState.inRankMembers
 
-                RankingMemberCard(inRankMembers[1])
-                RankingMemberCard(inRankMembers[0])
-                RankingMemberCard(inRankMembers[2])
+                RankingMemberCard(
+                    rankingMember = inRankMembers[1],
+                    onClick = {
+                        inRankMembers[1]?.let { member ->
+                            onNavigateToMemberCertInfo(uiState.groupId, member.memberId)
+                        }
+                    }
+                )
+                RankingMemberCard(
+                    rankingMember = inRankMembers[0],
+                    onClick = {
+                        inRankMembers[0]?.let { member ->
+                            onNavigateToMemberCertInfo(uiState.groupId, member.memberId)
+                        }
+                    }
+                )
+                RankingMemberCard(
+                    rankingMember = inRankMembers[2],
+                    onClick = {
+                        inRankMembers[2]?.let { member ->
+                            onNavigateToMemberCertInfo(uiState.groupId, member.memberId)
+                        }
+                    }
+                )
             }
 
             Row(
@@ -131,7 +160,11 @@ private fun RankingScreenContents(
                 ) {
                     items(uiState.outRankMembers) { member ->
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickableWithoutRipple {
+                                    onNavigateToMemberCertInfo(uiState.groupId, member.memberId)
+                                },
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -186,8 +219,15 @@ private fun RankingScreenContents(
 }
 
 @Composable
-private fun RowScope.RankingMemberCard(rankingMember: RankingMember?) {
-    Box(modifier = Modifier.weight(1f)) {
+private fun RowScope.RankingMemberCard(
+    rankingMember: RankingMember?,
+    onClick: () -> Unit = {},
+) {
+    Box(
+        modifier = Modifier
+            .weight(1f)
+            .clickableWithoutRipple(onClick)
+    ) {
         Column(
             modifier = Modifier
                 .padding(top = if (rankingMember?.rank == 1) 0.dp else 20.dp)
@@ -232,7 +272,12 @@ private fun RowScope.RankingMemberCard(rankingMember: RankingMember?) {
             )
 
             Text(
-                text = rankingMember?.achievementRate?.let { stringResource(R.string.unit_achieve_ratio, it) } ?: "-",
+                text = rankingMember?.achievementRate?.let {
+                    stringResource(
+                        R.string.unit_achieve_ratio,
+                        it
+                    )
+                } ?: "-",
                 style = Body2_S,
                 color = ColorTextPrimary,
             )
@@ -256,11 +301,4 @@ private fun RowScope.RankingMemberCard(rankingMember: RankingMember?) {
             )
         }
     }
-}
-
-@ScreenPreview
-@Composable
-private fun RankingScreenContentsPreview() {
-    RankingScreenContents(
-        uiState = RankingUiState(), onEvent = {})
 }

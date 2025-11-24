@@ -14,6 +14,7 @@ data class TodoRes(
     val certificationContent: String? = "",
     val certificationMediaUrl: String? = "",
     val reviewFeedback: String? = "",
+    val isRead: Boolean? = false,
 ) : DataModel
 
 object TodoResMapper : DataMapper<TodoRes, Todo> {
@@ -28,7 +29,8 @@ object TodoResMapper : DataMapper<TodoRes, Todo> {
             } catch (e: Exception) {
                 ""
             },
-            reviewFeedback = reviewFeedback.orEmpty()
+            reviewFeedback = reviewFeedback.orEmpty(),
+            isRead = isRead ?: false
         )
     }
 }

@@ -2,6 +2,7 @@ package site.dogether.domain.repository
 
 import site.dogether.domain.model.certificate.PresignedUrlData
 import site.dogether.domain.model.todo.GetMyTodoSpecificDateInfo
+import site.dogether.domain.model.todo.MemberTodoHistory
 import site.dogether.domain.model.todo.MyActivity
 import site.dogether.domain.model.todo.Todo
 
@@ -68,4 +69,14 @@ interface TodoRepository {
      * @param todoId 읽은 투두 ID
      */
     suspend fun readTodo(todoId: Long): Result<Unit>
+
+    /**
+     * 멤버의 투두 히스토리 조회
+     * @param groupId 챌린지 그룹 ID
+     * @param memberId 조회할 챌린지 그룹 멤버 ID
+     */
+    suspend fun getMemberTodoHistory(
+        groupId: Int,
+        memberId: Int,
+    ): Result<MemberTodoHistory>
 }
