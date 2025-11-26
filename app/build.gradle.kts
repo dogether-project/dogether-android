@@ -36,6 +36,18 @@ android {
         buildConfig = true
     }
 
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("prd") {
+            dimension = "environment"
+        }
+
+        create("dev") {
+            dimension = "environment"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
