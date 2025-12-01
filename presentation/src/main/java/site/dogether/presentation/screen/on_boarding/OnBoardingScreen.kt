@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -159,77 +160,32 @@ private fun OnBoardingScreenContents(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            val pagerState = rememberPagerState { PAGE_LIST.size }
-
             Column(
                 modifier = Modifier.align(Alignment.Center),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                FixedHeightPager(
-                    pageCount = PAGE_LIST.size,
-                    pager = { count, modifier ->
-                        HorizontalPager(
-                            modifier = Modifier.fillMaxWidth(),
-                            state = pagerState
-                        ) { pageIndex ->
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    text = stringResource(PAGE_LIST[pageIndex].titleStringId),
-                                    style = Head1_B,
-                                    textAlign = TextAlign.Center,
-                                    color = ColorTextDefault
-                                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val pagerState = rememberPagerState { PAGE_LIST.size }
 
-                                Text(
-                                    modifier = Modifier.padding(top = 8.dp),
-                                    text = stringResource(PAGE_LIST[pageIndex].bodyStringId),
-                                    style = Body1_R,
-                                    textAlign = TextAlign.Center,
-                                    color = ColorTextSubtle
-                                )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        FixedHeightPager(
+                            pageCount = PAGE_LIST.size,
+                            pageContent = { pageIndex -> OnBoardingPageContent(page = PAGE_LIST[pageIndex]) },
+                            pagerState = pagerState
+                        )
 
-                                Image(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    painter = painterResource(PAGE_LIST[pageIndex].imageId),
-                                    contentScale = ContentScale.FillWidth,
-                                    contentDescription = "image_on_boarding"
-                                )
-                            }
-                        }
-                    },
-                    page = { pageIndex ->
-                        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = stringResource(PAGE_LIST[pageIndex].titleStringId),
-                                style = Head1_B,
-                                textAlign = TextAlign.Center,
-                                color = ColorTextDefault
-                            )
-                            Text(
-                                modifier = Modifier.padding(top = 8.dp),
-                                text = stringResource(PAGE_LIST[pageIndex].bodyStringId),
-                                style = Body1_R,
-                                textAlign = TextAlign.Center,
-                                color = ColorTextSubtle
-                            )
-                            Image(
-                                modifier = Modifier.fillMaxWidth(),
-                                painter = painterResource(PAGE_LIST[pageIndex].imageId),
-                                contentScale = ContentScale.FillWidth,
-                                contentDescription = "image_on_boarding"
-                            )
-                        }
+                        PagerIndicator(
+                            modifier = Modifier.padding(top = 20.dp),
+                            currentPageIndex = pagerState.currentPage,
+                            pageCount = pagerState.pageCount
+                        )
                     }
-                )
-
-                PagerIndicator(
-                    modifier = Modifier.padding(top = 20.dp),
-                    currentPageIndex = pagerState.currentPage,
-                    pageCount = pagerState.pageCount
-                )
+                }
             }
         }
 
@@ -261,34 +217,61 @@ private fun OnBoardingScreenContents(
 }
 
 @Composable
+private fun OnBoardingPageContent(page: OnBoardingPage) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(page.titleStringId),
+            style = Head1_B,
+            textAlign = TextAlign.Center,
+            color = ColorTextDefault
+        )
+        Text(
+            modifier = Modifier.padding(top = 8.dp),
+            text = stringResource(page.bodyStringId),
+            style = Body1_R,
+            textAlign = TextAlign.Center,
+            color = ColorTextSubtle
+        )
+        Image(
+            modifier = Modifier.fillMaxWidth(),
+            painter = painterResource(page.imageId),
+            contentScale = ContentScale.FillWidth,
+            contentDescription = "image_on_boarding"
+        )
+    }
+}
+
+@Composable
 private fun FixedHeightPager(
     pageCount: Int,
-    pager: @Composable (Int, Modifier) -> Unit,
-    page: @Composable (Int) -> Unit,
+    pageContent: @Composable (Int) -> Unit,
+    pagerState: PagerState
 ) {
-    SubcomposeLayout { constraints ->
-        val placeables = (0 until pageCount).map { index ->
-            val measurables = subcompose("page-$index") { page(index) }
-            measurables.maxBy { it.maxIntrinsicHeight(constraints.maxWidth) }.measure(constraints.copy(minHeight = 0))
+    SubcomposeLayout(modifier = Modifier.fillMaxWidth()) { constraints ->
+        val measuredHeights = (0 until pageCount).map { index ->
+            subcompose(index) { pageContent(index) }.first().measure(constraints).height
         }
-        val maxHeight = placeables.maxOf { it.height }
+        val maxHeight = measuredHeights.maxOrNull() ?: 0
 
-        val pagerPlaceables = subcompose("pager") {
-            pager(pageCount, Modifier.height(maxHeight.toDp()))
-        }.map {
-            it.measure(
-                constraints.copy(
-                    minHeight = maxHeight,
-                    maxHeight = maxHeight
-                )
+        val pagerPlaceable = subcompose("pager") {
+            HorizontalPager(
+                modifier = Modifier.height(maxHeight.toDp()),
+                state = pagerState
+            ) { pageIndex ->
+                pageContent(pageIndex)
+            }
+        }.first().measure(
+            constraints.copy(
+                minHeight = maxHeight,
+                maxHeight = maxHeight
             )
-        }
+        )
 
-        layout(
-            width = constraints.maxWidth,
-            height = maxHeight
-        ) {
-            pagerPlaceables.forEach { it.place(0, 0) }
+        layout(pagerPlaceable.width, pagerPlaceable.height) {
+            pagerPlaceable.placeRelative(0, 0)
         }
     }
 }
