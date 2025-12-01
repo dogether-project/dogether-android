@@ -62,4 +62,10 @@ interface TodoRepository {
         status: String?,
         page: Int
     ): Result<MyActivity>
+
+    /**
+     * 특정 투두 히스토리 읽음 처리
+     * @param todoId 읽은 투두 ID
+     */
+    suspend fun readTodo(todoId: Long): Result<Unit>
 }

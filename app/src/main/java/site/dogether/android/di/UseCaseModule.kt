@@ -14,6 +14,7 @@ import site.dogether.domain.use_case.todo.GetMyActivityUseCase
 import site.dogether.domain.use_case.todo.GetMyTodoSpecificDateUseCase
 import site.dogether.domain.use_case.todo.GetMyTodosByDateUseCase
 import site.dogether.domain.use_case.todo.GetPresignedUrlsUseCase
+import site.dogether.domain.use_case.todo.ReadTodoUseCase
 import site.dogether.domain.use_case.todo.UploadImageToS3UseCase
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.GetGroupStatisticsUseCase
@@ -45,4 +46,5 @@ val useCaseModule = module {
     factory { GetMyActivityUseCase(repository = get()) }
     factory { GetRankingUseCase(repository = get()) }
     factory { GetGroupStatisticsUseCase(repository = get()) }
+    factory { ReadTodoUseCase(repository = get()) }
 }
