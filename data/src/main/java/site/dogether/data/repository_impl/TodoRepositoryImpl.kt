@@ -12,6 +12,7 @@ import site.dogether.data.remote.model.res.todo.MyActivityResMapper
 import site.dogether.data.remote.model.res.todo.TodosResMapper
 import site.dogether.data.remote.model.res.todo.certificate.PresignedUrlResMapper
 import site.dogether.data.utils.safeGet
+import site.dogether.data.utils.safeGetWithoutRes
 import site.dogether.data.utils.safePost
 import site.dogether.data.utils.safePostWithoutRes
 import site.dogether.data.utils.safePutToS3
@@ -114,5 +115,9 @@ class TodoRepositoryImpl(
             ),
             mapper = MyActivityResMapper
         )
+    }
+
+    override suspend fun readTodo(todoId: Long): Result<Unit> {
+        return httpClient.safeGetWithoutRes(ApiRoutes.readTodo(todoId))
     }
 }

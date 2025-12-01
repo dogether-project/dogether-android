@@ -18,4 +18,5 @@ object ApiRoutes {
     const val MY_ACTIVITY = "my/activity"
     fun getRanking(groupId: Int): String = "groups/${groupId}/ranking"
     fun getGroupStatistics(groupId: Int): String = "my/groups/${groupId}/activity"
+    fun readTodo(todoId: Long): String = "todo-history/$todoId"
 }
