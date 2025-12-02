@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -213,3 +214,12 @@ fun Modifier.alphaByProgress(progress: Float): Modifier = this.then(
         )
     )
 )
+
+suspend fun LazyListState.animateScrollToItemCenteredFixedWidth(
+    index: Int,
+    itemWidthPx: Int,
+) {
+    val viewportWidth = layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset
+    val offset = viewportWidth / 2 - itemWidthPx / 2
+    animateScrollToItem(index, scrollOffset = -offset)
+}

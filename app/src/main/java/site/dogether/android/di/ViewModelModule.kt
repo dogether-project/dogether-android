@@ -13,6 +13,7 @@ import site.dogether.presentation.screen.home.HomeViewModel
 import site.dogether.presentation.screen.my_cert_info.MyCertInfoViewModel
 import site.dogether.presentation.screen.my_page.MyPageViewModel
 import site.dogether.presentation.screen.my_page.screen.certification_list.CertificationListViewModel
+import site.dogether.presentation.screen.my_page.screen.certification_list.screen.certification_history.CertificationHistoryViewModel
 import site.dogether.presentation.screen.my_page.screen.group_management.GroupManagementViewModel
 import site.dogether.presentation.screen.my_page.screen.settings.SettingsViewModel
 import site.dogether.presentation.screen.my_page.screen.statistics.StatisticsViewModel
@@ -111,5 +112,8 @@ val viewModelModule = module {
             savedStateHandle = get(),
             getRanking = get()
         )
+    }
+    viewModel {
+        CertificationHistoryViewModel()
     }
 }
