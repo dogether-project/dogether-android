@@ -2,7 +2,6 @@ package site.dogether.domain.model.todo
 
 import site.dogether.domain.model.DomainModel
 import site.dogether.domain.model.PageInfo
-import site.dogether.domain.model.certificate.CertificationInfo
 
 data class MyActivity(
     val dailyTodoStats: DailyTodoStats = DailyTodoStats(),
@@ -21,5 +20,5 @@ data class GroupedCertification(
     val createdAt: String = "",
     val dayOfWeek: String = "",
     val groupName: String = "",
-    val certificationInfo: List<CertificationInfo> = emptyList()
+    val certificationInfo: List<Todo> = emptyList()
 ) : DomainModel

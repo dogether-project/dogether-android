@@ -1,6 +1,7 @@
 package site.dogether.presentation.screen.my_page.screen.certification_list
 
 import site.dogether.domain.model.todo.MyActivity
+import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.Chip
@@ -13,6 +14,10 @@ data class CertificationListUiState(
     val chips: List<Chip> = listOf(Chip.ReviewPending, Chip.Approve, Chip.Reject),
     val selectedChip: Chip? = null,
     val isSelectSortingMethodBottomSheetShowing: Boolean = false,
+    val isDetailMode: Boolean = false,
+    val detailedCertifications: List<Todo> = listOf(),
+    val selectedItemIndex: Int = 0,
+    val detailTitle: String = "",
 )
 
 sealed interface CertificationListUiEvent : UiEvent {
@@ -23,13 +28,22 @@ sealed interface CertificationListUiEvent : UiEvent {
 
         data class OnClickChip(val chip: Chip?) : Click
 
-        data class OnClickCertificationInfo(val index: Int) : Click
+        data class OnClickCertificationInfo(
+            val detailedCertifications: List<Todo>,
+            val index: Int
+        ) : Click
+
+        data object OnClickBackButtonWhenDetailMode : Click
     }
 
     sealed interface Callback : CertificationListUiEvent {
         data object OnSelectSortingMethodBottomSheetDismissRequested : Callback
 
         data object OnScrollReachedBottom : Callback
+
+        data object OnSwipeLeft : Callback
+
+        data object OnSwipeRight : Callback
     }
 }
 

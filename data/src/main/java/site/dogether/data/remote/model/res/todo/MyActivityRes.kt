@@ -9,8 +9,7 @@ import site.dogether.data.remote.model.res.PageInfoRes
 import site.dogether.data.remote.model.res.PageInfoResMapper.toDomainModel
 import site.dogether.data.remote.model.res.todo.DailyTodoStatsResMapper.toDomainModel
 import site.dogether.data.remote.model.res.todo.GroupedCertificationResMapper.toDomainModel
-import site.dogether.data.remote.model.res.todo.certificate.CertificationInfoRes
-import site.dogether.data.remote.model.res.todo.certificate.CertificationInfoResMapper.toDomainModel
+import site.dogether.data.remote.model.res.todo.TodoResMapper.toDomainModel
 import site.dogether.domain.model.todo.DailyTodoStats
 import site.dogether.domain.model.todo.GroupedCertification
 import site.dogether.domain.model.todo.MyActivity
@@ -56,7 +55,7 @@ object DailyTodoStatsResMapper : DataMapper<DailyTodoStatsRes, DailyTodoStats> {
 data class GroupedCertificationsRes(
     val createdAt: String? = "",
     val groupName: String? = "",
-    val certificationInfo: List<CertificationInfoRes>
+    val certificationInfo: List<TodoRes>
 ) : DataModel
 
 
