@@ -22,6 +22,7 @@ import site.dogether.presentation.screen.home.HomeScreen
 import site.dogether.presentation.screen.my_cert_info.MyCertInfoScreen
 import site.dogether.presentation.screen.my_page.MyPageScreen
 import site.dogether.presentation.screen.my_page.screen.certification_list.CertificationListScreen
+import site.dogether.presentation.screen.my_page.screen.certification_list.screen.certification_history.CertificationHistoryScreen
 import site.dogether.presentation.screen.my_page.screen.group_management.GroupManagementScreen
 import site.dogether.presentation.screen.my_page.screen.settings.SettingsScreen
 import site.dogether.presentation.screen.my_page.screen.statistics.StatisticsScreen
@@ -100,6 +101,9 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
             )
         ) {
             RankingScreen()
+        }
+        composable(Screen.CERTIFICATION_HISTORY) {
+            CertificationHistoryScreen()
         }
     }
 }

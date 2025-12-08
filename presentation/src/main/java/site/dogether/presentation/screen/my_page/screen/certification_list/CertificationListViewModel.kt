@@ -57,12 +57,17 @@ class CertificationListViewModel(
                     }
 
                     is CertificationListUiEvent.Click.OnClickCertificationInfo -> {
-//                        postEffect(
-//                            HomeUiEffect.NavigateToMyCertInfo(
-//                                groupId = uiState.selectedGroup.id,
-//                                todoIndex = event.todoIndex
-//                            )
-//                        )
+                        updateState {
+                            it.copy(
+                                isDetailMode = true,
+                                detailedCertifications = event.detailedCertifications,
+                                selectedItemIndex = event.index
+                            )
+                        }
+                    }
+
+                    is CertificationListUiEvent.Click.OnClickBackButtonWhenDetailMode -> {
+                        updateState { it.copy(isDetailMode = false) }
                     }
                 }
             }
@@ -138,6 +143,18 @@ class CertificationListViewModel(
                             }
                         }.invokeOnCompletion {
                             updateState { it.copy(isLoading = false) }
+                        }
+                    }
+
+                    is CertificationListUiEvent.Callback.OnSwipeLeft -> {
+                        if (uiState.selectedItemIndex < uiState.detailedCertifications.lastIndex) {
+                            updateState { it.copy(selectedItemIndex = it.selectedItemIndex + 1) }
+                        }
+                    }
+
+                    is CertificationListUiEvent.Callback.OnSwipeRight -> {
+                        if (uiState.selectedItemIndex > 0) {
+                            updateState { it.copy(selectedItemIndex = it.selectedItemIndex - 1) }
                         }
                     }
                 }

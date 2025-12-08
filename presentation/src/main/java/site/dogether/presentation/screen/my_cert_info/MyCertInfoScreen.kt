@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -64,6 +63,7 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
+import site.dogether.presentation.utils.animateScrollToItemCenteredFixedWidth
 import site.dogether.presentation.utils.toPx
 import kotlin.math.roundToInt
 
@@ -107,20 +107,33 @@ private fun MyCertInfoScreenContents(
         modifier = Modifier
             .fillMaxSize()
             .pointerInput(uiState.todos.size, uiState.selectedItemIndex) {
-                detectHorizontalDragGestures { change, dragAmount ->
-                    change.consume()
+                var dragAmountAccumulator = 0f
 
-                    val totalTodos = uiState.todos.size
-                    if (totalTodos <= 1) return@detectHorizontalDragGestures
+                detectHorizontalDragGestures(
+                    onDragStart = {
+                        dragAmountAccumulator = 0f
+                    },
+                    onHorizontalDrag = { change, dragAmount ->
+                        change.consume()
+                        dragAmountAccumulator += dragAmount
+                    },
+                    onDragEnd = {
+                        val totalTodos = uiState.todos.size
+                        if (totalTodos <= 1) return@detectHorizontalDragGestures
 
-                    if (dragAmount > 0 && uiState.selectedItemIndex > 0) {
-                        val newIndex = uiState.selectedItemIndex - 1
-                        onEvent(MyCertInfoUiEvent.Click.OnClickItem(newIndex))
-                    } else if (dragAmount < 0 && uiState.selectedItemIndex < totalTodos - 1) {
-                        val newIndex = uiState.selectedItemIndex + 1
-                        onEvent(MyCertInfoUiEvent.Click.OnClickItem(newIndex))
+                        val threshold = 50.dp.toPx()
+
+                        if (dragAmountAccumulator > threshold) {
+                            if (uiState.selectedItemIndex > 0) {
+                                onEvent(MyCertInfoUiEvent.Callback.OnSwipeRight)
+                            }
+                        } else if (dragAmountAccumulator < -threshold) {
+                            if (uiState.selectedItemIndex < totalTodos - 1) {
+                                onEvent(MyCertInfoUiEvent.Callback.OnSwipeLeft)
+                            }
+                        }
                     }
-                }
+                )
             }
     ) {
         TopBar(
@@ -310,15 +323,6 @@ private fun MyCertInfoScreenContents(
             }
         }
     }
-}
-
-suspend fun LazyListState.animateScrollToItemCenteredFixedWidth(
-    index: Int,
-    itemWidthPx: Int,
-) {
-    val viewportWidth = layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset
-    val offset = viewportWidth / 2 - itemWidthPx / 2
-    animateScrollToItem(index, scrollOffset = -offset)
 }
 
 @ScreenPreview
