@@ -87,6 +87,9 @@ dependencies {
     // Ktor
     implementation(libs.bundles.ktor)
 
+    // Chottulink
+    implementation(libs.chottulink.sdk)
+
     // Datastore
     implementation(libs.datastore)
 }

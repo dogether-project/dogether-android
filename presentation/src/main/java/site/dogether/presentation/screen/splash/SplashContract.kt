@@ -15,6 +15,10 @@ sealed interface SplashUiEvent : UiEvent {
     sealed interface Callback : SplashUiEvent {
         data class OnGetAppVersion(val appVersion: String) : Callback
     }
+
+    sealed interface Deeplink : SplashUiEvent {
+        data class OnDeeplinkReceived(val link: String?) : Deeplink
+    }
 }
 
 sealed interface SplashUiEffect : UiEffect {
@@ -25,4 +29,6 @@ sealed interface SplashUiEffect : UiEffect {
     data object NavigateToHome : SplashUiEffect
 
     data object NavigateToParticipationMethod : SplashUiEffect
+
+    data class NavigateToParticipateGroup(val joinCode: String) : SplashUiEffect
 }

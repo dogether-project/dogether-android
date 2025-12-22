@@ -48,6 +48,10 @@ val LocalNavHostController = staticCompositionLocalOf<NavHostController> {
     error("NavHostController not provided")
 }
 
+val LocalDeeplinkInfo = staticCompositionLocalOf<String?> {
+    null // 기본값은 null (딥링크가 없을 때)
+}
+
 @Composable
 inline fun <reified Effect : UiEffect> BaseViewModel<*>.CollectEffect(crossinline onCollected: (Effect) -> Unit) {
     val navHostController = LocalNavHostController.current
@@ -138,7 +142,8 @@ fun Modifier.intervaledClickableWithoutRipple(
 fun Float.toDp() = with(LocalDensity.current) { this@toDp.toDp() }
 
 @Composable
-fun displayHeightRatio(ratio: Float): Dp = (LocalWindowInfo.current.containerSize.height * ratio).toDp()
+fun displayHeightRatio(ratio: Float): Dp =
+    (LocalWindowInfo.current.containerSize.height * ratio).toDp()
 
 fun Color.alpha(alpha: Int) = this.copy(alpha = alpha / 100f)
 
@@ -183,13 +188,17 @@ fun Modifier.bottomSheetSnappable(
                 onVerticalDrag = { change, dragAmount ->
                     change.consume()
                     scope.launch {
-                        val newOffset = (sheetOffsetY.value + dragAmount).coerceIn(upperLimit.toFloat(), lowerLimit.toFloat())
+                        val newOffset = (sheetOffsetY.value + dragAmount).coerceIn(
+                            upperLimit.toFloat(),
+                            lowerLimit.toFloat()
+                        )
                         sheetOffsetY.snapTo(newOffset)
                     }
                 },
                 onDragEnd = {
                     val current = sheetOffsetY.value
-                    val nearest = if ((current - upperLimit) < (lowerLimit - current)) upperLimit.toFloat() else lowerLimit.toFloat()
+                    val nearest =
+                        if ((current - upperLimit) < (lowerLimit - current)) upperLimit.toFloat() else lowerLimit.toFloat()
                     scope.launch {
                         sheetOffsetY.animateTo(
                             targetValue = nearest,

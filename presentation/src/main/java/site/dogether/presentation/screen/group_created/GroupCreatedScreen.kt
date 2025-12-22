@@ -27,8 +27,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import com.chottulink.lib.ChottuLink
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import site.dogether.common.utils.DeeplinkUtil
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
@@ -68,19 +71,30 @@ fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
     )
 }
 
-private fun shareJoinCode(
-    context: Context,
-    joinCode: String,
-) {
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.intent_title_share_join_code))
-        putExtra(Intent.EXTRA_TEXT, joinCode)
-        type = "text/plain"
-    }
+private fun shareJoinCode(context: Context, joinCode: String) {
+    ChottuLink.createDynamicLink()
+        .setLink(DeeplinkUtil.generateInviteDeeplink(joinCode).toUri())
+        .setDomain(DeeplinkUtil.DEEPLINK_DOMAIN)
+        .build()
+        .addOnSuccessListener {
+            it?.let { result ->
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(
+                        Intent.EXTRA_SUBJECT,
+                        context.getString(R.string.intent_title_share_join_code)
+                    )
+                    putExtra(Intent.EXTRA_TEXT, result.uri.toString())
+                    type = "text/plain"
+                }
 
-    val shareIntent = Intent.createChooser(sendIntent, context.getString(R.string.intent_title_share_join_code))
-    context.startActivity(shareIntent)
+                val shareIntent = Intent.createChooser(
+                    sendIntent,
+                    context.getString(R.string.intent_title_share_join_code)
+                )
+                context.startActivity(shareIntent)
+            }
+        }
 }
 
 @Composable

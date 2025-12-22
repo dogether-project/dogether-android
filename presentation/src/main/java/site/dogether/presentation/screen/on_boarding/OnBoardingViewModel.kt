@@ -4,7 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.kakao.sdk.common.model.AuthError
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
+import site.dogether.domain.use_case.user.GetGroupJoinCodeUseCase
 import site.dogether.domain.use_case.user.LoginWithKakaoUseCase
+import site.dogether.domain.use_case.user.StoreGroupJoinCodeUseCase
 import site.dogether.domain.use_case.user.StoreUserInfoUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEvent
@@ -14,6 +16,8 @@ class OnBoardingViewModel(
     private val loginWithKakao: LoginWithKakaoUseCase,
     private val storeUserInfo: StoreUserInfoUseCase,
     private val checkParticipating: CheckParticipatingUseCase,
+    private val getGroupJoinCodeUseCase: GetGroupJoinCodeUseCase,
+    private val storeGroupJoinCodeUseCase: StoreGroupJoinCodeUseCase
 ) : BaseViewModel<OnBoardingUiState>(OnBoardingUiState()) {
 
     override fun onEvent(event: UiEvent) {
@@ -41,7 +45,7 @@ class OnBoardingViewModel(
                             val loginWithKakaoResult = loginWithKakao(
                                 name = event.name,
                                 idToken = event.idToken
-                            ).getOrElse { e ->
+                            ).getOrElse {
                                 // handle exception
                                 return@launch
                             }
@@ -49,7 +53,7 @@ class OnBoardingViewModel(
                             storeUserInfo(
                                 name = loginWithKakaoResult.name,
                                 accessToken = loginWithKakaoResult.accessToken
-                            ).getOrElse { e ->
+                            ).getOrElse {
                                 // handle exception
                                 return@launch
                             }
@@ -59,10 +63,23 @@ class OnBoardingViewModel(
                                 return@launch
                             }
 
-                            if (checkParticipatingResult.shouldParticipating) {
-                                postEffect(OnBoardingUiEffect.NavigateToParticipationMethod)
+                            // 딥링크로 받은 코드가 있으면 ParticipateGroupScreen으로 이동
+                            val groupJoinCode = getGroupJoinCodeUseCase()
+                            if (groupJoinCode.isNotEmpty()) {
+                                // 저장된 딥링크 정보 삭제
+                                postEffect(
+                                    OnBoardingUiEffect.NavigateToParticipateGroup(
+                                        groupJoinCode
+                                    )
+                                )
+                                storeGroupJoinCodeUseCase()
                             } else {
-                                postEffect(OnBoardingUiEffect.NavigateToHome)
+                                // 딥링크가 없으면 기존 로직대로 진행
+                                if (checkParticipatingResult.shouldParticipating) {
+                                    postEffect(OnBoardingUiEffect.NavigateToParticipationMethod)
+                                } else {
+                                    postEffect(OnBoardingUiEffect.NavigateToHome)
+                                }
                             }
                         }
                     }

@@ -1,6 +1,7 @@
 package site.dogether.data.repository_impl
 
 import io.ktor.client.HttpClient
+import kotlin.io.encoding.Base64
 import kotlinx.serialization.json.Json
 import org.jetbrains.annotations.VisibleForTesting
 import site.dogether.data.local.DataStoreManager
@@ -21,12 +22,14 @@ import site.dogether.domain.model.user.GroupStatistics
 import site.dogether.domain.model.user.ParticipatingInfo
 import site.dogether.domain.model.user.UserInfo
 import site.dogether.domain.repository.UserRepository
-import kotlin.io.encoding.Base64
 
 class UserRepositoryImpl(
     private val dataStoreManager: DataStoreManager,
     private val httpClient: HttpClient,
 ) : UserRepository {
+
+    // 딥링크 joinCode를 임시로 저장 (한 번 사용 후 삭제)
+    override var joinCode: String? = null
 
     override suspend fun storeUserInfo(
         name: String,
@@ -51,9 +54,10 @@ class UserRepositoryImpl(
     override suspend fun getUserInfo(): Result<UserInfo> {
         return dataStoreManager.loadString(PreferenceKey.USER_NAME).fold(
             onSuccess = { name ->
-                val accessToken = dataStoreManager.loadString(PreferenceKey.USER_TOKEN).getOrElse { e ->
-                    return Result.failure(e)
-                }
+                val accessToken =
+                    dataStoreManager.loadString(PreferenceKey.USER_TOKEN).getOrElse { e ->
+                        return Result.failure(e)
+                    }
 
                 Result.success(
                     UserInfo(

@@ -17,10 +17,12 @@ import site.dogether.domain.use_case.todo.GetPresignedUrlsUseCase
 import site.dogether.domain.use_case.todo.ReadTodoUseCase
 import site.dogether.domain.use_case.todo.UploadImageToS3UseCase
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
+import site.dogether.domain.use_case.user.GetGroupJoinCodeUseCase
 import site.dogether.domain.use_case.user.GetGroupStatisticsUseCase
 import site.dogether.domain.use_case.user.GetUserInfoUseCase
 import site.dogether.domain.use_case.user.LoginWithKakaoUseCase
 import site.dogether.domain.use_case.user.LogoutUseCase
+import site.dogether.domain.use_case.user.StoreGroupJoinCodeUseCase
 import site.dogether.domain.use_case.user.StoreUserInfoUseCase
 import site.dogether.domain.use_case.user.WithdrawUseCase
 
@@ -47,4 +49,6 @@ val useCaseModule = module {
     factory { GetRankingUseCase(repository = get()) }
     factory { GetGroupStatisticsUseCase(repository = get()) }
     factory { ReadTodoUseCase(repository = get()) }
+    factory { StoreGroupJoinCodeUseCase(repository = get()) }
+    factory { GetGroupJoinCodeUseCase(repository = get()) }
 }

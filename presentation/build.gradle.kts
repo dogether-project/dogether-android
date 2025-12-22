@@ -68,5 +68,8 @@ dependencies {
     implementation(libs.bundles.compose.debug)
     
     // Permission handling
-    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
+    implementation(libs.accompanist.permissions)
+
+    // Chottulink
+    implementation(libs.chottulink.sdk)
 }
