@@ -116,7 +116,9 @@ private fun MemberCertInfoScreenContents(
     ) {
         TopBar(
             start = { BackButton { } },
-            centerText = stringResource(R.string.title_my_cert_info)
+            centerText = stringResource(R.string.title_member_cert_info).format(
+                uiState.name
+            )
         )
 
         Column(
