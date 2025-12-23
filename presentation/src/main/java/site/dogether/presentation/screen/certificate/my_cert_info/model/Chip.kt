@@ -1,4 +1,4 @@
-package site.dogether.presentation.screen.my_cert_info.model
+package site.dogether.presentation.screen.certificate.my_cert_info.model
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes

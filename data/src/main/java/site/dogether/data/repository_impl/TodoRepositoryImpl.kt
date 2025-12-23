@@ -8,6 +8,7 @@ import site.dogether.data.remote.model.req.todo.CreateTodoReq
 import site.dogether.data.remote.model.req.todo.certificate.CertificateTodoReq
 import site.dogether.data.remote.model.req.todo.certificate.PresignedUrlReq
 import site.dogether.data.remote.model.res.todo.GetMyTodoSpecificDateResMapper
+import site.dogether.data.remote.model.res.todo.MemberTodoHistoryResMapper
 import site.dogether.data.remote.model.res.todo.MyActivityResMapper
 import site.dogether.data.remote.model.res.todo.TodosResMapper
 import site.dogether.data.remote.model.res.todo.certificate.PresignedUrlResMapper
@@ -18,6 +19,7 @@ import site.dogether.data.utils.safePostWithoutRes
 import site.dogether.data.utils.safePutToS3
 import site.dogether.domain.model.certificate.PresignedUrlData
 import site.dogether.domain.model.todo.GetMyTodoSpecificDateInfo
+import site.dogether.domain.model.todo.MemberTodoHistory
 import site.dogether.domain.model.todo.MyActivity
 import site.dogether.domain.model.todo.Todo
 import site.dogether.domain.repository.TodoRepository
@@ -119,5 +121,16 @@ class TodoRepositoryImpl(
 
     override suspend fun readTodo(todoId: Long): Result<Unit> {
         return httpClient.safeGetWithoutRes(ApiRoutes.readTodo(todoId))
+    }
+
+    override suspend fun getMemberTodoHistory(
+        groupId: Int,
+        memberId: Int,
+    ): Result<MemberTodoHistory> {
+        return httpClient.safeGet(
+            apiRoute = ApiRoutes.getMemberTodoHistory(groupId, memberId),
+            params = emptyMap(),
+            mapper = MemberTodoHistoryResMapper
+        )
     }
 }

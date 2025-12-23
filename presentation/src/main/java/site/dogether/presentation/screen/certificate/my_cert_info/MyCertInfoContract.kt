@@ -1,4 +1,4 @@
-package site.dogether.presentation.screen.my_cert_info
+package site.dogether.presentation.screen.certificate.my_cert_info
 
 import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.base.UiEffect

@@ -28,7 +28,7 @@ class RankingViewModel(
     }
 
     init {
-        updateState { it.copy(isLoading = true) }
+        updateState { it.copy(isLoading = true, groupId = groupId) }
 
         viewModelScope.launch {
             getRanking(groupId).onSuccess { rankingInfo ->

@@ -1,4 +1,4 @@
-package site.dogether.presentation.screen.my_cert_info
+package site.dogether.presentation.screen.certificate.member_cert_info
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -37,18 +36,16 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import kotlin.math.roundToInt
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.domain.model.todo.Todo
-import site.dogether.domain.model.todo.Todo.Companion.STATUS_CERTIFY_PENDING
 import site.dogether.presentation.R
-import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
-import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.CertInfoRowItem
 import site.dogether.presentation.composables.TopBar
-import site.dogether.presentation.screen.my_cert_info.model.Chip
+import site.dogether.presentation.screen.certificate.my_cert_info.model.Chip
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_S
@@ -61,35 +58,29 @@ import site.dogether.presentation.theme.ColorTextInverse
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
-import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.animateScrollToItemCenteredFixedWidth
 import site.dogether.presentation.utils.toPx
-import kotlin.math.roundToInt
 
 @Composable
-fun MyCertInfoScreen(viewModel: MyCertInfoViewModel = koinViewModel()) {
+fun MemberCertInfoScreen(viewModel: MemberCertInfoViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
     val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
-    val navHostController = LocalNavHostController.current
 
-    viewModel.CollectEffect<MyCertInfoUiEffect> { uiEffect ->
+    viewModel.CollectEffect<MemberCertInfoUiEffect> { uiEffect ->
         when (uiEffect) {
-            is MyCertInfoUiEffect.NavigateToCertificateTodo -> {
-                navHostController.navigate("${Screen.CERTIFICATE_TODO}/${uiEffect.todoId}/${uiEffect.todoTitle}")
-            }
+            else -> Unit
         }
     }
 
-    MyCertInfoScreenContents(
+    MemberCertInfoScreenContents(
         uiState = uiState,
         onEvent = onEvent
     )
 }
 
 @Composable
-private fun MyCertInfoScreenContents(
-    uiState: MyCertInfoUiState,
+private fun MemberCertInfoScreenContents(
+    uiState: MemberCertInfoUiState,
     onEvent: (UiEvent) -> Unit,
 ) {
     val context = LocalContext.current
@@ -107,33 +98,20 @@ private fun MyCertInfoScreenContents(
         modifier = Modifier
             .fillMaxSize()
             .pointerInput(uiState.todos.size, uiState.selectedItemIndex) {
-                var dragAmountAccumulator = 0f
+                detectHorizontalDragGestures { change, dragAmount ->
+                    change.consume()
 
-                detectHorizontalDragGestures(
-                    onDragStart = {
-                        dragAmountAccumulator = 0f
-                    },
-                    onHorizontalDrag = { change, dragAmount ->
-                        change.consume()
-                        dragAmountAccumulator += dragAmount
-                    },
-                    onDragEnd = {
-                        val totalTodos = uiState.todos.size
-                        if (totalTodos <= 1) return@detectHorizontalDragGestures
+                    val totalTodos = uiState.todos.size
+                    if (totalTodos <= 1) return@detectHorizontalDragGestures
 
-                        val threshold = 50.dp.toPx()
-
-                        if (dragAmountAccumulator > threshold) {
-                            if (uiState.selectedItemIndex > 0) {
-                                onEvent(MyCertInfoUiEvent.Callback.OnSwipeRight)
-                            }
-                        } else if (dragAmountAccumulator < -threshold) {
-                            if (uiState.selectedItemIndex < totalTodos - 1) {
-                                onEvent(MyCertInfoUiEvent.Callback.OnSwipeLeft)
-                            }
-                        }
+                    if (dragAmount > 0 && uiState.selectedItemIndex > 0) {
+                        val newIndex = uiState.selectedItemIndex - 1
+                        onEvent(MemberCertInfoUiEvent.Click.OnClickItem(newIndex))
+                    } else if (dragAmount < 0 && uiState.selectedItemIndex < totalTodos - 1) {
+                        val newIndex = uiState.selectedItemIndex + 1
+                        onEvent(MemberCertInfoUiEvent.Click.OnClickItem(newIndex))
                     }
-                )
+                }
             }
     ) {
         TopBar(
@@ -158,7 +136,7 @@ private fun MyCertInfoScreenContents(
                         isSelected = index == uiState.selectedItemIndex,
                         todo = todo,
                         onClick = { clickedItemIndex ->
-                            onEvent(MyCertInfoUiEvent.Click.OnClickItem(clickedItemIndex))
+                            onEvent(MemberCertInfoUiEvent.Click.OnClickItem(clickedItemIndex))
                         }
                     )
                 }
@@ -299,25 +277,6 @@ private fun MyCertInfoScreenContents(
                                 color = ColorTextDefault
                             )
                         }
-
-                        if (selectedTodo.status == STATUS_CERTIFY_PENDING) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f)
-                            ) {
-                                CTAButton(
-                                    modifier = Modifier
-                                        .padding(16.dp)
-                                        .align(BottomCenter)
-                                        .fillMaxWidth()
-                                        .height(50.dp),
-                                    isEnabled = true,
-                                    text = stringResource(R.string.cta_button_certificate),
-                                    onClick = { onEvent(MyCertInfoUiEvent.Click.OnClickCertificate) }
-                                )
-                            }
-                        }
                     }
                 }
             }
@@ -325,11 +284,21 @@ private fun MyCertInfoScreenContents(
     }
 }
 
+suspend fun LazyListState.animateScrollToItemCenteredFixedWidth(
+    index: Int,
+    itemWidthPx: Int,
+) {
+    val viewportWidth = layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset
+    val offset = viewportWidth / 2 - itemWidthPx / 2
+    animateScrollToItem(index, scrollOffset = -offset)
+}
+
 @ScreenPreview
 @Composable
-private fun MyCertInfoScreenContentsPreview() {
-    MyCertInfoScreenContents(
-        uiState = MyCertInfoUiState(),
+private fun MemberCertInfoScreenContentsPreview() {
+    MemberCertInfoScreenContents(
+        uiState = MemberCertInfoUiState(),
         onEvent = {}
     )
 }
+

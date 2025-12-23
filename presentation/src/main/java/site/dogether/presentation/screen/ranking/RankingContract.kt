@@ -6,6 +6,7 @@ import site.dogether.presentation.base.UiEvent
 
 data class RankingUiState(
     val isLoading: Boolean = false,
+    val groupId: Int = 0,
     val inRankMembers: List<RankingMember?> = listOf(),
     val outRankMembers: List<RankingMember> = listOf()
 )

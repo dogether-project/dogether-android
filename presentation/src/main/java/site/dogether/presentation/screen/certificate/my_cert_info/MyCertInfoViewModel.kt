@@ -1,4 +1,4 @@
-package site.dogether.presentation.screen.my_cert_info
+package site.dogether.presentation.screen.certificate.my_cert_info
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope

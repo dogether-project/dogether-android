@@ -18,6 +18,7 @@ object Screen {
     const val SETTINGS = "settings"
     const val GROUP_MANAGEMENT = "group_management"
     const val MY_CERT_INFO = "my_cert_info"
+    const val MEMBER_CERT_INFO = "member_cert_info"
     const val CREATE_TODO = "create_todo"
     const val CERTIFICATE_TODO = "certificate_todo"
     const val CERTIFICATE_DESCRIPTION = "certificate_description"
