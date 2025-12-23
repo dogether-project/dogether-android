@@ -32,6 +32,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.domain.model.user.RankingMember
 import site.dogether.presentation.R
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body1_B
@@ -45,10 +46,8 @@ import site.dogether.presentation.theme.ColorIconSecondary
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextDisabled
 import site.dogether.presentation.theme.ColorTextPrimary
-import site.dogether.presentation.Screen
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
-import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
@@ -64,8 +63,8 @@ fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
     RankingScreenContents(
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) },
-        onNavigateToMemberCertInfo = { groupId, memberId ->
-            navHostController.navigate("${Screen.MEMBER_CERT_INFO}/$groupId/$memberId")
+        onNavigateToMemberCertInfo = { groupId, memberId, memberName ->
+            navHostController.navigate("${Screen.MEMBER_CERT_INFO}/$groupId/$memberId/$memberName")
         }
     )
 }
@@ -74,7 +73,7 @@ fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
 private fun RankingScreenContents(
     uiState: RankingUiState,
     onEvent: (UiEvent) -> Unit,
-    onNavigateToMemberCertInfo: (groupId: Int, memberId: Int) -> Unit
+    onNavigateToMemberCertInfo: (groupId: Int, memberId: Int, memberName: String) -> Unit
 ) {
     if (!uiState.isLoading) {
         Column(
@@ -99,7 +98,11 @@ private fun RankingScreenContents(
                     rankingMember = inRankMembers[1],
                     onClick = {
                         inRankMembers[1]?.let { member ->
-                            onNavigateToMemberCertInfo(uiState.groupId, member.memberId)
+                            onNavigateToMemberCertInfo(
+                                uiState.groupId,
+                                member.memberId,
+                                member.name
+                            )
                         }
                     }
                 )
@@ -107,7 +110,11 @@ private fun RankingScreenContents(
                     rankingMember = inRankMembers[0],
                     onClick = {
                         inRankMembers[0]?.let { member ->
-                            onNavigateToMemberCertInfo(uiState.groupId, member.memberId)
+                            onNavigateToMemberCertInfo(
+                                uiState.groupId,
+                                member.memberId,
+                                member.name
+                            )
                         }
                     }
                 )
@@ -115,7 +122,11 @@ private fun RankingScreenContents(
                     rankingMember = inRankMembers[2],
                     onClick = {
                         inRankMembers[2]?.let { member ->
-                            onNavigateToMemberCertInfo(uiState.groupId, member.memberId)
+                            onNavigateToMemberCertInfo(
+                                uiState.groupId,
+                                member.memberId,
+                                member.name
+                            )
                         }
                     }
                 )
@@ -163,7 +174,11 @@ private fun RankingScreenContents(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickableWithoutRipple {
-                                    onNavigateToMemberCertInfo(uiState.groupId, member.memberId)
+                                    onNavigateToMemberCertInfo(
+                                        uiState.groupId,
+                                        member.memberId,
+                                        member.name
+                                    )
                                 },
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically

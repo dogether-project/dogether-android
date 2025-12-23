@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_MEMBER_ID
+import site.dogether.KEY_MEMBER_NAME
 import site.dogether.common.utils.orZero
 import site.dogether.domain.use_case.todo.GetMemberTodoHistoryUseCase
 import site.dogether.presentation.base.BaseViewModel
@@ -23,9 +24,13 @@ class MemberCertInfoViewModel(
         savedStateHandle.get<Int>(KEY_MEMBER_ID).orZero()
     }
 
+    private val name : String by lazy {
+        savedStateHandle.get<String>(KEY_MEMBER_NAME).orEmpty()
+    }
+
     init {
         viewModelScope.launch {
-            updateState { it.copy(isLoading = true) }
+            updateState { it.copy(isLoading = true, name = name) }
 
             getMemberTodoHistory(
                 groupId = groupId,

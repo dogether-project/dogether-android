@@ -10,6 +10,7 @@ import site.dogether.KEY_ENCODED_URI
 import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_JOIN_CODE
 import site.dogether.KEY_MEMBER_ID
+import site.dogether.KEY_MEMBER_NAME
 import site.dogether.KEY_SELECTED_DATE
 import site.dogether.KEY_TODO_ID
 import site.dogether.KEY_TODO_INDEX
@@ -80,10 +81,11 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
             )
         ) { MyCertInfoScreen() }
         composable(
-            route = "${Screen.MEMBER_CERT_INFO}/{${KEY_GROUP_ID}}/{${KEY_MEMBER_ID}}",
+            route = "${Screen.MEMBER_CERT_INFO}/{${KEY_GROUP_ID}}/{${KEY_MEMBER_ID}}/{${KEY_MEMBER_NAME}}",
             arguments = listOf(
                 navArgument(KEY_GROUP_ID) { type = NavType.IntType },
-                navArgument(KEY_MEMBER_ID) { type = NavType.IntType }
+                navArgument(KEY_MEMBER_ID) { type = NavType.IntType },
+                navArgument(KEY_MEMBER_NAME) { type = NavType.StringType }
             )
         ) { MemberCertInfoScreen() }
         composable(

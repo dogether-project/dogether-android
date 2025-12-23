@@ -36,6 +36,7 @@
     <string name="title_settings">설정</string>
     <string name="title_group_management">그룹 관리</string>
     <string name="title_my_cert_info">나의 인증 정보</string>
+    <string name="title_member_cert_info">%s님의 인증 정보</string>
     <string name="title_ranking">순위</string>
 
     <string name="body_force_update">두게더가 유저분들의 의견을 반영하여\n더 편하게 사용하도록 사용성을 개선했어요.\n지금 바로 업데이트하고 인증하러 가요!</string>

@@ -8,10 +8,8 @@ data class MemberCertInfoUiState(
     val isLoading: Boolean = false,
     val todos: List<Todo> = listOf(),
     val selectedItemIndex: Int = 0,
-    val title: String = "",
-) {
-    val currentTodoHistoryToReadIndex: Int = 0
-}
+    val name: String = "",
+)
 
 sealed interface MemberCertInfoUiEvent : UiEvent {
     sealed interface Click : MemberCertInfoUiEvent {
