@@ -1,8 +1,5 @@
 package site.dogether.presentation.utils
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -37,6 +34,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
+import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 
 @Preview(
     showBackground = true,
@@ -175,40 +173,31 @@ fun Modifier.hideKeyboardOnTap(): Modifier {
 }
 
 fun Modifier.bottomSheetSnappable(
-    sheetOffsetY: Animatable<Float, AnimationVector1D>,
-    upperLimit: Int,
-    lowerLimit: Int,
+    state: AnchoredBottomSheetState,
     scope: CoroutineScope,
 ): Modifier = this.then(
-    Modifier.pointerInput(
-        key1 = upperLimit,
-        key2 = lowerLimit,
-        block = {
-            detectVerticalDragGestures(
-                onVerticalDrag = { change, dragAmount ->
-                    change.consume()
-                    scope.launch {
-                        val newOffset = (sheetOffsetY.value + dragAmount).coerceIn(
-                            upperLimit.toFloat(),
-                            lowerLimit.toFloat()
-                        )
-                        sheetOffsetY.snapTo(newOffset)
-                    }
-                },
-                onDragEnd = {
-                    val current = sheetOffsetY.value
-                    val nearest =
-                        if ((current - upperLimit) < (lowerLimit - current)) upperLimit.toFloat() else lowerLimit.toFloat()
-                    scope.launch {
-                        sheetOffsetY.animateTo(
-                            targetValue = nearest,
-                            animationSpec = tween(durationMillis = 200)
-                        )
+    Modifier.pointerInput(state) {
+        detectVerticalDragGestures(
+            onVerticalDrag = { change, dragAmount ->
+                change.consume()
+                state.dispatchRawDelta(dragAmount)
+            },
+            onDragEnd = {
+                val current = state.sheetOffsetY
+                val upper = state.upperAnchorY
+                val lower = state.lowerAnchorY
+                val midPoint = (upper + lower) / 2
+
+                scope.launch {
+                    if (current < midPoint) {
+                        state.animateToUpper()
+                    } else {
+                        state.animateToLower()
                     }
                 }
-            )
-        }
-    )
+            }
+        )
+    }
 )
 
 fun Modifier.alphaByProgress(progress: Float): Modifier = this.then(
