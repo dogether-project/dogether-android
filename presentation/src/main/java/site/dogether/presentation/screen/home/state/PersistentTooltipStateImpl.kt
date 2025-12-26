@@ -19,8 +19,16 @@ class PersistentTooltipStateImpl(
     override val isVisible: Boolean
         get() = transition.currentState || transition.targetState
 
+    @Deprecated(
+        level = DeprecationLevel.WARNING,
+        message = "This method will not work properly. use forceDismiss() instead."
+    )
     override fun dismiss() = Unit
 
+    @Deprecated(
+        level = DeprecationLevel.WARNING,
+        message = "This method will not work properly. use forceDismiss() instead."
+    )
     override fun onDispose() = Unit
 
     override suspend fun show(mutatePriority: MutatePriority) {

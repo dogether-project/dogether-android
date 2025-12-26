@@ -241,48 +241,44 @@ private fun HomeScreenContents(
     val density = LocalDensity.current
     val context = LocalContext.current
     val anchoredBottomSheetState = remember { AnchoredBottomSheetState() }
-    val connection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                if (available.y < 0f && anchoredBottomSheetState.sheetOffsetY.value > anchoredBottomSheetState.upperAnchorY) {
-                    val before = anchoredBottomSheetState.sheetOffsetY.value
-                    scope.launch {
-                        anchoredBottomSheetState.setOffset(before + available.y)
-                    }
-                    return Offset(x = 0f, y = available.y)
-                }
-                return Offset.Zero
+    val connection = object : NestedScrollConnection {
+        override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+            return if (anchoredBottomSheetState.isExpandable(available)) {
+                val consumedY = anchoredBottomSheetState.dispatchRawDelta(available.y)
+                Offset(0f, consumedY)
+            } else {
+                Offset.Zero
             }
+        }
 
-            override fun onPostScroll(
-                consumed: Offset,
-                available: Offset,
-                source: NestedScrollSource,
-            ): Offset {
-                if (available.y > 0f && anchoredBottomSheetState.sheetOffsetY.value < anchoredBottomSheetState.lowerAnchorY) {
-                    val before = anchoredBottomSheetState.sheetOffsetY.value
-                    scope.launch {
-                        anchoredBottomSheetState.setOffset(before + available.y)
-                    }
-                    return Offset(x = 0f, y = available.y)
-                }
-                return Offset.Zero
+        override fun onPostScroll(
+            consumed: Offset,
+            available: Offset,
+            source: NestedScrollSource
+        ): Offset {
+            return if (anchoredBottomSheetState.isCollapsable(available)) {
+                val consumedY = anchoredBottomSheetState.dispatchRawDelta(available.y)
+                Offset(0f, consumedY)
+            } else {
+                Offset.Zero
             }
+        }
 
-            override suspend fun onPreFling(available: Velocity): Velocity {
-                if (available.y < 0f && anchoredBottomSheetState.sheetOffsetY.value > anchoredBottomSheetState.upperAnchorY) {
-                    anchoredBottomSheetState.animateToUpper()
-                    return available
-                }
-                return Velocity.Zero
+        override suspend fun onPreFling(available: Velocity): Velocity {
+            return if (anchoredBottomSheetState.isCollapsable(available)) {
+                anchoredBottomSheetState.animateToLower()
+                available
+            } else {
+                Velocity.Zero
             }
+        }
 
-            override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-                if (available.y > 0f && anchoredBottomSheetState.sheetOffsetY.value < anchoredBottomSheetState.lowerAnchorY) {
-                    anchoredBottomSheetState.animateToLower()
-                    return available
-                }
-                return Velocity.Zero
+        override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+            return if (anchoredBottomSheetState.isExpandable(available)) {
+                anchoredBottomSheetState.animateToUpper()
+                available
+            } else {
+                Velocity.Zero
             }
         }
     }
@@ -418,12 +414,11 @@ private fun HomeScreenContents(
                 }
 
                 TooltipBox(
+                    modifier = Modifier.alphaByProgress(anchoredBottomSheetState.expandingProgress),
                     positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                     tooltip = {
                         DosikTooltip(
-                            modifier = Modifier.alphaByProgress(anchoredBottomSheetState.expandingProgress),
-                            text = uiState.tooltipUiState.stringId?.let { stringResource(it) }
-                                .orEmpty(),
+                            text = uiState.tooltipUiState.stringId?.let { stringResource(it) }.orEmpty(),
                             onClickDismiss = { onEvent(HomeUiEvent.Click.OnClickDismissTooltip) }
                         )
                     },
@@ -431,9 +426,7 @@ private fun HomeScreenContents(
                     focusable = false
                 ) {
                     Image(
-                        modifier = Modifier
-                            .alphaByProgress(anchoredBottomSheetState.expandingProgress)
-                            .size(100.dp),
+                        modifier = Modifier.size(100.dp),
                         painter = painterResource(R.drawable.img_dosik_main),
                         contentDescription = "image_dosik_main"
                     )
@@ -563,14 +556,10 @@ private fun InitDialog(
 
 @Composable
 private fun DosikTooltip(
-    modifier: Modifier,
     text: String,
     onClickDismiss: () -> Unit,
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.End
-    ) {
+    Column(horizontalAlignment = Alignment.End) {
         Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
@@ -654,21 +643,19 @@ private fun AnchoredBottomSheet(
             .offset {
                 IntOffset(
                     x = 0,
-                    y = sheetState.sheetOffsetY.value.roundToInt() - sheetState.statusBarHeight
+                    y = sheetState.sheetOffsetY.roundToInt() - sheetState.statusBarHeight
                 )
             }
             .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
             .fillMaxWidth()
             .height(
                 (sheetState.frameHeight
-                        - sheetState.sheetOffsetY.value
+                        - sheetState.sheetOffsetY
                         + sheetState.statusBarHeight).toDp()
             )
             .nestedScroll(connection)
             .bottomSheetSnappable(
-                sheetOffsetY = sheetState.sheetOffsetY,
-                upperLimit = sheetState.upperAnchorY,
-                lowerLimit = sheetState.lowerAnchorY,
+                state = sheetState,
                 scope = scope
             )
             .background(ColorBgElevated)
