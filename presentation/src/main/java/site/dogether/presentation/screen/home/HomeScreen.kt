@@ -57,16 +57,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.chottulink.lib.ChottuLink
-import java.time.LocalDate
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.common.MaxDailyTodoCount
@@ -91,6 +88,7 @@ import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.skeleton
 import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 import site.dogether.presentation.screen.home.state.PersistentTooltipStateImpl
@@ -131,6 +129,9 @@ import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.conditionedClickableWithoutRipple
 import site.dogether.presentation.utils.isPermissionGranted
 import site.dogether.presentation.utils.toDp
+import java.time.LocalDate
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -331,10 +332,16 @@ private fun HomeScreenContents(
                     .padding(top = 8.dp)
                     .fillMaxWidth()
             ) {
-                Column(modifier = Modifier.weight(1f)) {
+                Column(
+                    modifier = Modifier
+                        .padding(end = 12.dp)
+                        .weight(1f)
+                ) {
                     Row(
                         modifier = Modifier
                             .padding(top = 6.dp)
+                            .fillMaxWidth()
+                            .skeleton(uiState.isLoading)
                             .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickSelectGroup) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -362,6 +369,7 @@ private fun HomeScreenContents(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         GroupInfoColumn(
+                            isLoading = uiState.isLoading,
                             title = stringResource(R.string.info_group_member_count),
                             value = "${uiState.selectedGroup.currentMemberCount}/${uiState.selectedGroup.maximumMemberCount}",
                         )
@@ -378,6 +386,11 @@ private fun HomeScreenContents(
                                     }
                         ) {
                             Text(
+                                modifier = Modifier
+                                    .skeleton(
+                                        condition = uiState.isLoading,
+                                        widthDp = 50.dp
+                                    ),
                                 text = stringResource(R.string.info_join_code),
                                 style = Body2_R.copy(
                                     lineHeightStyle = LineHeightStyle.Default.copy(
@@ -387,18 +400,26 @@ private fun HomeScreenContents(
                                 color = ColorTextSecondary
                             )
 
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = uiState.selectedGroup.joinCode,
-                                    style = Body1_S.copy(
+                            Row(
+                                modifier = Modifier
+                                    .padding(top = 4.dp)
+                                    .skeleton(
+                                        condition = uiState.isLoading,
+                                        widthDp = 36.dp
+                                    ),
+                                verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = uiState.selectedGroup.joinCode,
+                                        style = Body1_S.copy(
                                         lineHeightStyle = LineHeightStyle.Default.copy(
-                                            trim = LineHeightStyle.Trim.None
+                                            trim = LineHeightStyle.Trim.Both
                                         )
                                     ),
                                     color = ColorTextDefault
                                 )
 
                                 Icon(
+                                    modifier = Modifier.size(20.dp),
                                     painter = painterResource(R.drawable.ic_copy),
                                     tint = ColorIconDefault,
                                     contentDescription = "icon_copy"
@@ -407,6 +428,7 @@ private fun HomeScreenContents(
                         }
 
                         GroupInfoColumn(
+                            isLoading = uiState.isLoading,
                             title = stringResource(R.string.info_end_date),
                             value = uiState.selectedGroup.endAt
                         )
@@ -426,7 +448,9 @@ private fun HomeScreenContents(
                     focusable = false
                 ) {
                     Image(
-                        modifier = Modifier.size(100.dp),
+                        modifier = Modifier
+                            .size(100.dp)
+                            .skeleton(uiState.isLoading),
                         painter = painterResource(R.drawable.img_dosik_main),
                         contentDescription = "image_dosik_main"
                     )
@@ -440,17 +464,19 @@ private fun HomeScreenContents(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = stringResource(R.string.info_progress),
-                    style = Body2_R.copy(lineHeightStyle = LineHeightStyle.Default),
-                    color = ColorTextSecondary
-                )
+                Row(modifier = Modifier.skeleton(uiState.isLoading)) {
+                    Text(
+                        text = stringResource(R.string.info_progress),
+                        style = Body2_R.copy(lineHeightStyle = LineHeightStyle.Default),
+                        color = ColorTextSecondary
+                    )
 
-                Text(
-                    text = "(${uiState.selectedGroup.progressDay}${stringResource(R.string.unit_day_passed)})",
-                    style = Small_R.copy(lineHeightStyle = LineHeightStyle.Default),
-                    color = ColorTextSecondary
-                )
+                    Text(
+                        text = "(${uiState.selectedGroup.progressDay}${stringResource(R.string.unit_day_passed)})",
+                        style = Small_R.copy(lineHeightStyle = LineHeightStyle.Default),
+                        color = ColorTextSecondary
+                    )
+                }
 
                 Box(
                     modifier = Modifier
@@ -458,6 +484,7 @@ private fun HomeScreenContents(
                         .clip(RoundedCornerShape(64.dp))
                         .weight(1f)
                         .height(8.dp)
+                        .skeleton(uiState.isLoading)
                         .background(ColorBgElevated)
                 ) {
                     Box(
@@ -519,6 +546,7 @@ private fun HomeScreenContents(
         }
 
         AnchoredBottomSheet(
+            isLoading = uiState.isLoading,
             sheetState = anchoredBottomSheetState,
             connection = connection,
             status = uiState.selectedGroup.status,
@@ -623,6 +651,7 @@ private fun DosikTooltip(
 
 @Composable
 private fun AnchoredBottomSheet(
+    isLoading: Boolean,
     sheetState: AnchoredBottomSheetState,
     connection: NestedScrollConnection,
     status: String,
@@ -682,8 +711,16 @@ private fun AnchoredBottomSheet(
             }
 
             Text(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .weight(1f)
+                    .height(28.dp)
+                    .skeleton(isLoading),
                 text = selectedDate.toFormattedString(DATE_FORMAT_FULL_YEAR),
-                style = Head2_B.copy(lineHeightStyle = LineHeightStyle.Default),
+                style = Head2_B.copy(
+                    textAlign = TextAlign.Center,
+                    lineHeightStyle = LineHeightStyle.Default
+                ),
                 color = ColorTextDefault
             )
 
@@ -703,30 +740,32 @@ private fun AnchoredBottomSheet(
             }
         }
 
-        when (status) {
-            STATUS_READY -> {
-                LaunchFromTomorrowContents(
-                    timerText = timerText,
-                    timerProgress = timerProgress,
-                    onEvent = onEvent
-                )
-            }
-
-            STATUS_RUNNING -> {
-                if (selectedDate != today && todoList.isEmpty()) {
-                    NoTodoContents()
-                } else {
-                    TodoContents(
-                        todoList = todoList,
-                        filteredTodoList = filteredTodoList,
-                        selectedChip = selectedChip,
+        if (!isLoading) {
+            when (status) {
+                STATUS_READY -> {
+                    LaunchFromTomorrowContents(
+                        timerText = timerText,
+                        timerProgress = timerProgress,
                         onEvent = onEvent
                     )
                 }
-            }
 
-            STATUS_FINISHED -> {
-                FinishedContents()
+                STATUS_RUNNING -> {
+                    if (selectedDate != today && todoList.isEmpty()) {
+                        NoTodoContents()
+                    } else {
+                        TodoContents(
+                            todoList = todoList,
+                            filteredTodoList = filteredTodoList,
+                            selectedChip = selectedChip,
+                            onEvent = onEvent
+                        )
+                    }
+                }
+
+                STATUS_FINISHED -> {
+                    FinishedContents()
+                }
             }
         }
     }

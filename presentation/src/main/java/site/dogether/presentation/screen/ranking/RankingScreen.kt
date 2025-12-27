@@ -75,156 +75,155 @@ private fun RankingScreenContents(
     onEvent: (UiEvent) -> Unit,
     onNavigateToMemberCertInfo: (groupId: Int, memberId: Int, memberName: String) -> Unit
 ) {
-    if (!uiState.isLoading) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxSize()
-        ) {
-            TopBar(
-                start = {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxSize()
+    ) {
+        TopBar(
+            start = {
 
-                }, centerText = stringResource(R.string.title_ranking)
+            }, centerText = stringResource(R.string.title_ranking)
+        )
+
+        Row(
+            modifier = Modifier
+                .padding(top = 26.dp)
+                .fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(11.dp)
+        ) {
+            val inRankMembers = uiState.inRankMembers
+
+            RankingMemberCard(
+                modifier = Modifier.padding(top = 20.dp),
+                isLoading = uiState.isLoading,
+                rankingMember = inRankMembers[1],
+                onClick = {
+                    onNavigateToMemberCertInfo(
+                        uiState.groupId,
+                        inRankMembers[1].memberId,
+                        inRankMembers[1].name
+                    )
+                }
             )
 
-            Row(
-                modifier = Modifier
-                    .padding(top = 26.dp)
-                    .fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(11.dp)
-            ) {
-                val inRankMembers = uiState.inRankMembers
+            RankingMemberCard(
+                isLoading = uiState.isLoading,
+                rankingMember = inRankMembers[0],
+                onClick = {
+                    onNavigateToMemberCertInfo(
+                        uiState.groupId,
+                        inRankMembers[0].memberId,
+                        inRankMembers[0].name
+                    )
+                }
+            )
 
-                RankingMemberCard(
-                    rankingMember = inRankMembers[1],
-                    onClick = {
-                        inRankMembers[1]?.let { member ->
-                            onNavigateToMemberCertInfo(
-                                uiState.groupId,
-                                member.memberId,
-                                member.name
-                            )
-                        }
-                    }
-                )
-                RankingMemberCard(
-                    rankingMember = inRankMembers[0],
-                    onClick = {
-                        inRankMembers[0]?.let { member ->
-                            onNavigateToMemberCertInfo(
-                                uiState.groupId,
-                                member.memberId,
-                                member.name
-                            )
-                        }
-                    }
-                )
-                RankingMemberCard(
-                    rankingMember = inRankMembers[2],
-                    onClick = {
-                        inRankMembers[2]?.let { member ->
-                            onNavigateToMemberCertInfo(
-                                uiState.groupId,
-                                member.memberId,
-                                member.name
-                            )
-                        }
-                    }
-                )
-            }
+            RankingMemberCard(
+                modifier = Modifier.padding(top = 20.dp),
+                isLoading = uiState.isLoading,
+                rankingMember = inRankMembers[2],
+                onClick = {
+                    onNavigateToMemberCertInfo(
+                        uiState.groupId,
+                        inRankMembers[2].memberId,
+                        inRankMembers[2].name
+                    )
+                }
+            )
+        }
 
-            Row(
+        Row(
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .fillMaxWidth()
+                .height(40.dp)
+                .border(
+                    width = 1.dp,
+                    color = ColorBorderDisabled,
+                    shape = RoundedCornerShape(8.dp)
+                ),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(R.drawable.ic_caution),
+                tint = ColorIconSecondary,
+                contentDescription = "ic_caution"
+            )
+
+            Text(
+                modifier = Modifier.padding(start = 8.dp),
+                text = stringResource(R.string.body_ranking),
+                style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                color = ColorTextDisabled
+            )
+        }
+
+        if (uiState.outRankMembers.isNotEmpty()) {
+            LazyColumn(
                 modifier = Modifier
-                    .padding(top = 20.dp)
+                    .padding(horizontal = 20.dp)
                     .fillMaxWidth()
-                    .height(40.dp)
-                    .border(
-                        width = 1.dp,
-                        color = ColorBorderDisabled,
-                        shape = RoundedCornerShape(8.dp)
-                    ),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                    .weight(1f),
+                contentPadding = PaddingValues(vertical = 18.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                Icon(
-                    modifier = Modifier.size(16.dp),
-                    painter = painterResource(R.drawable.ic_caution),
-                    tint = ColorIconSecondary,
-                    contentDescription = "ic_caution"
-                )
+                items(uiState.outRankMembers) { member ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickableWithoutRipple {
+                                onNavigateToMemberCertInfo(
+                                    uiState.groupId,
+                                    member.memberId,
+                                    member.name
+                                )
+                            },
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = member.rank.toString(),
+                                style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                                color = ColorTextDefault,
+                            )
 
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(R.string.body_ranking),
-                    style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
-                    color = ColorTextDisabled
-                )
-            }
-
-            if (uiState.outRankMembers.isNotEmpty()) {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentPadding = PaddingValues(vertical = 18.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-                    items(uiState.outRankMembers) { member ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickableWithoutRipple {
-                                    onNavigateToMemberCertInfo(
-                                        uiState.groupId,
-                                        member.memberId,
-                                        member.name
+                            Box(
+                                modifier = Modifier
+                                    .padding(start = 20.dp)
+                                    .size(50.dp)
+                                    .border(
+                                        width = 1.dp,
+                                        brush = BrushProfileBorder,
+                                        shape = CircleShape
                                     )
-                                },
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = member.rank.toString(),
-                                    style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
-                                    color = ColorTextDefault,
-                                )
+                            )
 
-                                Box(
-                                    modifier = Modifier
-                                        .padding(start = 20.dp)
-                                        .size(50.dp)
-                                        .border(
-                                            width = 1.dp,
-                                            brush = BrushProfileBorder,
-                                            shape = CircleShape
-                                        )
-                                )
+                            Text(
+                                modifier = Modifier.padding(start = 12.dp),
+                                text = member.name,
+                                style = Body1_S,
+                                color = ColorTextDefault
+                            )
+                        }
 
-                                Text(
-                                    modifier = Modifier.padding(start = 12.dp),
-                                    text = member.name,
-                                    style = Body1_S,
-                                    color = ColorTextDefault
-                                )
-                            }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                painter = painterResource(R.drawable.ic_achieved),
+                                tint = ColorIconPrimary,
+                                contentDescription = "ic_achieved"
+                            )
 
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(R.drawable.ic_achieved),
-                                    tint = ColorIconPrimary,
-                                    contentDescription = "ic_achieved"
-                                )
-
-                                Text(
-                                    modifier = Modifier
-                                        .padding(horizontal = 8.dp),
-                                    text = "${member.achievementRate}%",
-                                    style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
-                                    color = ColorTextPrimary
-                                )
-                            }
+                            Text(
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp),
+                                text = "${member.achievementRate}%",
+                                style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                                color = ColorTextPrimary
+                            )
                         }
                     }
                 }
@@ -235,17 +234,20 @@ private fun RankingScreenContents(
 
 @Composable
 private fun RowScope.RankingMemberCard(
-    rankingMember: RankingMember?,
+    modifier: Modifier = Modifier,
+    isLoading: Boolean,
+    rankingMember: RankingMember,
     onClick: () -> Unit = {},
 ) {
+    val isValid = rankingMember.rank in 1..3
+
     Box(
         modifier = Modifier
             .weight(1f)
             .clickableWithoutRipple(onClick)
     ) {
         Column(
-            modifier = Modifier
-                .padding(top = if (rankingMember?.rank == 1) 0.dp else 20.dp)
+            modifier = modifier
                 .fillMaxWidth()
                 .background(
                     color = ColorBgSurface,
@@ -254,7 +256,7 @@ private fun RowScope.RankingMemberCard(
                 .padding(vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            rankingMember?.let {
+            if (isValid) {
                 Box(
                     modifier = Modifier
                         .size(60.dp)
@@ -266,7 +268,7 @@ private fun RowScope.RankingMemberCard(
                 ) {
 
                 }
-            } ?: run {
+            } else {
                 Box(
                     modifier = Modifier
                         .padding(4.dp)
@@ -281,24 +283,23 @@ private fun RowScope.RankingMemberCard(
 
             Text(
                 modifier = Modifier.padding(top = 12.dp),
-                text = rankingMember?.name ?: "-",
+                text = if (isValid) rankingMember.name else "-",
                 style = Body1_B,
                 color = ColorTextDefault,
             )
 
             Text(
-                text = rankingMember?.achievementRate?.let {
+                text = if (isValid)
                     stringResource(
                         R.string.unit_achieve_ratio,
-                        it
-                    )
-                } ?: "-",
+                        rankingMember.achievementRate
+                    ) else "-",
                 style = Body2_S,
                 color = ColorTextPrimary,
             )
         }
 
-        rankingMember?.let {
+        if (rankingMember.rank in 1..3) {
             Icon(
                 modifier = Modifier
                     .align(Alignment.TopCenter)

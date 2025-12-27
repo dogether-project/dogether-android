@@ -5,7 +5,12 @@ import site.dogether.domain.model.group.Group
 
 data class GroupStatistics(
     val group: Group = Group(),
-    val certificationPeriods: List<GroupCertificationStatistics> = listOf(),
+    val certificationPeriods: List<GroupCertificationStatistics> = listOf(
+        GroupCertificationStatistics(),
+        GroupCertificationStatistics(),
+        GroupCertificationStatistics(),
+        GroupCertificationStatistics()
+    ), // 스켈레톤 표시를 위한 더미 데이터
     val ranking: Ranking = Ranking(),
     val stats: Stats = Stats()
 ) : DomainModel
