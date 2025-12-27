@@ -62,6 +62,7 @@ import site.dogether.common.utils.DateTimeUtils.tomorrow
 import site.dogether.domain.model.group.Group
 import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.R
+import site.dogether.presentation.composables.node.skeleton
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
@@ -441,19 +442,32 @@ private fun InfoRowPreview() {
 
 @Composable
 fun GroupInfoColumn(
+    isLoading: Boolean,
     title: String,
     value: String,
 ) {
     Column {
         Text(
+            modifier = Modifier.skeleton(
+                condition = isLoading,
+                widthDp = 50.dp,
+                heightDp = 22.dp
+            ),
             text = title,
             style = Body2_R.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
             color = ColorTextSecondary
         )
 
         Text(
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .skeleton(
+                    condition = isLoading,
+                    widthDp = 36.dp,
+                    heightDp = 22.dp
+                ),
             text = value,
-            style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+            style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.FirstLineTop)),
             color = ColorTextDefault
         )
     }
@@ -463,6 +477,7 @@ fun GroupInfoColumn(
 @Composable
 private fun GroupInfoColumnPreview() {
     GroupInfoColumn(
+        isLoading = false,
         title = "Title",
         value = "value"
     )

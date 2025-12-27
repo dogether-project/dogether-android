@@ -45,6 +45,8 @@ class HomeViewModel(
             is HomeUiEvent.Lifecycle -> {
                 when (event) {
                     is HomeUiEvent.Lifecycle.OnFirstComposition -> {
+                        updateState { it.copy(isLoading = true)}
+
                         viewModelScope.launch {
                             val getJoiningGroupsResult = getJoiningGroups().getOrElse {
                                 // handle exception
@@ -53,6 +55,8 @@ class HomeViewModel(
 
                             updateState { it.copy(groups = getJoiningGroupsResult.groups) }
                             selectGroup(getJoiningGroupsResult.groups[getJoiningGroupsResult.lastSelectedGroupIndex])
+                        }.invokeOnCompletion {
+                            updateState { it.copy(isLoading = false) }
                         }
 
                         postEffect(HomeUiEffect.CheckNotificationPermission)
