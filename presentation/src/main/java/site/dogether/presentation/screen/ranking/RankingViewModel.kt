@@ -28,13 +28,18 @@ class RankingViewModel(
     }
 
     init {
-        updateState { it.copy(isLoading = true, groupId = groupId) }
+        updateState {
+            it.copy(
+                isLoading = true,
+                groupId = groupId
+            )
+        }
 
         viewModelScope.launch {
             getRanking(groupId).onSuccess { rankingInfo ->
                 val originalMembers = rankingInfo.list
 
-                val inRankArray = Array<RankingMember?>(3) { null }
+                val inRankArray = Array(3) { RankingMember() }
 
                 for (i in 0 until kotlin.math.min(originalMembers.size, 3)) {
                     inRankArray[i] = originalMembers[i]
