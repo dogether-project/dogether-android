@@ -2,13 +2,18 @@ package site.dogether.presentation.composables.node
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.node.DrawModifierNode
+import androidx.compose.ui.node.LayoutModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.invalidateDraw
+import androidx.compose.ui.node.invalidateMeasurement
 import androidx.compose.ui.platform.InspectorInfo
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import site.dogether.presentation.theme.ColorBgSurface
@@ -19,16 +24,34 @@ class SkeletonNode(
     var widthDp: Dp,
     var heightDp: Dp,
     var radiusDp: Dp
-) : DrawModifierNode, Modifier.Node() {
+) : DrawModifierNode, LayoutModifierNode, Modifier.Node() {
+
+    override fun MeasureScope.measure(
+        measurable: Measurable,
+        constraints: Constraints
+    ): MeasureResult {
+        val width = if (condition && widthDp > 0.dp) widthDp.roundToPx() else null
+        val height = if (condition && heightDp > 0.dp) heightDp.roundToPx() else null
+
+        val placeable = measurable.measure(
+            constraints.copy(
+                minWidth = width ?: constraints.minWidth,
+                maxWidth = width ?: constraints.maxWidth,
+                minHeight = height ?: constraints.minHeight,
+                maxHeight = height ?: constraints.maxHeight
+            )
+        )
+
+        return layout(placeable.width, placeable.height) {
+            placeable.placeRelative(0, 0)
+        }
+    }
 
     override fun ContentDrawScope.draw() {
         if (condition) {
-            val finalWidth = if (widthDp > 0.dp) widthDp.toPx() else size.width
-            val finalHeight = if (heightDp > 0.dp) heightDp.toPx() else size.height
-
             drawRoundRect(
                 color = color,
-                size = Size(finalWidth, finalHeight),
+                size = size,
                 cornerRadius = CornerRadius(radiusDp.toPx())
             )
         } else {
@@ -59,6 +82,7 @@ data class SkeletonElement(
         node.widthDp = widthDp
         node.heightDp = heightDp
         node.radiusDp = radiusDp
+        node.invalidateMeasurement()
         node.invalidateDraw()
     }
 
