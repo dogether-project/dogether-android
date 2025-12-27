@@ -42,9 +42,11 @@ import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.skeleton
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.Body2_S
+import site.dogether.presentation.theme.ColorBgDisabled
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBgPrimary
 import site.dogether.presentation.theme.ColorBorderSecondary
@@ -108,14 +110,10 @@ private fun StatisticsScreenContents(
             centerText = stringResource(R.string.title_statistics)
         )
 
-        if (uiState.groups.isNotEmpty()) {
-            StatisticsContents(
-                uiState = uiState,
-                onEvent = onEvent
-            )
-        } else {
-            NoGroupContents()
-        }
+        StatisticsContents(
+            uiState = uiState,
+            onEvent = onEvent
+        )
     }
 }
 
@@ -129,7 +127,13 @@ private fun StatisticsContents(
     Box(modifier = Modifier.fillMaxWidth()) {
         Column {
             Row(
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .skeleton(
+                        condition = uiState.isLoading,
+                        widthDp = 200.dp,
+                        heightDp = 36.dp
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -153,16 +157,19 @@ private fun StatisticsContents(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 GroupInfoColumn(
+                    isLoading = uiState.isLoading,
                     title = stringResource(R.string.info_group_member_count),
                     value = "${group.currentMemberCount}/${group.maximumMemberCount}",
                 )
 
                 GroupInfoColumn(
+                    isLoading = uiState.isLoading,
                     title = stringResource(R.string.info_join_code),
                     value = group.joinCode
                 )
 
                 GroupInfoColumn(
+                    isLoading = uiState.isLoading,
                     title = stringResource(R.string.info_end_date),
                     value = group.endAt
                 )
@@ -265,7 +272,12 @@ private fun StatisticsContents(
                             }
 
                             Text(
-                                modifier = Modifier.padding(top = 10.dp),
+                                modifier = Modifier
+                                    .padding(top = 10.dp)
+                                    .skeleton(
+                                        condition = uiState.isLoading,
+                                        widthDp = 50.dp
+                                    ),
                                 text = "${certificationPeriods[index].day}${stringResource(R.string.unit_day_passed)}",
                                 style = Body2_S,
                                 color = ColorTextDefault
@@ -332,14 +344,24 @@ private fun StatisticsContents(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
+                    modifier = Modifier.skeleton(
+                        condition = uiState.isLoading,
+                        color = ColorBgDisabled,
+                    ),
                     text = ranking.totalMemberCount.toString() + stringResource(R.string.unit_member) + " " + stringResource(R.string.unit_postfix_total),
                     style = Body1_S,
                     color = ColorTextSubtle
                 )
 
                 Text(
+                    modifier = Modifier
+                        .padding(top = 6.dp)
+                        .skeleton(
+                            condition = uiState.isLoading,
+                            color = ColorBgDisabled,
+                        ),
                     text = ranking.myRank.toString() + stringResource(R.string.unit_rank),
-                    style = Emphasis2_B,
+                    style = Emphasis2_B.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.FirstLineTop)),
                     color = ColorTextPrimary
                 )
             }
@@ -379,6 +401,7 @@ private fun StatisticsContents(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 SummaryItem(
+                    isLoading = uiState.isLoading,
                     icon = painterResource(R.drawable.ic_achieved),
                     tint = ColorIconElevated,
                     title = stringResource(R.string.common_achieved),
@@ -386,6 +409,7 @@ private fun StatisticsContents(
                 )
 
                 SummaryItem(
+                    isLoading = uiState.isLoading,
                     icon = painterResource(R.drawable.ic_approve_summary),
                     tint = ColorIconPrimary,
                     title = stringResource(R.string.common_approve),
@@ -393,6 +417,7 @@ private fun StatisticsContents(
                 )
 
                 SummaryItem(
+                    isLoading = uiState.isLoading,
                     icon = painterResource(R.drawable.ic_reject_summary),
                     tint = ColorIconError,
                     title = stringResource(R.string.common_reject),
@@ -483,6 +508,7 @@ fun Modifier.hatch(color: Color = ColorBorderSecondary) = this.then(
 
 @Composable
 private fun SummaryItem(
+    isLoading: Boolean,
     icon: Painter,
     tint: Color,
     title: String,
@@ -503,7 +529,13 @@ private fun SummaryItem(
         )
 
         Text(
-            modifier = Modifier.padding(start = 8.dp),
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .skeleton(
+                    condition = isLoading,
+                    widthDp = 64.dp,
+                    color = ColorBgDisabled
+                ),
             text = "$value" + stringResource(R.string.unit_each),
             style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
             color = ColorTextDefault
