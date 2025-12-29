@@ -24,4 +24,5 @@ object Screen {
     const val CERTIFICATE_DESCRIPTION = "certificate_description"
     const val RANKING = "ranking"
     const val CERTIFICATION_HISTORY = "certification_history"
+    const val CHECK_TODO = "check_todo"
 }

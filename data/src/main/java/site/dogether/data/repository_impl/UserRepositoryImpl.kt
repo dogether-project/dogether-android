@@ -8,6 +8,7 @@ import site.dogether.data.local.DataStoreManager
 import site.dogether.data.local.PreferenceKey
 import site.dogether.data.model.JwtPayload
 import site.dogether.data.remote.ApiRoutes
+import site.dogether.data.remote.model.req.notification.RegisterTokenReq
 import site.dogether.data.remote.model.req.user.KakaoLoginReq
 import site.dogether.data.remote.model.req.user.WithdrawReq
 import site.dogether.data.remote.model.res.user.CheckParticipatingResMapper
@@ -18,6 +19,7 @@ import site.dogether.data.utils.LOGIN_TYPE
 import site.dogether.data.utils.safeDeleteWithoutRes
 import site.dogether.data.utils.safeGet
 import site.dogether.data.utils.safePost
+import site.dogether.data.utils.safePostWithoutRes
 import site.dogether.domain.model.user.GroupStatistics
 import site.dogether.domain.model.user.ParticipatingInfo
 import site.dogether.domain.model.user.UserInfo
@@ -134,6 +136,13 @@ class UserRepositoryImpl(
         return httpClient.safeGet(
             apiRoute = ApiRoutes.getGroupStatistics(groupId),
             mapper = GetGroupStatisticsResMapper
+        )
+    }
+
+    override suspend fun registerFcmToken(token: String): Result<Unit> {
+        return httpClient.safePostWithoutRes<RegisterTokenReq>(
+            apiRoute = ApiRoutes.NOTIFICATION_TOKENS,
+            body = RegisterTokenReq(token = token)
         )
     }
 }

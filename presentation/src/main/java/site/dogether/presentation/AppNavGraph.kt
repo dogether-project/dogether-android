@@ -15,14 +15,15 @@ import site.dogether.KEY_SELECTED_DATE
 import site.dogether.KEY_TODO_ID
 import site.dogether.KEY_TODO_INDEX
 import site.dogether.KEY_TODO_TITLE
+import site.dogether.presentation.screen.certificate.member_cert_info.MemberCertInfoScreen
+import site.dogether.presentation.screen.certificate.my_cert_info.MyCertInfoScreen
+import site.dogether.presentation.screen.check.CheckTodoScreen
 import site.dogether.presentation.screen.create_group.CreateGroupScreen
 import site.dogether.presentation.screen.error.ErrorScreen
 import site.dogether.presentation.screen.force_update.ForceUpdateScreen
 import site.dogether.presentation.screen.group_created.GroupCreatedScreen
 import site.dogether.presentation.screen.group_participated.GroupParticipatedScreen
 import site.dogether.presentation.screen.home.HomeScreen
-import site.dogether.presentation.screen.certificate.member_cert_info.MemberCertInfoScreen
-import site.dogether.presentation.screen.certificate.my_cert_info.MyCertInfoScreen
 import site.dogether.presentation.screen.my_page.MyPageScreen
 import site.dogether.presentation.screen.my_page.screen.certification_list.CertificationListScreen
 import site.dogether.presentation.screen.my_page.screen.certification_list.screen.certification_history.CertificationHistoryScreen
@@ -122,5 +123,6 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
         composable(Screen.CERTIFICATION_HISTORY) {
             CertificationHistoryScreen()
         }
+        composable(Screen.CHECK_TODO) { CheckTodoScreen() }
     }
 }

@@ -8,6 +8,7 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import site.dogether.common.utils.DeeplinkConstants
 import site.dogether.domain.use_case.app_info.CheckUpdateRequiredUseCase
+import site.dogether.domain.use_case.todo.GetPendingReviewCertificationsUseCase
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.GetUserInfoUseCase
 import site.dogether.domain.use_case.user.StoreGroupJoinCodeUseCase
@@ -20,6 +21,7 @@ class SplashViewModel(
     private val getUserInfo: GetUserInfoUseCase,
     private val checkParticipating: CheckParticipatingUseCase,
     private val storeGroupJoinCodeUseCase: StoreGroupJoinCodeUseCase,
+    private val getPendingReviewCertifications: GetPendingReviewCertificationsUseCase,
 ) : BaseViewModel<SplashUiState>(SplashUiState()) {
 
     override val container: Container<SplashUiState, UiEffect> = container(SplashUiState())
@@ -69,6 +71,17 @@ class SplashViewModel(
                                 joinCode?.let { storeGroupJoinCodeUseCase(it) }
                                 postEffect(SplashUiEffect.NavigateToOnBoarding)
                                 return@launch
+                            }
+
+                            // 리뷰 대기가 있는 경우
+                            val getPendingReviewCertifications =
+                                getPendingReviewCertifications().getOrElse {
+                                    // handle exception
+                                    return@launch
+                                }
+
+                            if (getPendingReviewCertifications.certifications.isNotEmpty()) {
+                                postEffect(SplashUiEffect.NavigateToReviewCertification)
                             }
 
                             val checkParticipatingResult = checkParticipating().getOrElse {

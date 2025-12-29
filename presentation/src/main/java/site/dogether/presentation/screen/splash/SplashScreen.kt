@@ -13,7 +13,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import org.koin.androidx.compose.koinViewModel
-import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
@@ -25,7 +24,6 @@ import site.dogether.presentation.utils.ScreenPreview
 
 @Composable
 fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
-    val uiState = viewModel.collectAsState().value
     val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
     val navHostController = LocalNavHostController.current
@@ -57,6 +55,10 @@ fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
             is SplashUiEffect.NavigateToOnBoarding -> navigateToOnBoarding(navHostController)
 
             is SplashUiEffect.NavigateToHome -> navigateToHome(navHostController)
+
+            is SplashUiEffect.NavigateToReviewCertification -> navigateToReviewCertification(
+                navHostController
+            )
 
             is SplashUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(
                 navHostController
@@ -95,6 +97,10 @@ private fun navigateToHome(navHostController: NavHostController) {
 
 private fun navigateToParticipationMethod(navHostController: NavHostController) {
     navHostController.navigate(Screen.PARTICIPATION_METHOD)
+}
+
+private fun navigateToReviewCertification(navHostController: NavHostController) {
+    navHostController.navigate(Screen.CHECK_TODO)
 }
 
 @Composable

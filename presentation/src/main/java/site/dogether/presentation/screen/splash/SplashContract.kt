@@ -26,6 +26,8 @@ sealed interface SplashUiEffect : UiEffect {
 
     data object NavigateToOnBoarding : SplashUiEffect
 
+    data object NavigateToReviewCertification : SplashUiEffect
+
     data object NavigateToHome : SplashUiEffect
 
     data object NavigateToParticipationMethod : SplashUiEffect

@@ -4,6 +4,7 @@ import site.dogether.domain.model.certificate.PresignedUrlData
 import site.dogether.domain.model.todo.GetMyTodoSpecificDateInfo
 import site.dogether.domain.model.todo.MemberTodoHistory
 import site.dogether.domain.model.todo.MyActivity
+import site.dogether.domain.model.todo.PendingReviewCertifications
 import site.dogether.domain.model.todo.Todo
 
 interface TodoRepository {
@@ -79,4 +80,22 @@ interface TodoRepository {
         groupId: Int,
         memberId: Int,
     ): Result<MemberTodoHistory>
+
+    /**
+     * 투두 검사 (인정/노인정)
+     * @param todoId 검사할 투두 ID
+     * @param isApprove 인정 여부 (true: 인정, false: 노인정)
+     * @param feedback 노인정 사유 (노인정인 경우 필수)
+     */
+    suspend fun reviewTodo(
+        todoId: Int,
+        isApprove: Boolean,
+        feedback: String = "",
+    ): Result<Unit>
+
+    /**
+     * 검사 대기 중인 인증 목록 조회
+     * @return 검사 대기 중인 인증 목록
+     */
+    suspend fun getPendingReviewCertifications(): Result<PendingReviewCertifications>
 }

@@ -7,9 +7,12 @@ import site.dogether.data.remote.ApiRoutes
 import site.dogether.data.remote.model.req.todo.CreateTodoReq
 import site.dogether.data.remote.model.req.todo.certificate.CertificateTodoReq
 import site.dogether.data.remote.model.req.todo.certificate.PresignedUrlReq
+import site.dogether.data.remote.model.req.todo.review.ReviewTodoReq
+import site.dogether.data.remote.model.req.todo.review.ReviewTodoResult
 import site.dogether.data.remote.model.res.todo.GetMyTodoSpecificDateResMapper
 import site.dogether.data.remote.model.res.todo.MemberTodoHistoryResMapper
 import site.dogether.data.remote.model.res.todo.MyActivityResMapper
+import site.dogether.data.remote.model.res.todo.PendingReviewCertificationsResMapper
 import site.dogether.data.remote.model.res.todo.TodosResMapper
 import site.dogether.data.remote.model.res.todo.certificate.PresignedUrlResMapper
 import site.dogether.data.utils.safeGet
@@ -21,6 +24,7 @@ import site.dogether.domain.model.certificate.PresignedUrlData
 import site.dogether.domain.model.todo.GetMyTodoSpecificDateInfo
 import site.dogether.domain.model.todo.MemberTodoHistory
 import site.dogether.domain.model.todo.MyActivity
+import site.dogether.domain.model.todo.PendingReviewCertifications
 import site.dogether.domain.model.todo.Todo
 import site.dogether.domain.repository.TodoRepository
 
@@ -131,6 +135,28 @@ class TodoRepositoryImpl(
             apiRoute = ApiRoutes.getMemberTodoHistory(groupId, memberId),
             params = emptyMap(),
             mapper = MemberTodoHistoryResMapper
+        )
+    }
+
+    override suspend fun reviewTodo(
+        todoId: Int,
+        isApprove: Boolean,
+        feedback: String,
+    ): Result<Unit> {
+        return httpClient.safePostWithoutRes(
+            apiRoute = ApiRoutes.reviewTodo(todoId),
+            body = ReviewTodoReq(
+                result = ReviewTodoResult.getResults(isApprove),
+                reviewFeedback = feedback
+            )
+        )
+    }
+
+    override suspend fun getPendingReviewCertifications(): Result<PendingReviewCertifications> {
+        return httpClient.safeGet(
+            apiRoute = ApiRoutes.PENDING_REVIEW_CERTIFICATIONS,
+            params = emptyMap(),
+            mapper = PendingReviewCertificationsResMapper
         )
     }
 }

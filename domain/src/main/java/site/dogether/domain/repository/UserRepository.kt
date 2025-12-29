@@ -27,4 +27,6 @@ interface UserRepository {
     suspend fun withdraw(): Result<Unit>
 
     suspend fun getGroupStatistics(groupId: Int): Result<GroupStatistics>
+
+    suspend fun registerFcmToken(token: String): Result<Unit>
 }
