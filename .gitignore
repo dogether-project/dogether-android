@@ -39,7 +39,7 @@ output.json
 proguard/
 
 # Google 서비스 키
-google-services.json
+#google-services.json
 
 # 임시 파일
 *~
