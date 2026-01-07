@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1084582413530",
+    "project_id": "dogether-b3f37",
+    "storage_bucket": "dogether-b3f37.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1084582413530:android:1f6d7d46305a02b0eed1e3",
+        "android_client_info": {
+          "package_name": "site.dogether.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDevTdTHzTyTfho_ev-bW7cpEPPo7ShFXY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

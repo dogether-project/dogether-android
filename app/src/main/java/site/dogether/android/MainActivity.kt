@@ -23,6 +23,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.chottulink.lib.ChottuLink
 import site.dogether.presentation.AppNavGraph
+import site.dogether.presentation.Screen
 import site.dogether.presentation.theme.ColorBgDefault
 import site.dogether.presentation.theme.ColorIconPrimary
 import site.dogether.presentation.theme.DogetherAndroidTheme
@@ -32,6 +33,7 @@ import site.dogether.presentation.utils.LocalNavHostController
 class MainActivity : ComponentActivity() {
     private var currentIntent: Intent? by mutableStateOf(null)
     private var deeplinkInfo: String? by mutableStateOf(null)
+    private var pushRoute: String? by mutableStateOf(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,14 +41,34 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         currentIntent = intent
         extractDeeplinkInfo(intent)
+        // 초기 Intent가 푸시로 인입된 경우 처리
+        if (intent.extras != null) {
+            redirectFromPush(intent)
+        }
 
         setContent {
             DogetherAndroidTheme {
                 GlobalComposition {
+                    val navController = LocalNavHostController.current
+
                     // 딥링크 정보 추출 - currentIntent가 변경될 때마다 실행
                     LaunchedEffect(currentIntent) {
                         currentIntent?.let { intent ->
                             extractDeeplinkInfo(intent)
+                        }
+                    }
+
+                    // 푸시 알림으로 인입된 경우 네비게이션 처리
+                    LaunchedEffect(pushRoute) {
+                        pushRoute?.let { route ->
+                            navController.navigate(route) {
+                                // 백스택을 HOME까지 유지하고, HOME은 유지
+                                popUpTo(Screen.HOME) {
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                            }
+                            pushRoute = null // 처리 후 초기화
                         }
                     }
 
@@ -68,6 +90,26 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         currentIntent = intent
+        redirectFromPush(intent)
+    }
+
+    // Push로 인입된 유저의 리디렉션
+    private fun redirectFromPush(intent: Intent) {
+        // Intent에 데이터가 없으면 홈으로 이동
+        if (intent.extras == null || intent.extras!!.isEmpty) {
+            pushRoute = Screen.HOME
+            return
+        }
+
+        val extras = intent.extras ?: return
+
+        // TODO : 푸시 타입 또는 화면 정보 확인
+//        val screenType = extras.getString("screen") ?: extras.getString("type")
+//        when (screenType?.lowercase()) {
+//
+//        }
+
+        pushRoute = Screen.HOME
     }
 
     private fun extractDeeplinkInfo(intent: Intent) {

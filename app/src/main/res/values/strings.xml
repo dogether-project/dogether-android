@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Dogether</string>
+    <string name="default_notification_channel_id">dogether_notification_channel</string>
+    <string name="default_notification_channel_name">두게더 알림</string>
+    <string name="default_notification_channel_description">두게더 앱의 모든 알림을 받습니다</string>
+</resources>
+
