@@ -42,6 +42,7 @@ import site.dogether.presentation.theme.Yellow
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
+import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.intervaledClickableWithoutRipple
 
 @Composable
@@ -96,7 +97,8 @@ private fun ParticipationMethodScreenContents(
                 },
                 end = {
                     Icon(
-                        painter = painterResource(R.drawable.ic_arrow_forward),
+                        modifier = Modifier.clickableWithoutRipple { onEvent(ParticipationMethodUiEvent.Click.OnClickMyPage) },
+                        painter = painterResource(R.drawable.ic_my),
                         tint = ColorIconDefault,
                         contentDescription = "icon_arrow_forward"
                     )
