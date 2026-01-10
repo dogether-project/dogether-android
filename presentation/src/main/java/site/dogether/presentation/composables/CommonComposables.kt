@@ -527,12 +527,6 @@ fun SelectGroupBottomSheet(
                     style = Head2_B,
                     color = ColorTextDefault
                 )
-
-                Text(
-                    text = stringResource(R.string.cta_button_confirm),
-                    style = Body1_S,
-                    color = ColorTextDefault
-                )
             }
 
             groups.forEach {
