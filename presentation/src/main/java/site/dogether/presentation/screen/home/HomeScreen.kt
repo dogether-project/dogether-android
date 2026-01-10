@@ -237,7 +237,6 @@ private fun HomeScreenContents(
     uiState: HomeUiState,
     onEvent: (UiEvent) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
     val tooltipState = remember { PersistentTooltipStateImpl() }
     val density = LocalDensity.current
     val context = LocalContext.current
@@ -405,7 +404,8 @@ private fun HomeScreenContents(
                                     .padding(top = 4.dp)
                                     .skeleton(
                                         condition = uiState.isLoading,
-                                        widthDp = 36.dp
+                                        widthDp = 36.dp,
+                                        heightDp = 22.dp
                                     ),
                                 verticalAlignment = Alignment.CenterVertically) {
                                     Text(
