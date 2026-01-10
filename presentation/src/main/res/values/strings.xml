@@ -189,4 +189,7 @@
     <string name="certificate_description_hint">팀원이 이해하기 쉽도록 인증에 대한 설명을 입력하세요.</string>
     <string name="certificate_description_submit_button">인증하기</string>
     <string name="certificate_description_success_message">인증을 완료했어요!</string>
+
+    <!-- Statistics Screen -->
+    <string name="statistics_description_achieve_ratio">%d%% 달성중</string>
 </resources>
