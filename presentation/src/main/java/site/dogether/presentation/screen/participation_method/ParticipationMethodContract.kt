@@ -13,6 +13,8 @@ sealed interface ParticipationMethodUiEvent : UiEvent {
         data object OnClickCreateGroup : Click
 
         data object OnClickParticipateGroup : Click
+
+        data object OnClickMyPage : Click
     }
 }
 
