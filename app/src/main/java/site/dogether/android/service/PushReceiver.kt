@@ -3,36 +3,36 @@ package site.dogether.android.service
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import site.dogether.android.MainActivity
 import site.dogether.android.R
+import site.dogether.domain.use_case.user.RegisterFcmTokenUseCase
 
 class PushReceiver : FirebaseMessagingService() {
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val registerFcmTokenUseCase: RegisterFcmTokenUseCase by inject()
+
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        Log.d(TAG, "From: ${remoteMessage.from}")
-
-        // 데이터 페이로드 확인
-        if (remoteMessage.data.isNotEmpty()) {
-            Log.d(TAG, "Message data payload: ${remoteMessage.data}")
-        }
-
-        // 알림 페이로드 확인
         remoteMessage.notification?.let { notification ->
-            Log.d(TAG, "Message Notification Body: ${notification.body}")
             sendNotification(
-                title = notification.title ?: "두게더",
+                title = notification.title ?: "Dogether",
                 messageBody = notification.body.orEmpty(),
                 data = remoteMessage.data
             )
         } ?: run {
             // 알림이 없고 데이터만 있는 경우
             if (remoteMessage.data.isNotEmpty()) {
-                val title = remoteMessage.data["title"] ?: "두게더"
+                val title = remoteMessage.data["title"] ?: "Dogether"
                 val body = remoteMessage.data["body"].orEmpty()
                 sendNotification(
                     title = title,
@@ -45,10 +45,13 @@ class PushReceiver : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d(TAG, "Refreshed token: $token")
+        sendFcmToken(token)
+    }
 
-        // TODO: 서버에 토큰 전송
-        // sendRegistrationToServer(token)
+    private fun sendFcmToken(token: String) {
+        serviceScope.launch {
+            registerFcmTokenUseCase(token)
+        }
     }
 
     private fun sendNotification(
@@ -85,9 +88,10 @@ class PushReceiver : FirebaseMessagingService() {
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(System.currentTimeMillis().toInt(), notificationBuilder.build())
     }
+}
 
-    companion object {
-        private const val TAG = "PushReceiver"
-    }
+enum class PushType {
+    JOIN, CERTIFICATION, REVIEW;
+    // TODO_CERTIFICATION_REMINDER, TODO_CERTIFICATION_REVIEW_REMINDER // - 알림 재촉하기
 }
 

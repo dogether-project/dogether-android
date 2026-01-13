@@ -6,6 +6,7 @@ import org.koin.dsl.module
 import site.dogether.common.DefaultDispatcher
 import site.dogether.presentation.screen.certificate.member_cert_info.MemberCertInfoViewModel
 import site.dogether.presentation.screen.certificate.my_cert_info.MyCertInfoViewModel
+import site.dogether.presentation.screen.check.CheckTodoViewModel
 import site.dogether.presentation.screen.create_group.CreateGroupViewModel
 import site.dogether.presentation.screen.error.ErrorViewModel
 import site.dogether.presentation.screen.force_update.ForceUpdateViewModel
@@ -33,7 +34,8 @@ val viewModelModule = module {
             checkUpdateRequired = get(),
             getUserInfo = get(),
             checkParticipating = get(),
-            storeGroupJoinCodeUseCase = get()
+            storeGroupJoinCodeUseCase = get(),
+            getPendingReviewCertifications = get()
         )
     }
     viewModel { ForceUpdateViewModel() }
@@ -209,5 +211,11 @@ val viewModelModule = module {
     }
     viewModel {
         CertificationHistoryViewModel()
+    }
+    viewModel {
+        CheckTodoViewModel(
+            getPendingReviewCertifications = get(),
+            reviewTodo = get()
+        )
     }
 }

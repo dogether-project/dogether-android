@@ -1,6 +1,5 @@
 package site.dogether.android.di
 
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import site.dogether.data.repository_impl.AppInfoRepositoryImpl
 import site.dogether.data.repository_impl.GroupRepositoryImpl

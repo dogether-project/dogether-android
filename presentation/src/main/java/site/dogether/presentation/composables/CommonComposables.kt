@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -236,7 +238,10 @@ fun DogetherTextField(
     Row(
         modifier
             .clip(RoundedCornerShape(12.dp))
-            .onFocusChanged { focusState -> borderColorState = if (focusState.hasFocus) ColorBorderPrimary else Color.Transparent }
+            .onFocusChanged { focusState ->
+                borderColorState =
+                    if (focusState.hasFocus) ColorBorderPrimary else Color.Transparent
+            }
             .background(ColorBgElevated)
             .border(
                 width = (1.5).dp,
@@ -375,7 +380,9 @@ fun GroupInfoBoard(
 
             InfoRow(
                 title = stringResource(R.string.info_group_member_count),
-                value = stringResource(R.string.unit_prefix_whole) + " $maximumMemberCount" + stringResource(R.string.unit_member)
+                value = stringResource(R.string.unit_prefix_whole) + " $maximumMemberCount" + stringResource(
+                    R.string.unit_member
+                )
             )
 
             InfoRow(
@@ -387,7 +394,9 @@ fun GroupInfoBoard(
 
             InfoRow(
                 title = stringResource(R.string.info_end_date),
-                value = if (isLaunchFromToday) today.plusDays(duration.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.plusDays(duration.toLong()).toFormattedString(DATE_FORMAT_SHORT_YEAR)
+                value = if (isLaunchFromToday) today.plusDays(duration.toLong())
+                    .toFormattedString(DATE_FORMAT_SHORT_YEAR) else tomorrow.plusDays(duration.toLong())
+                    .toFormattedString(DATE_FORMAT_SHORT_YEAR)
             )
         }
     }
@@ -644,6 +653,49 @@ fun CertInfoRowItem(
             )
         }
     }
+}
+
+@Composable
+private fun ProgressIndicator(
+    currentIndex: Int,
+    totalCount: Int,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        repeat(totalCount) { index ->
+            val isCompleted = index < currentIndex
+            val isCurrent = index == currentIndex
+
+            Box(
+                modifier = Modifier
+                    .size(if (isCurrent) 10.dp else 8.dp)
+                    .background(
+                        color = when {
+                            isCompleted -> ColorBgPrimary
+                            isCurrent -> ColorBgPrimary
+                            else -> ColorBorderDefault
+                        },
+                        shape = CircleShape
+                    )
+            )
+
+            if (index < totalCount - 1) {
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ProgressIndicatorPreview() {
+    ProgressIndicator(
+        currentIndex = 2,
+        totalCount = 5
+    )
 }
 
 /**

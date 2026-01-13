@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.chottulink.lib.ChottuLink
+import site.dogether.android.service.PushType
 import site.dogether.presentation.AppNavGraph
 import site.dogether.presentation.Screen
 import site.dogether.presentation.theme.ColorBgDefault
@@ -31,6 +32,7 @@ import site.dogether.presentation.utils.LocalDeeplinkInfo
 import site.dogether.presentation.utils.LocalNavHostController
 
 class MainActivity : ComponentActivity() {
+    // TODO : 리팩토링 필요..!
     private var currentIntent: Intent? by mutableStateOf(null)
     private var deeplinkInfo: String? by mutableStateOf(null)
     private var pushRoute: String? by mutableStateOf(null)
@@ -96,20 +98,33 @@ class MainActivity : ComponentActivity() {
     // Push로 인입된 유저의 리디렉션
     private fun redirectFromPush(intent: Intent) {
         // Intent에 데이터가 없으면 홈으로 이동
-        if (intent.extras == null || intent.extras!!.isEmpty) {
+        if (intent.extras == null || intent.extras?.isEmpty == true) {
             pushRoute = Screen.HOME
             return
         }
 
         val extras = intent.extras ?: return
 
-        // TODO : 푸시 타입 또는 화면 정보 확인
-//        val screenType = extras.getString("screen") ?: extras.getString("type")
-//        when (screenType?.lowercase()) {
-//
-//        }
+        when (extras.getString("type")) {
+            PushType.JOIN.name -> {
+                // 그룹 참여, 다른 그룹원 참여
+                pushRoute = Screen.HOME
+            }
 
-        pushRoute = Screen.HOME
+            PushType.CERTIFICATION.name -> {
+                // 내가 다른 그룹원의 투두 검사자로 선정되었을때
+                pushRoute = Screen.CHECK_TODO
+            }
+
+            PushType.REVIEW.name -> {
+                // 검사자가 내 투두 인증을 검사했을 때
+                pushRoute = Screen.HOME
+            }
+
+            else -> {
+                pushRoute = Screen.HOME
+            }
+        }
     }
 
     private fun extractDeeplinkInfo(intent: Intent) {

@@ -20,4 +20,7 @@ object ApiRoutes {
     fun getGroupStatistics(groupId: Int): String = "my/groups/${groupId}/activity"
     fun readTodo(todoId: Long): String = "todo-history/$todoId"
     fun getMemberTodoHistory(groupId: Int, memberId: Int): String = "challenge-groups/$groupId/challenge-group-members/$memberId/today-todo-history"
+    fun reviewTodo(todoId: Int): String = "todo-certifications/$todoId/review"
+    const val NOTIFICATION_TOKENS = "notification/tokens"
+    const val PENDING_REVIEW_CERTIFICATIONS = "todo-certifications/pending-review"
 }
