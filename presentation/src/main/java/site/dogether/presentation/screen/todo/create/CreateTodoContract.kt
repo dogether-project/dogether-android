@@ -1,11 +1,11 @@
 package site.dogether.presentation.screen.todo.create
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.dialog_state.DialogState
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 data class CreateTodoUiState(
     val todoItems: List<Todo> = emptyList(),
@@ -28,7 +28,6 @@ sealed interface CreateTodoUiEvent : UiEvent {
     data class RemoveTodoItem(val index: Int) : CreateTodoUiEvent
     data object AddTodoItem : CreateTodoUiEvent
     data object CreateTodos : CreateTodoUiEvent
-    data object NavigateBack : CreateTodoUiEvent
 
     sealed interface CheckDialog : CreateTodoUiEvent {
         data object Confirm : CheckDialog

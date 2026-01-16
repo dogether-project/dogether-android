@@ -21,7 +21,6 @@ sealed interface CertificateDescriptionUiEvent : UiEvent {
 
     data class UpdateDescription(val text: String) : CertificateDescriptionUiEvent
     data object SubmitCertificate : CertificateDescriptionUiEvent
-    data object NavigateBack : CertificateDescriptionUiEvent
 }
 
 sealed interface CertificateDescriptionSideEffect : UiEffect {

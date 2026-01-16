@@ -54,9 +54,7 @@ private fun ParticipateGroupScreenContents(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TopBar(
-                start = {
-                    BackButton {}
-                },
+                start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
                 centerText = stringResource(R.string.title_participate_group)
             )
 

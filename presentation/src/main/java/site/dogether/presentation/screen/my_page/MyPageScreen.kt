@@ -77,7 +77,7 @@ private fun MyPageScreenContents(
             .fillMaxSize()
     ) {
         TopBar(
-            start = { BackButton {} },
+            start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
             centerText = stringResource(R.string.title_my_page)
         )
 

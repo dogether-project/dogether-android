@@ -83,7 +83,7 @@ private fun ParticipationMethodScreenContents(
     ) {
         if (uiState.isParticipatingGroupExist) {
             TopBar(
-                start = { BackButton {} },
+                start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
                 centerText = stringResource(R.string.title_add_new_group),
             )
         } else {

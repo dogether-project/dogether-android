@@ -34,6 +34,7 @@ import site.dogether.domain.model.user.RankingMember
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_S
@@ -81,9 +82,8 @@ private fun RankingScreenContents(
             .fillMaxSize()
     ) {
         TopBar(
-            start = {
-
-            }, centerText = stringResource(R.string.title_ranking)
+            start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
+            centerText = stringResource(R.string.title_ranking)
         )
 
         Row(

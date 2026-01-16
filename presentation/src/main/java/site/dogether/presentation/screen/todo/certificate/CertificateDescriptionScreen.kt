@@ -33,6 +33,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherSnackbar
@@ -99,7 +100,7 @@ fun CertificateDescriptionScreen(
 @Composable
 private fun CertificateDescriptionScreenContents(
     uiState: CertificateDescriptionUiState = CertificateDescriptionUiState(),
-    onEvent: (CertificateDescriptionUiEvent) -> Unit = {},
+    onEvent: (UiEvent) -> Unit = {},
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     context: Context = LocalContext.current
 ) {
@@ -109,7 +110,7 @@ private fun CertificateDescriptionScreenContents(
             .padding(horizontal = 20.dp)
     ) {
         TopBar(
-            start = { BackButton { onEvent(CertificateDescriptionUiEvent.NavigateBack) } },
+            start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
             centerText = context.getString(R.string.certificate_description_screen_title)
         )
 

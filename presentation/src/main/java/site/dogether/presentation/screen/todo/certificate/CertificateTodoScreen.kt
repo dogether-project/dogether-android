@@ -50,6 +50,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherSnackbar
@@ -210,7 +211,7 @@ fun CertificateTodoScreen(
 @Composable
 private fun CertificateTodoScreenContents(
     uiState: CertificateTodoUiState = CertificateTodoUiState(),
-    onEvent: (CertificateTodoUiEvent) -> Unit = {},
+    onEvent: (UiEvent) -> Unit = {},
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     context: Context = LocalContext.current,
 ) {
@@ -220,7 +221,7 @@ private fun CertificateTodoScreenContents(
             .padding(horizontal = 20.dp)
     ) {
         TopBar(
-            start = { BackButton { onEvent(CertificateTodoUiEvent.NavigateBack) } },
+            start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
             centerText = context.getString(R.string.certificate_todo_screen_title)
         )
 

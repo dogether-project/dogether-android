@@ -31,7 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import kotlin.math.roundToInt
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
@@ -48,6 +47,7 @@ import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.utils.animateScrollToItemCenteredFixedWidth
 import site.dogether.presentation.utils.toPx
+import kotlin.math.roundToInt
 
 @Composable
 fun CertificationHistoryScreen(viewModel: CertificationHistoryViewModel = koinViewModel()) {
@@ -111,7 +111,7 @@ private fun CertificationHistoryScreenContents(
                 }
         ) {
             TopBar(
-                start = { BackButton { } },
+                start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
                 centerText = uiState.title
             )
 

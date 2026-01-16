@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import java.net.URLDecoder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import site.dogether.KEY_ENCODED_URI
@@ -14,6 +13,7 @@ import site.dogether.domain.use_case.todo.GetPresignedUrlsUseCase
 import site.dogether.domain.use_case.todo.UploadImageToS3UseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEvent
+import java.net.URLDecoder
 
 class CertificateDescriptionViewModel(
     savedStateHandle: SavedStateHandle,
@@ -58,10 +58,6 @@ class CertificateDescriptionViewModel(
 
             is CertificateDescriptionUiEvent.SubmitCertificate -> {
                 submitCertificate()
-            }
-
-            is CertificateDescriptionUiEvent.NavigateBack -> {
-                navigateBack()
             }
         }
     }
@@ -170,9 +166,4 @@ class CertificateDescriptionViewModel(
             )
         }
     }
-
-    private fun navigateBack() {
-        postEffect(CertificateDescriptionSideEffect.Back)
-    }
-
 }

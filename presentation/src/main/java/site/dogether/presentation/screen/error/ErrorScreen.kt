@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,19 +19,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.NegativeCTAButton
-import site.dogether.presentation.composables.TopBar
-import site.dogether.presentation.screen.error.model.Error
 import site.dogether.presentation.theme.Body2_R
-import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun ErrorScreen(viewModel: ErrorViewModel = koinViewModel()) {
@@ -53,17 +47,6 @@ private fun ErrorScreenContents(
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TopBar(
-            end = {
-                Icon(
-                    modifier = Modifier.clickableWithoutRipple {},
-                    painter = painterResource(R.drawable.ic_close),
-                    tint = ColorIconDefault,
-                    contentDescription = "icon_close"
-                )
-            }
-        )
-
         Column(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,

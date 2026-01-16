@@ -144,7 +144,7 @@ private fun CertificationListScreenContents(
             if (uiState.myActivity.dailyTodoStats.totalCertificatedCount > 0) {
                 TopBar(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    start = { BackButton {} },
+                    start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
                     centerText = stringResource(R.string.title_certification_list)
                 )
 
@@ -658,7 +658,7 @@ private fun DetailModeScreen(
                 }
         ) {
             TopBar(
-                start = { BackButton { } },
+                start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
                 centerText = uiState.detailTitle
             )
 

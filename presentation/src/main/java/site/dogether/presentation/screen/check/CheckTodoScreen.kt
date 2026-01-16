@@ -47,6 +47,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
+import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherSnackbar
@@ -97,10 +98,6 @@ fun CheckTodoScreen(viewModel: CheckTodoViewModel = koinViewModel()) {
 
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is CheckTodoUiEffect.NavigateBack -> {
-                navController.popBackStack()
-            }
-
             is CheckTodoUiEffect.ShowToast -> {
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar(
@@ -127,7 +124,7 @@ fun CheckTodoScreen(viewModel: CheckTodoViewModel = koinViewModel()) {
 @Composable
 private fun CheckTodoScreenContents(
     uiState: CheckTodoUiState = CheckTodoUiState(),
-    onEvent: (CheckTodoUiEvent) -> Unit = {},
+    onEvent: (UiEvent) -> Unit = {},
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     context: Context = LocalContext.current,
 ) {
@@ -138,7 +135,7 @@ private fun CheckTodoScreenContents(
                 .padding(horizontal = 20.dp)
         ) {
             TopBar(
-                start = { BackButton { onEvent(CheckTodoUiEvent.NavigateBack) } },
+                start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
                 centerText = "검사하기"
             )
 
