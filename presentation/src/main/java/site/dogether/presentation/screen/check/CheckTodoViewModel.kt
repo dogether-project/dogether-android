@@ -20,10 +20,6 @@ class CheckTodoViewModel(
                 loadPendingReviewCertifications()
             }
 
-            is CheckTodoUiEvent.NavigateBack -> {
-                postEffect(CheckTodoUiEffect.NavigateBack)
-            }
-
             is CheckTodoUiEvent.SelectReviewType -> {
                 updateState { it.copy(selectedReviewType = event.type) }
 
@@ -60,18 +56,13 @@ class CheckTodoViewModel(
             getPendingReviewCertifications().onSuccess { result ->
                 updateState {
                     it.copy(
-                        isLoading = false,
-                        certifications = result.certifications,
-                        currentIndex = 0,
-                        selectedReviewType = null,
-                        reviewFeedback = ""
+                        isLoading = false, certifications = result.certifications, currentIndex = 0, selectedReviewType = null, reviewFeedback = ""
                     )
                 }
             }.onFailure { error ->
                 updateState {
                     it.copy(
-                        isLoading = false,
-                        errorMessage = error.message ?: "검사 대기 목록을 불러오는데 실패했습니다"
+                        isLoading = false, errorMessage = error.message ?: "검사 대기 목록을 불러오는데 실패했습니다"
                     )
                 }
                 postEffect(CheckTodoUiEffect.ShowToast(error.message ?: "검사 대기 목록을 불러오는데 실패했습니다"))
@@ -95,9 +86,7 @@ class CheckTodoViewModel(
             updateState { it.copy(isLoading = true) }
 
             reviewTodo(
-                todoId = currentState.todoId.toInt(),
-                isApprove = currentState.selectedReviewType == ReviewType.APPROVE,
-                feedback = if (currentState.selectedReviewType == ReviewType.REJECT) {
+                todoId = currentState.todoId.toInt(), isApprove = currentState.selectedReviewType == ReviewType.APPROVE, feedback = if (currentState.selectedReviewType == ReviewType.REJECT) {
                     currentState.reviewFeedback
                 } else {
                     ""
@@ -107,8 +96,7 @@ class CheckTodoViewModel(
             }.onFailure { error ->
                 updateState {
                     it.copy(
-                        isLoading = false,
-                        errorMessage = error.message ?: "검사 결과 제출에 실패했습니다"
+                        isLoading = false, errorMessage = error.message ?: "검사 결과 제출에 실패했습니다"
                     )
                 }
                 postEffect(CheckTodoUiEffect.ShowToast(error.message ?: "검사 결과 제출에 실패했습니다"))
@@ -123,11 +111,7 @@ class CheckTodoViewModel(
             // 다음 인증으로 이동
             updateState {
                 it.copy(
-                    isLoading = false,
-                    currentIndex = it.currentIndex + 1,
-                    selectedReviewType = null,
-                    reviewFeedback = "",
-                    isFeedbackDialogShowing = false
+                    isLoading = false, currentIndex = it.currentIndex + 1, selectedReviewType = null, reviewFeedback = "", isFeedbackDialogShowing = false
                 )
             }
             postEffect(CheckTodoUiEffect.ShowToast("검사 완료! 다음 인증을 확인하세요"))

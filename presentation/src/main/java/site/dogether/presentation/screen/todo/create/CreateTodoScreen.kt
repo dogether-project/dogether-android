@@ -109,7 +109,7 @@ fun CreateTodoScreen(
 @Composable
 private fun CreateTodoScreenContents(
     uiState: CreateTodoUiState = CreateTodoUiState(),
-    onEvent: (CreateTodoUiEvent) -> Unit = {},
+    onEvent: (UiEvent) -> Unit = {},
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     Column(
@@ -124,7 +124,7 @@ private fun CreateTodoScreenContents(
                 .height(56.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            BackButton(onClick = { onEvent(CreateTodoUiEvent.NavigateBack) })
+            BackButton(onClick = { onEvent(UiEvent.Click.OnClickBack) })
 
             Box(
                 modifier = Modifier.weight(1f),

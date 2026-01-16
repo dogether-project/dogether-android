@@ -40,8 +40,8 @@ data class CheckTodoUiState(
 
     val confirmEnabled: Boolean
         get() = selectedReviewType != null &&
-                (selectedReviewType == ReviewType.APPROVE ||
-                        (selectedReviewType == ReviewType.REJECT && reviewFeedback.isNotEmpty()))
+          (selectedReviewType == ReviewType.APPROVE ||
+            (selectedReviewType == ReviewType.REJECT && reviewFeedback.isNotEmpty()))
 }
 
 enum class ReviewType {
@@ -54,7 +54,6 @@ sealed interface CheckTodoUiEvent : UiEvent {
         data object OnStart : Lifecycle
     }
 
-    data object NavigateBack : CheckTodoUiEvent
     data class SelectReviewType(val type: ReviewType) : CheckTodoUiEvent
     data object ShowFeedbackDialog : CheckTodoUiEvent
     data object HideFeedbackDialog : CheckTodoUiEvent
@@ -63,7 +62,6 @@ sealed interface CheckTodoUiEvent : UiEvent {
 }
 
 sealed interface CheckTodoUiEffect : UiEffect {
-    data object NavigateBack : CheckTodoUiEffect
     data class ShowToast(val message: String) : CheckTodoUiEffect
     data object ReviewSubmitted : CheckTodoUiEffect
 }

@@ -60,10 +60,6 @@ class CreateTodoViewModel(
                 showCheckPopup()
             }
 
-            is CreateTodoUiEvent.NavigateBack -> {
-                navigateBack()
-            }
-
             is CreateTodoUiEvent.CheckDialog -> {
                 when (event) {
                     is CreateTodoUiEvent.CheckDialog.Confirm -> {
@@ -189,9 +185,5 @@ class CreateTodoViewModel(
                 )
             }
         }
-    }
-
-    private fun navigateBack() {
-        postEffect(CreateTodoSideEffect.Back)
     }
 }

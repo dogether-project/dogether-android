@@ -115,7 +115,7 @@ private fun MemberCertInfoScreenContents(
             }
     ) {
         TopBar(
-            start = { BackButton { } },
+            start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
             centerText = stringResource(R.string.title_member_cert_info).format(
                 uiState.name
             )

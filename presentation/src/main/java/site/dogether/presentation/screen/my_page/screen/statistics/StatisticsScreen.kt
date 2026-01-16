@@ -111,7 +111,7 @@ private fun StatisticsScreenContents(
             .fillMaxSize()
     ) {
         TopBar(
-            start = { BackButton {} },
+            start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
             centerText = stringResource(R.string.title_statistics)
         )
 

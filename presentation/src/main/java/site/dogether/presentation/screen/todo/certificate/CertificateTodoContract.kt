@@ -22,7 +22,6 @@ sealed interface CertificateTodoUiEvent : UiEvent {
     data object SelectFromGallery : CertificateTodoUiEvent
     data object TakePhoto : CertificateTodoUiEvent
     data object Next : CertificateTodoUiEvent
-    data object NavigateBack : CertificateTodoUiEvent
 }
 
 sealed interface CertificateTodoSideEffect : UiEffect {

@@ -7,8 +7,7 @@ import site.dogether.KEY_TODO_TITLE
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEvent
 
-class CertificateTodoViewModel(savedStateHandle: SavedStateHandle) :
-    BaseViewModel<CertificateTodoUiState>(initialState = CertificateTodoUiState()) {
+class CertificateTodoViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel<CertificateTodoUiState>(initialState = CertificateTodoUiState()) {
 
     val todoId: Int by lazy {
         savedStateHandle.get<Int>(KEY_TODO_ID) ?: -1
@@ -23,8 +22,7 @@ class CertificateTodoViewModel(savedStateHandle: SavedStateHandle) :
             is CertificateTodoUiEvent.Lifecycle -> {
                 updateState {
                     it.copy(
-                        todoId = todoId,
-                        todoTitle = todoTitle
+                        todoId = todoId, todoTitle = todoTitle
                     )
                 }
 
@@ -46,10 +44,6 @@ class CertificateTodoViewModel(savedStateHandle: SavedStateHandle) :
                     postEffect(CertificateTodoSideEffect.ShowToast("인증 사진을 선택해주세요"))
                 }
             }
-
-            is CertificateTodoUiEvent.NavigateBack -> {
-                navigateBack()
-            }
         }
     }
 
@@ -64,10 +58,7 @@ class CertificateTodoViewModel(savedStateHandle: SavedStateHandle) :
     fun setSelectedImage(uri: Uri?) {
         updateState { state ->
             state.copy(
-                selectedImageUri = uri,
-                isRequestingCamera = false,
-                isRequestingGallery = false,
-                errorMessage = null
+                selectedImageUri = uri, isRequestingCamera = false, isRequestingGallery = false, errorMessage = null
             )
         }
     }
@@ -87,14 +78,8 @@ class CertificateTodoViewModel(savedStateHandle: SavedStateHandle) :
     fun setError(message: String?) {
         updateState { state ->
             state.copy(
-                errorMessage = message,
-                isRequestingCamera = false,
-                isRequestingGallery = false
+                errorMessage = message, isRequestingCamera = false, isRequestingGallery = false
             )
         }
-    }
-
-    private fun navigateBack() {
-        postEffect(CertificateTodoSideEffect.Back)
     }
 }
