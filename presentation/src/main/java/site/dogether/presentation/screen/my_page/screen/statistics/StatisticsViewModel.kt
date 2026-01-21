@@ -5,7 +5,9 @@ import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.domain.use_case.user.GetGroupStatisticsUseCase
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.screen.error.model.Error
 
 class StatisticsViewModel(
     private val getJoiningGroupsUseCase: GetJoiningGroupsUseCase,
@@ -45,6 +47,10 @@ class StatisticsViewModel(
     }
 
     init {
+        loadInitialData()
+    }
+
+    private fun loadInitialData() {
         updateState { it.copy(isLoading = true) }
 
         viewModelScope.launch {
@@ -61,7 +67,12 @@ class StatisticsViewModel(
 
                 getGroupStatistics(groupId)
             }.onFailure {
-                // handle exception
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { loadInitialData() }
+                    )
+                )
             }
         }.invokeOnCompletion {
             updateState { it.copy(isLoading = false) }
@@ -75,7 +86,12 @@ class StatisticsViewModel(
             getGroupStatisticsUseCase(groupId).onSuccess { groupStatistics ->
                 updateState { it.copy(groupStatistics = groupStatistics) }
             }.onFailure {
-                // handle exception
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { getGroupStatistics(groupId) }
+                    )
+                )
             }
         }.invokeOnCompletion {
             updateState { it.copy(isLoading = false) }

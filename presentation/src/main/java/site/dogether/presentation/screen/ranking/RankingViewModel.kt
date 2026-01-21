@@ -8,7 +8,9 @@ import site.dogether.common.utils.orZero
 import site.dogether.domain.model.user.RankingMember
 import site.dogether.domain.use_case.group.GetRankingUseCase
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.screen.error.model.Error
 
 class RankingViewModel(
     savedStateHandle: SavedStateHandle,
@@ -28,6 +30,10 @@ class RankingViewModel(
     }
 
     init {
+        loadRanking()
+    }
+
+    private fun loadRanking() {
         updateState {
             it.copy(
                 isLoading = true,
@@ -58,7 +64,12 @@ class RankingViewModel(
                     )
                 }
             }.onFailure {
-                // handle error
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { loadRanking() }
+                    )
+                )
             }
         }.invokeOnCompletion {
             updateState { it.copy(isLoading = false) }

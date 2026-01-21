@@ -37,5 +37,4 @@ sealed interface CreateTodoUiEvent : UiEvent {
 
 sealed interface CreateTodoSideEffect : UiEffect {
     data object Back : CreateTodoSideEffect
-    data class ShowToast(val text: String) : CreateTodoSideEffect
 }

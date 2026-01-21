@@ -10,6 +10,7 @@ enum class Error(
     @field:DrawableRes val imageId: Int = R.drawable.img_error_common,
     @field:StringRes val negativeButtonStringId: Int? = null,
     @field:StringRes val positiveButtonStringId: Int,
+    val errorCode : String = ""
 ) {
     Network(
         titleStringId = R.string.title_error_network,
@@ -39,24 +40,28 @@ enum class Error(
     ),
     ParticipateGroup(
         titleStringId = R.string.title_error_participate_group,
-        positiveButtonStringId = R.string.cta_button_go_back
+        positiveButtonStringId = R.string.cta_button_go_back,
+        errorCode = "CGF-0001"
     ),
     AlreadyParticipated(
         titleStringId = R.string.title_error_already_participated,
         bodyStringId = R.string.body_error_already_participated,
         negativeButtonStringId = R.string.cta_button_go_back,
-        positiveButtonStringId = R.string.cta_button_create_new_group
+        positiveButtonStringId = R.string.cta_button_create_new_group,
+        errorCode = "CGF-0002"
     ),
     FullHouse(
         titleStringId = R.string.title_error_full_house,
         bodyStringId = R.string.body_error_full_house,
         negativeButtonStringId = R.string.cta_button_go_back,
-        positiveButtonStringId = R.string.cta_button_create_new_group
+        positiveButtonStringId = R.string.cta_button_create_new_group,
+        errorCode = "CGF-0003"
     ),
     InvalidGroup(
         titleStringId = R.string.title_error_invalid_group,
         bodyStringId = R.string.body_error_invalid_group,
         negativeButtonStringId = R.string.cta_button_go_back,
-        positiveButtonStringId = R.string.cta_button_create_new_group
+        positiveButtonStringId = R.string.cta_button_create_new_group,
+        errorCode = "CGF-0004"
     )
 }

@@ -19,13 +19,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -38,17 +33,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
-import site.dogether.presentation.composables.DogetherSnackbar
 import site.dogether.presentation.composables.DogetherTextField
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
@@ -62,6 +54,7 @@ import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.clickableWithoutRipple
 
@@ -70,34 +63,20 @@ fun CreateTodoScreen(
     viewModel: CreateTodoViewModel = koinViewModel()
 ) {
     val uiState = viewModel.collectAsState().value
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
     LifecycleEvent(Lifecycle.Event.ON_START) {
         viewModel.onEvent(CreateTodoUiEvent.Lifecycle.OnStart)
     }
 
-    viewModel.collectSideEffect { sideEffect ->
+    viewModel.CollectEffect<CreateTodoSideEffect> { sideEffect ->
         when (sideEffect) {
-            is CreateTodoSideEffect.Back -> {
-
-            }
-
-            is CreateTodoSideEffect.ShowToast -> {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = sideEffect.text,
-                        duration = SnackbarDuration.Short
-                    )
-                }
-            }
+            is CreateTodoSideEffect.Back -> Unit
         }
     }
 
     CreateTodoScreenContents(
         uiState = uiState,
-        onEvent = viewModel::onEvent,
-        snackBarHostState = snackbarHostState
+        onEvent = viewModel::onEvent
     )
 
     CheckDialog(
@@ -109,8 +88,7 @@ fun CreateTodoScreen(
 @Composable
 private fun CreateTodoScreenContents(
     uiState: CreateTodoUiState = CreateTodoUiState(),
-    onEvent: (UiEvent) -> Unit = {},
-    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    onEvent: (UiEvent) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -235,18 +213,6 @@ private fun CreateTodoScreenContents(
 
                 Spacer(modifier = Modifier.height(20.dp))
             }
-
-            // Snackbar Host
-            SnackbarHost(
-                hostState = snackBarHostState,
-                modifier = Modifier.align(Alignment.BottomCenter),
-                snackbar = { snackbarData ->
-                    DogetherSnackbar(
-                        message = snackbarData.visuals.message,
-                        onDismiss = { snackbarData.dismiss() }
-                    )
-                }
-            )
         }
     }
 }

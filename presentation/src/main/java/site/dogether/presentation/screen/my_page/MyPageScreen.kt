@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
@@ -38,6 +39,7 @@ import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.CollectEffect
+import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.clickableWithoutRipple
@@ -47,6 +49,10 @@ private val MENU_LIST: List<Menu> = Menu.entries
 @Composable
 fun MyPageScreen(viewModel: MyPageViewModel = koinViewModel()) {
     val navHostController = LocalNavHostController.current
+
+    LifecycleEvent(Lifecycle.Event.ON_START) {
+        viewModel.onEvent(MyPageUiEvent.OnStart)
+    }
 
     viewModel.CollectEffect<MyPageUiEffect> { uiEffect ->
         when (uiEffect) {

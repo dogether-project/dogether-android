@@ -9,7 +9,9 @@ import site.dogether.domain.use_case.user.LoginWithKakaoUseCase
 import site.dogether.domain.use_case.user.StoreGroupJoinCodeUseCase
 import site.dogether.domain.use_case.user.StoreUserInfoUseCase
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.screen.error.model.Error
 import site.dogether.presentation.screen.on_boarding.OnBoardingUiEvent.Click.OnClickKakaoLogin
 
 class OnBoardingViewModel(
@@ -41,47 +43,7 @@ class OnBoardingViewModel(
                     }
 
                     is OnBoardingUiEvent.Callback.OnSuccessKakaoLogin -> {
-                        viewModelScope.launch {
-                            val loginWithKakaoResult = loginWithKakao(
-                                name = event.name,
-                                idToken = event.idToken
-                            ).getOrElse {
-                                // handle exception
-                                return@launch
-                            }
-
-                            storeUserInfo(
-                                name = loginWithKakaoResult.name,
-                                accessToken = loginWithKakaoResult.accessToken
-                            ).getOrElse {
-                                // handle exception
-                                return@launch
-                            }
-
-                            val checkParticipatingResult = checkParticipating().getOrElse {
-                                // handle exception
-                                return@launch
-                            }
-
-                            // 딥링크로 받은 코드가 있으면 ParticipateGroupScreen으로 이동
-                            val groupJoinCode = getGroupJoinCodeUseCase()
-                            if (groupJoinCode.isNotEmpty()) {
-                                // 저장된 딥링크 정보 삭제
-                                postEffect(
-                                    OnBoardingUiEffect.NavigateToParticipateGroup(
-                                        groupJoinCode
-                                    )
-                                )
-                                storeGroupJoinCodeUseCase()
-                            } else {
-                                // 딥링크가 없으면 기존 로직대로 진행
-                                if (checkParticipatingResult.shouldParticipating) {
-                                    postEffect(OnBoardingUiEffect.NavigateToParticipationMethod)
-                                } else {
-                                    postEffect(OnBoardingUiEffect.NavigateToHome)
-                                }
-                            }
-                        }
+                        handleKakaoLoginSuccess(event.name, event.idToken)
                     }
 
                     is OnBoardingUiEvent.Callback.OnErrorKakaoLogin -> {
@@ -91,6 +53,65 @@ class OnBoardingViewModel(
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    private fun handleKakaoLoginSuccess(name: String, idToken: String) {
+        viewModelScope.launch {
+            val loginWithKakaoResult = loginWithKakao(
+                name = name,
+                idToken = idToken
+            ).getOrElse {
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { handleKakaoLoginSuccess(name, idToken) }
+                    )
+                )
+                return@launch
+            }
+
+            storeUserInfo(
+                name = loginWithKakaoResult.name,
+                accessToken = loginWithKakaoResult.accessToken
+            ).getOrElse {
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { handleKakaoLoginSuccess(name, idToken) }
+                    )
+                )
+                return@launch
+            }
+
+            val checkParticipatingResult = checkParticipating().getOrElse {
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { handleKakaoLoginSuccess(name, idToken) }
+                    )
+                )
+                return@launch
+            }
+
+            // 딥링크로 받은 코드가 있으면 ParticipateGroupScreen으로 이동
+            val groupJoinCode = getGroupJoinCodeUseCase()
+            if (groupJoinCode.isNotEmpty()) {
+                // 저장된 딥링크 정보 삭제
+                postEffect(
+                    OnBoardingUiEffect.NavigateToParticipateGroup(
+                        groupJoinCode
+                    )
+                )
+                storeGroupJoinCodeUseCase()
+            } else {
+                // 딥링크가 없으면 기존 로직대로 진행
+                if (checkParticipatingResult.shouldParticipating) {
+                    postEffect(OnBoardingUiEffect.NavigateToParticipationMethod)
+                } else {
+                    postEffect(OnBoardingUiEffect.NavigateToHome)
                 }
             }
         }

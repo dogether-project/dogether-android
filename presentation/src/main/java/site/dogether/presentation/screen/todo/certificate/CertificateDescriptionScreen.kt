@@ -12,13 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,7 +23,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -36,7 +30,6 @@ import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
-import site.dogether.presentation.composables.DogetherSnackbar
 import site.dogether.presentation.composables.DogetherTextField
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body2_R
@@ -51,11 +44,8 @@ fun CertificateDescriptionScreen(
     viewModel: CertificateDescriptionViewModel = koinViewModel()
 ) {
     val uiState = viewModel.collectAsState().value
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
     val navController = LocalNavHostController.current
     val context = LocalContext.current
-
 
     LifecycleEvent(Lifecycle.Event.ON_START) {
         viewModel.onEvent(CertificateDescriptionUiEvent.Lifecycle.OnStart)
@@ -65,15 +55,6 @@ fun CertificateDescriptionScreen(
         when (sideEffect) {
             is CertificateDescriptionSideEffect.Back -> {
                 navController.popBackStack()
-            }
-
-            is CertificateDescriptionSideEffect.ShowToast -> {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = sideEffect.text,
-                        duration = SnackbarDuration.Short
-                    )
-                }
             }
 
             is CertificateDescriptionSideEffect.NavigateToNext -> {
@@ -92,7 +73,6 @@ fun CertificateDescriptionScreen(
     CertificateDescriptionScreenContents(
         uiState = uiState,
         onEvent = viewModel::onEvent,
-        snackBarHostState = snackbarHostState,
         context = context
     )
 }
@@ -101,7 +81,6 @@ fun CertificateDescriptionScreen(
 private fun CertificateDescriptionScreenContents(
     uiState: CertificateDescriptionUiState = CertificateDescriptionUiState(),
     onEvent: (UiEvent) -> Unit = {},
-    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     context: Context = LocalContext.current
 ) {
     Column(
@@ -178,18 +157,6 @@ private fun CertificateDescriptionScreenContents(
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-
-        // Snackbar Host
-        SnackbarHost(
-            hostState = snackBarHostState,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            snackbar = { snackbarData ->
-                DogetherSnackbar(
-                    message = snackbarData.visuals.message,
-                    onDismiss = { snackbarData.dismiss() }
-                )
-            }
-        )
     }
 }
 

@@ -19,14 +19,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,15 +36,12 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
-import site.dogether.presentation.composables.DogetherSnackbar
 import site.dogether.presentation.composables.DogetherTextField
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body1_B
@@ -68,6 +59,7 @@ import site.dogether.presentation.theme.ColorTextBlack
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.clickableWithoutRipple
@@ -75,38 +67,15 @@ import site.dogether.presentation.utils.clickableWithoutRipple
 @Composable
 fun CheckTodoScreen(viewModel: CheckTodoViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val navController = LocalNavHostController.current
-
-    // 에러 메시지 처리
-    LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let { message ->
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(
-                    message = message,
-                    duration = SnackbarDuration.Short
-                )
-            }
-        }
-    }
 
     LifecycleEvent(Lifecycle.Event.ON_START) {
         viewModel.onEvent(CheckTodoUiEvent.Lifecycle.OnStart)
     }
 
-    viewModel.collectSideEffect { sideEffect ->
+    viewModel.CollectEffect<CheckTodoUiEffect> { sideEffect ->
         when (sideEffect) {
-            is CheckTodoUiEffect.ShowToast -> {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = sideEffect.message,
-                        duration = SnackbarDuration.Short
-                    )
-                }
-            }
-
             is CheckTodoUiEffect.ReviewSubmitted -> {
                 navController.popBackStack()
             }
@@ -116,7 +85,6 @@ fun CheckTodoScreen(viewModel: CheckTodoViewModel = koinViewModel()) {
     CheckTodoScreenContents(
         uiState = uiState,
         onEvent = viewModel::onEvent,
-        snackBarHostState = snackbarHostState,
         context = context
     )
 }
@@ -125,7 +93,6 @@ fun CheckTodoScreen(viewModel: CheckTodoViewModel = koinViewModel()) {
 private fun CheckTodoScreenContents(
     uiState: CheckTodoUiState = CheckTodoUiState(),
     onEvent: (UiEvent) -> Unit = {},
-    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     context: Context = LocalContext.current,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -166,18 +133,6 @@ private fun CheckTodoScreenContents(
                     )
                 }
             }
-
-            // Snackbar Host
-            SnackbarHost(
-                hostState = snackBarHostState,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                snackbar = { snackbarData ->
-                    DogetherSnackbar(
-                        message = snackbarData.visuals.message,
-                        onDismiss = { snackbarData.dismiss() }
-                    )
-                }
-            )
         }
 
         // 피드백 입력 다이얼로그

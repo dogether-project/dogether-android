@@ -42,12 +42,12 @@ fun ActionDialog(
     title: String,
     body: String,
     icon: Painter? = null,
-    negativeText: String,
+    negativeText: String = "",
     positiveText: String,
     positiveButtonColor: Color = ColorBgPrimary,
-    onClickNegative: () -> Unit,
+    onClickNegative: () -> Unit = {},
     onClickPositive: () -> Unit,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit = onClickPositive
 ) {
     Dialog(
         onDismissRequest = { onDismissRequest() },
@@ -99,25 +99,12 @@ fun ActionDialog(
                     )
                 }
 
-                Row(
-                    modifier = Modifier
-                        .padding(top = 24.dp)
-                        .fillMaxWidth()
-                ) {
-                    NegativeCTAButton(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(50.dp),
-                        text = negativeText,
-                        radius = 8.dp,
-                        onClick = { onClickNegative() }
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
+                // negativeText가 비어있으면 positive 버튼만 표시
+                if (negativeText.isEmpty()) {
                     CTAButton(
                         modifier = Modifier
-                            .weight(1f)
+                            .padding(top = 24.dp)
+                            .fillMaxWidth()
                             .height(50.dp),
                         text = positiveText,
                         isEnabled = true,
@@ -125,6 +112,34 @@ fun ActionDialog(
                         color = positiveButtonColor,
                         onClick = { onClickPositive() }
                     )
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 24.dp)
+                            .fillMaxWidth()
+                    ) {
+                        NegativeCTAButton(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(50.dp),
+                            text = negativeText,
+                            radius = 8.dp,
+                            onClick = { onClickNegative() }
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        CTAButton(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(50.dp),
+                            text = positiveText,
+                            isEnabled = true,
+                            radius = 8.dp,
+                            color = positiveButtonColor,
+                            onClick = { onClickPositive() }
+                        )
+                    }
                 }
             }
         }

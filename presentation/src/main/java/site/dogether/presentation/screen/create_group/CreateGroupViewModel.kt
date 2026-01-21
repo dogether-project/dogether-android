@@ -4,7 +4,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.group.CreateGroupUseCase
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.screen.error.model.Error
 
 class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseViewModel<CreateGroupUiState>(CreateGroupUiState()) {
 
@@ -55,18 +57,7 @@ class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseVi
                     }
 
                     is CreateGroupUiEvent.Click.OnClickCreateGroup -> {
-                        viewModelScope.launch {
-                            val createGroupResult = createGroup(
-                                name = uiState.name,
-                                maximumMemberCount = uiState.maximumMemberCount,
-                                isLaunchFromToday = uiState.isLaunchFromToday,
-                                duration = uiState.duration
-                            ).getOrElse { throwable ->
-                                return@launch
-                            }
-
-                            postEffect(CreateGroupUiEffect.NavigateToGroupCreated(createGroupResult.joinCode))
-                        }
+                        createGroupAction()
                     }
 
                     is CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogNegative -> {
@@ -94,5 +85,26 @@ class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseVi
 
     private fun dismissDuplicatedNameDialog() {
         updateState { it.copy(duplicatedNameDialogState = it.duplicatedNameDialogState.copy(isShowing = false)) }
+    }
+
+    private fun createGroupAction() {
+        viewModelScope.launch {
+            val createGroupResult = createGroup(
+                name = uiState.name,
+                maximumMemberCount = uiState.maximumMemberCount,
+                isLaunchFromToday = uiState.isLaunchFromToday,
+                duration = uiState.duration
+            ).getOrElse {
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { createGroupAction() }
+                    )
+                )
+                return@launch
+            }
+
+            postEffect(CreateGroupUiEffect.NavigateToGroupCreated(createGroupResult.joinCode))
+        }
     }
 }

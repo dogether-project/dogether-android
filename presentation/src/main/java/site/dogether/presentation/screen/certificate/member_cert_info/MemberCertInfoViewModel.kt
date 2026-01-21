@@ -9,7 +9,9 @@ import site.dogether.KEY_MEMBER_NAME
 import site.dogether.common.utils.orZero
 import site.dogether.domain.use_case.todo.GetMemberTodoHistoryUseCase
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.screen.error.model.Error
 
 class MemberCertInfoViewModel(
     private val getMemberTodoHistory: GetMemberTodoHistoryUseCase,
@@ -29,6 +31,10 @@ class MemberCertInfoViewModel(
     }
 
     init {
+        loadData()
+    }
+
+    private fun loadData() {
         viewModelScope.launch {
             updateState { it.copy(isLoading = true, name = name) }
 
@@ -50,6 +56,12 @@ class MemberCertInfoViewModel(
                 }
             }.onFailure {
                 updateState { it.copy(isLoading = false) }
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { loadData() }
+                    )
+                )
             }
         }
     }

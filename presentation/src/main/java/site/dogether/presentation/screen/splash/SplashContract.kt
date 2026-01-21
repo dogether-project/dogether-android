@@ -19,6 +19,8 @@ sealed interface SplashUiEvent : UiEvent {
     sealed interface Deeplink : SplashUiEvent {
         data class OnDeeplinkReceived(val link: String?) : Deeplink
     }
+
+    data class ShowToast(val text: String) : SplashUiEvent
 }
 
 sealed interface SplashUiEffect : UiEffect {

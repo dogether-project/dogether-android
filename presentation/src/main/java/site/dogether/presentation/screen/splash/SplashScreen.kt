@@ -48,7 +48,11 @@ fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
                             )
                         )
                     },
-                    onFailure = {}
+                    onFailure = {
+                        onEvent(
+                            SplashUiEvent.ShowToast("서버가 불안정합니다. 다시 시도해주세요")
+                        )
+                    }
                 )
             }
 

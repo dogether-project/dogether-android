@@ -21,14 +21,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,7 +40,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -53,7 +48,6 @@ import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
-import site.dogether.presentation.composables.DogetherSnackbar
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.ColorBgElevated
@@ -75,8 +69,6 @@ fun CertificateTodoScreen(
     viewModel: CertificateTodoViewModel = koinViewModel(),
 ) {
     val uiState = viewModel.collectAsState().value
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val navController = LocalNavHostController.current
 
@@ -112,18 +104,6 @@ fun CertificateTodoScreen(
         viewModel.onEvent(CertificateTodoUiEvent.Lifecycle.OnStart)
     }
 
-    // 에러 메시지 처리
-    LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let { message ->
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(
-                    message = message,
-                    duration = SnackbarDuration.Short
-                )
-            }
-        }
-    }
-
     // 권한 승인 후 자동 실행
     LaunchedEffect(cameraPermissionState.status.isGranted, uiState.isRequestingCamera) {
         if (cameraPermissionState.status.isGranted && uiState.isRequestingCamera) {
@@ -155,15 +135,6 @@ fun CertificateTodoScreen(
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is CertificateTodoSideEffect.Back -> Unit
-
-            is CertificateTodoSideEffect.ShowToast -> {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = sideEffect.text,
-                        duration = SnackbarDuration.Short
-                    )
-                }
-            }
 
             is CertificateTodoSideEffect.OpenGallery -> {
                 if (storagePermissionState.status.isGranted) {
@@ -202,7 +173,6 @@ fun CertificateTodoScreen(
     CertificateTodoScreenContents(
         uiState = uiState,
         onEvent = viewModel::onEvent,
-        snackBarHostState = snackbarHostState,
         context = context
     )
 }
@@ -212,7 +182,6 @@ fun CertificateTodoScreen(
 private fun CertificateTodoScreenContents(
     uiState: CertificateTodoUiState = CertificateTodoUiState(),
     onEvent: (UiEvent) -> Unit = {},
-    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     context: Context = LocalContext.current,
 ) {
     Column(
@@ -284,18 +253,6 @@ private fun CertificateTodoScreenContents(
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-
-        // Snackbar Host
-        SnackbarHost(
-            hostState = snackBarHostState,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            snackbar = { snackbarData ->
-                DogetherSnackbar(
-                    message = snackbarData.visuals.message,
-                    onDismiss = { snackbarData.dismiss() }
-                )
-            }
-        )
     }
 }
 

@@ -5,11 +5,14 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
@@ -50,14 +53,29 @@ val LocalDeeplinkInfo = staticCompositionLocalOf<String?> {
     null // 기본값은 null (딥링크가 없을 때)
 }
 
+val LocalSnackbarHostState = staticCompositionLocalOf<SnackbarHostState> {
+    error("SnackbarHostState not provided")
+}
+
 @Composable
 inline fun <reified Effect : UiEffect> BaseViewModel<*>.CollectEffect(crossinline onCollected: (Effect) -> Unit) {
     val navHostController = LocalNavHostController.current
+    val snackbarHostState = LocalSnackbarHostState.current
+    val errorCallbackManager = LocalErrorCallbackManager.current
+    val scope = rememberCoroutineScope()
+
     collectSideEffect { effect ->
         when (effect) {
             is UiEffect.NavigateToPreviousScreen -> navHostController.popBackStack()
 
-            is UiEffect.NavigateToError -> navHostController.navigate(Screen.ERROR)
+            is UiEffect.NavigateToErrorWithCallback -> {
+                // 콜백 저장 후 에러 화면으로 이동
+                errorCallbackManager.setCallbacks(
+                    onPositive = effect.onPositive,
+                    onNegative = effect.onNegative
+                )
+                navHostController.navigate("${Screen.ERROR}/${effect.error.name}")
+            }
 
             is UiEffect.NavigateTo -> {
                 navHostController.navigate(effect.screen) {
@@ -67,6 +85,15 @@ inline fun <reified Effect : UiEffect> BaseViewModel<*>.CollectEffect(crossinlin
                         }
                         launchSingleTop = true
                     }
+                }
+            }
+
+            is UiEffect.ShowToast -> {
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = effect.text,
+                        duration = SnackbarDuration.Short
+                    )
                 }
             }
 
