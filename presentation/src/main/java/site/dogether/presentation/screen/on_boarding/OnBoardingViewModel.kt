@@ -100,12 +100,13 @@ class OnBoardingViewModel(
             val groupJoinCode = getGroupJoinCodeUseCase()
             if (groupJoinCode.isNotEmpty()) {
                 // 저장된 딥링크 정보 삭제
+                storeGroupJoinCodeUseCase()
+
                 postEffect(
                     OnBoardingUiEffect.NavigateToParticipateGroup(
                         groupJoinCode
                     )
                 )
-                storeGroupJoinCodeUseCase()
             } else {
                 // 딥링크가 없으면 기존 로직대로 진행
                 if (checkParticipatingResult.shouldParticipating) {

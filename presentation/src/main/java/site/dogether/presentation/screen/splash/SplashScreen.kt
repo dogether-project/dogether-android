@@ -96,7 +96,9 @@ private fun navigateToOnBoarding(navHostController: NavHostController) {
 }
 
 private fun navigateToHome(navHostController: NavHostController) {
-    navHostController.navigate(Screen.HOME)
+    navHostController.navigate(Screen.HOME) {
+        popUpTo(0) { inclusive = true }
+    }
 }
 
 private fun navigateToParticipationMethod(navHostController: NavHostController) {

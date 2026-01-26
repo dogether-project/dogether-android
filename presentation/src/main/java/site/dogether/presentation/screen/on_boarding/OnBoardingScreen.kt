@@ -142,7 +142,9 @@ private fun loginWithKakaoAccount(
 }
 
 private fun navigateToHome(navHostController: NavHostController) {
-    navHostController.navigate(Screen.HOME)
+    navHostController.navigate(Screen.HOME) {
+        popUpTo(0) { inclusive = false }
+    }
 }
 
 private fun navigateToParticipationMethod(navHostController: NavHostController) {

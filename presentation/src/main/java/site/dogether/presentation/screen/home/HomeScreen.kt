@@ -1,9 +1,11 @@
 package site.dogether.presentation.screen.home
 
+import android.app.Activity
 import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -140,6 +142,11 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
     val navHostController = LocalNavHostController.current
+
+    // 백버튼 누르면 앱 완전 종료
+    BackHandler {
+        (context as? Activity)?.finishAffinity()
+    }
 
     viewModel.CollectEffect<HomeUiEffect> { uiEffect ->
         when (uiEffect) {
