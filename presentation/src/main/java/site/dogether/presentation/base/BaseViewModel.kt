@@ -35,4 +35,8 @@ open class BaseViewModel<State : Any>(
     protected fun postEffect(effect: UiEffect) {
         intent { postSideEffect(effect) }
     }
+
+    protected fun showToast(message: String) {
+        postEffect(UiEffect.ShowToast(message))
+    }
 }

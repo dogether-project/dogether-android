@@ -9,33 +9,48 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.chottulink.lib.ChottuLink
 import site.dogether.android.service.PushType
+import site.dogether.common.auth.TokenExpirationManager
 import site.dogether.presentation.AppNavGraph
+import site.dogether.presentation.R
 import site.dogether.presentation.Screen
+import site.dogether.presentation.composables.ActionDialog
+import site.dogether.presentation.composables.DogetherSnackbar
 import site.dogether.presentation.theme.ColorBgDefault
 import site.dogether.presentation.theme.ColorIconPrimary
 import site.dogether.presentation.theme.DogetherAndroidTheme
+import site.dogether.presentation.utils.ErrorCallbackManager
 import site.dogether.presentation.utils.LocalDeeplinkInfo
+import site.dogether.presentation.utils.LocalErrorCallbackManager
 import site.dogether.presentation.utils.LocalNavHostController
+import site.dogether.presentation.utils.LocalSnackbarHostState
 
 class MainActivity : ComponentActivity() {
     // TODO : 리팩토링 필요..!
     private var currentIntent: Intent? by mutableStateOf(null)
     private var deeplinkInfo: String? by mutableStateOf(null)
     private var pushRoute: String? by mutableStateOf(null)
+    private var showTokenExpiredDialog by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +87,29 @@ class MainActivity : ComponentActivity() {
                             }
                             pushRoute = null // 처리 후 초기화
                         }
+                    }
+
+                    // 토큰 만료 이벤트 구독 - 다이얼로그 표시
+                    LaunchedEffect(Unit) {
+                        TokenExpirationManager.tokenExpiredEvent.collect {
+                            showTokenExpiredDialog = true
+                        }
+                    }
+
+                    // 토큰 만료 다이얼로그
+                    if (showTokenExpiredDialog) {
+                        ActionDialog(
+                            title = "로그인 정보가 만료됐어요",
+                            body = "다시 로그인해 주세요.",
+                            icon = painterResource(R.drawable.ic_notice),
+                            positiveText = "확인",
+                            onClickPositive = {
+                                showTokenExpiredDialog = false
+                                navController.navigate(Screen.ON_BOARDING) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
+                        )
                     }
 
                     Box(
@@ -141,6 +179,9 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun GlobalComposition(block: @Composable () -> Unit) {
+        val snackbarHostState = remember { SnackbarHostState() }
+        val errorCallbackManager = remember { ErrorCallbackManager() }
+
         CompositionLocalProvider(
             LocalOverscrollFactory provides null,
             LocalTextSelectionColors provides TextSelectionColors(
@@ -148,9 +189,25 @@ class MainActivity : ComponentActivity() {
                 backgroundColor = ColorIconPrimary.copy(alpha = 0.4f)
             ),
             LocalNavHostController provides rememberNavController(),
-            LocalDeeplinkInfo provides deeplinkInfo
+            LocalDeeplinkInfo provides deeplinkInfo,
+            LocalSnackbarHostState provides snackbarHostState,
+            LocalErrorCallbackManager provides errorCallbackManager
         ) {
-            block()
+            Box(modifier = Modifier.fillMaxSize()) {
+                block()
+                // 전역 Snackbar Host
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 30.dp)
+                ) { snackbarData ->
+                    DogetherSnackbar(
+                        message = snackbarData.visuals.message,
+                        onDismiss = { snackbarData.dismiss() }
+                    )
+                }
+            }
         }
     }
 }

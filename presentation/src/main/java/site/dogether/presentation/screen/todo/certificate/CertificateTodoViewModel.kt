@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import site.dogether.KEY_TODO_ID
 import site.dogether.KEY_TODO_TITLE
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 
 class CertificateTodoViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel<CertificateTodoUiState>(initialState = CertificateTodoUiState()) {
@@ -41,7 +42,7 @@ class CertificateTodoViewModel(savedStateHandle: SavedStateHandle) : BaseViewMod
                 if (uiState.selectedImageUri != null) {
                     postEffect(CertificateTodoSideEffect.NavigateToNext)
                 } else {
-                    postEffect(CertificateTodoSideEffect.ShowToast("인증 사진을 선택해주세요"))
+                    postEffect(UiEffect.ShowToast("인증 사진을 선택해주세요"))
                 }
             }
         }

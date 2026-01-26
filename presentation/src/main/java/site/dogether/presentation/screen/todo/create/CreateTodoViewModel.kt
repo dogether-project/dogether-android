@@ -14,7 +14,9 @@ import site.dogether.domain.model.todo.Todo
 import site.dogether.domain.use_case.todo.CreateMyTodosUseCase
 import site.dogether.domain.use_case.todo.GetMyTodoSpecificDateUseCase
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.screen.error.model.Error
 import site.dogether.presentation.model.dialog_state.DialogState
 
 class CreateTodoViewModel(
@@ -89,12 +91,13 @@ class CreateTodoViewModel(
                 groupId = groupId,
                 date = uiState.selectedDate.toFormattedString(DATE_FORMAT_FULL_YEAR)
             )
-                .getOrElse { error ->
+                .getOrElse {
                     postEffect(
-                        CreateTodoSideEffect.ShowToast(
-                            text = error.message.takeIf {
-                                it.isNullOrEmpty().not()
-                            } ?: "투두 목록을 불러오는데 실패했습니다."))
+                        UiEffect.NavigateToErrorWithCallback(
+                            error = Error.LoadData,
+                            onPositive = { getMyTodoList() }
+                        )
+                    )
                     return@launch
                 }.let { todoList ->
                     updateState { state ->
@@ -167,22 +170,19 @@ class CreateTodoViewModel(
             createMyTodosUseCase(
                 groupId = groupId,
                 todos = uiState.todoItems.filter { it.id == 0L }.map { it.content }
-            ).getOrElse { error ->
-                postEffect(
-                    CreateTodoSideEffect.ShowToast(
-                        text = error.message.takeIf {
-                            it.isNullOrEmpty().not()
-                        } ?: "투두 목록을 저장하는데 실패했습니다.")
-                )
+            ).getOrElse {
                 closeCheckPopup()
-                getMyTodoList()
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { createTodos() }
+                    )
+                )
                 return@launch
             }.let {
                 closeCheckPopup()
                 getMyTodoList()
-                postEffect(
-                    CreateTodoSideEffect.ShowToast("투두 저장에 성공했습니다")
-                )
+                postEffect(UiEffect.ShowToast("투두 저장에 성공했습니다"))
             }
         }
     }

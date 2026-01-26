@@ -2,6 +2,7 @@ package site.dogether.data.utils
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.delete
@@ -14,6 +15,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
+import site.dogether.common.auth.TokenExpirationManager
 import site.dogether.common.exception.NetworkFailureException
 import site.dogether.data.model.DataMapper
 import site.dogether.data.model.DataModel
@@ -43,11 +45,18 @@ suspend inline fun <reified T> safeApiCall(
             if (data != null) {
                 Result.success(data)
             } else {
-                Result.failure(IllegalStateException("Response body 'data' is null"))
+                Log.d("safeApiCall", "safeApiCall Error! Response body 'data' is null")
+                Result.failure(Exception("서버가 불안정합니다. 다시 시도해주세요"))
             }
         } else {
             val parsedErrorBody =
                 json.decodeFromString<BaseResponse<Nothing>>(response.bodyAsText())
+
+            // 토큰 만료 에러 체크
+            if (TokenExpirationManager.isTokenExpiredError(parsedErrorBody.code)) {
+                TokenExpirationManager.notifyTokenExpired()
+            }
+
             Result.failure(
                 NetworkFailureException(
                     code = parsedErrorBody.code,
@@ -70,6 +79,12 @@ suspend inline fun safeApiCallWithoutRes(
         } else {
             val parsedErrorBody =
                 json.decodeFromString<BaseResponse<Nothing>>(response.bodyAsText())
+
+            // 토큰 만료 에러 체크
+            if (TokenExpirationManager.isTokenExpiredError(parsedErrorBody.code)) {
+                TokenExpirationManager.notifyTokenExpired()
+            }
+
             Result.failure(
                 NetworkFailureException(
                     code = parsedErrorBody.code,

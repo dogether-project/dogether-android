@@ -25,7 +25,6 @@ sealed interface CertificateDescriptionUiEvent : UiEvent {
 
 sealed interface CertificateDescriptionSideEffect : UiEffect {
     data object Back : CertificateDescriptionSideEffect
-    data class ShowToast(val text: String) : CertificateDescriptionSideEffect
     data object NavigateToNext : CertificateDescriptionSideEffect
     data object NavigateToHome : CertificateDescriptionSideEffect
 }

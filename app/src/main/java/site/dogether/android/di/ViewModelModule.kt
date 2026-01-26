@@ -55,7 +55,7 @@ val viewModelModule = module {
     viewModel { GroupCreatedViewModel(savedStateHandle = get()) }
     viewModel { ParticipateGroupViewModel(participateGroup = get(), savedStateHandle = get()) }
     viewModel { GroupParticipatedViewModel() }
-    viewModel { ErrorViewModel() }
+    viewModel { ErrorViewModel(savedStateHandle = get()) }
     viewModel {
         HomeViewModel(
             defaultDispatcher = get(named(DefaultDispatcher)),
@@ -64,91 +64,7 @@ val viewModelModule = module {
             getMyTodoSpecificDate = get()
         )
     }
-    viewModel { MyPageViewModel() }
-    viewModel {
-        StatisticsViewModel(
-            getJoiningGroupsUseCase = get(),
-            getGroupStatisticsUseCase = get()
-        )
-    }
-    viewModel {
-        CertificationListViewModel(
-            getMyActivity = get()
-        )
-    }
-    viewModel {
-        SettingsViewModel(
-            logout = get(),
-            withdraw = get()
-        )
-    }
-    viewModel {
-        GroupManagementViewModel(
-            getJoiningGroups = get(),
-            withdrawGroup = get()
-        )
-    }
-    viewModel {
-        MyCertInfoViewModel(
-            getMyTodoListByDate = get(),
-            getUserInfo = get(),
-            savedStateHandle = get(),
-        )
-    }
-    viewModel {
-        CreateTodoViewModel(
-            getMyTodoSpecificDateUseCase = get(),
-            createMyTodosUseCase = get(),
-            savedStateHandle = get()
-        )
-    }
-    viewModel {
-        CertificateTodoViewModel(savedStateHandle = get())
-    }
-    viewModel {
-        CertificateDescriptionViewModel(
-            savedStateHandle = get(),
-            getPresignedUrlsUseCase = get(),
-            uploadImageToS3UseCase = get(),
-            certificateTodoUseCase = get()
-        )
-    }
-    viewModel {
-        RankingViewModel(
-            savedStateHandle = get(),
-            getRanking = get()
-        )
-    }
-    viewModel {
-        CertificationHistoryViewModel()
-    }
-    viewModel { ForceUpdateViewModel() }
-    viewModel {
-        OnBoardingViewModel(
-            loginWithKakao = get(),
-            storeUserInfo = get(),
-            checkParticipating = get(),
-            getGroupJoinCodeUseCase = get(),
-            storeGroupJoinCodeUseCase = get()
-        )
-    }
-    viewModel { ParticipationMethodViewModel() }
-    viewModel {
-        CreateGroupViewModel(createGroup = get())
-    }
-    viewModel { GroupCreatedViewModel(savedStateHandle = get()) }
-    viewModel { ParticipateGroupViewModel(participateGroup = get(), savedStateHandle = get()) }
-    viewModel { GroupParticipatedViewModel() }
-    viewModel { ErrorViewModel() }
-    viewModel {
-        HomeViewModel(
-            defaultDispatcher = get(named(DefaultDispatcher)),
-            getJoiningGroups = get(),
-            storeLastSelectedGroupId = get(),
-            getMyTodoSpecificDate = get()
-        )
-    }
-    viewModel { MyPageViewModel() }
+    viewModel { MyPageViewModel(getUserInfoUseCase = get()) }
     viewModel {
         StatisticsViewModel(
             getJoiningGroupsUseCase = get(),

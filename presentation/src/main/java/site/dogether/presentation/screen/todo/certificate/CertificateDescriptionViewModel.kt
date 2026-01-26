@@ -12,7 +12,9 @@ import site.dogether.domain.use_case.todo.CertificateTodoUseCase
 import site.dogether.domain.use_case.todo.GetPresignedUrlsUseCase
 import site.dogether.domain.use_case.todo.UploadImageToS3UseCase
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.screen.error.model.Error
 import java.net.URLDecoder
 
 class CertificateDescriptionViewModel(
@@ -97,11 +99,16 @@ class CertificateDescriptionViewModel(
                     // 2. 이미지를 S3에 업로드
                     uploadImageToS3(presignedUrls.firstOrNull())
                 },
-                onFailure = { error ->
+                onFailure = {
                     updateState { state ->
                         state.copy(isLoading = false)
                     }
-                    postEffect(CertificateDescriptionSideEffect.ShowToast("Presigned URL 발급 실패: ${error.message}"))
+                    postEffect(
+                        UiEffect.NavigateToErrorWithCallback(
+                            error = Error.LoadData,
+                            onPositive = { submitCertificate() }
+                        )
+                    )
                 }
             )
         }
@@ -112,7 +119,7 @@ class CertificateDescriptionViewModel(
             updateState { state ->
                 state.copy(isLoading = false)
             }
-            postEffect(CertificateDescriptionSideEffect.ShowToast("Presigned URL이 없습니다"))
+            postEffect(UiEffect.ShowToast("Presigned URL이 없습니다"))
             return
         }
 
@@ -121,7 +128,7 @@ class CertificateDescriptionViewModel(
             updateState { state ->
                 state.copy(isLoading = false)
             }
-            postEffect(CertificateDescriptionSideEffect.ShowToast("이미지가 선택되지 않았습니다"))
+            postEffect(UiEffect.ShowToast("이미지가 선택되지 않았습니다"))
             return
         }
 
@@ -133,11 +140,16 @@ class CertificateDescriptionViewModel(
                 onSuccess = {
                     certificateTodo(presignedUrl)
                 },
-                onFailure = { error ->
+                onFailure = {
                     updateState { state ->
                         state.copy(isLoading = false)
                     }
-                    postEffect(CertificateDescriptionSideEffect.ShowToast("S3 업로드 실패: ${error.message}"))
+                    postEffect(
+                        UiEffect.NavigateToErrorWithCallback(
+                            error = Error.LoadData,
+                            onPositive = { uploadImageToS3(presignedUrl) }
+                        )
+                    )
                 }
             )
         }
@@ -154,14 +166,19 @@ class CertificateDescriptionViewModel(
                     updateState { state ->
                         state.copy(isLoading = false)
                     }
-                    postEffect(CertificateDescriptionSideEffect.ShowToast("인증을 완료했어요!"))
+                    postEffect(UiEffect.ShowToast("인증을 완료했어요!"))
                     postEffect(CertificateDescriptionSideEffect.NavigateToHome)
                 },
-                onFailure = { error ->
+                onFailure = {
                     updateState { state ->
                         state.copy(isLoading = false)
                     }
-                    postEffect(CertificateDescriptionSideEffect.ShowToast("인증 실패: ${error.message}"))
+                    postEffect(
+                        UiEffect.NavigateToErrorWithCallback(
+                            error = Error.LoadData,
+                            onPositive = { certificateTodo(s3Url) }
+                        )
+                    )
                 }
             )
         }

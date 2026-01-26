@@ -7,7 +7,9 @@ import site.dogether.domain.model.todo.Todo.Companion.STATUS_REJECT
 import site.dogether.domain.model.todo.Todo.Companion.STATUS_REVIEW_PENDING
 import site.dogether.domain.use_case.todo.GetMyActivityUseCase
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.screen.error.model.Error
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.Chip
 
 class CertificationListViewModel(
@@ -138,8 +140,8 @@ class CertificationListViewModel(
                                         )
                                     }
                                 }
-                            }.onFailure {
-
+                            }.onFailure { error ->
+                                postEffect(UiEffect.ShowToast(error.message ?: "인증 목록을 불러오는데 실패했습니다"))
                             }
                         }.invokeOnCompletion {
                             updateState { it.copy(isLoading = false) }
@@ -176,7 +178,12 @@ class CertificationListViewModel(
             ).onSuccess { myActivity ->
                 updateState { it.copy(myActivity = myActivity) }
             }.onFailure {
-                // handle exception
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { loadNewMyActivityData(sortBy, status) }
+                    )
+                )
             }
         }.invokeOnCompletion {
             updateState { it.copy(isLoading = false) }

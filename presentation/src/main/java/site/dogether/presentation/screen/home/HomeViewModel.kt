@@ -25,6 +25,7 @@ import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.screen.error.model.Error
 import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.TooltipUiState
 import java.time.Duration.between
@@ -45,20 +46,7 @@ class HomeViewModel(
             is HomeUiEvent.Lifecycle -> {
                 when (event) {
                     is HomeUiEvent.Lifecycle.OnFirstComposition -> {
-                        updateState { it.copy(isLoading = true)}
-
-                        viewModelScope.launch {
-                            val getJoiningGroupsResult = getJoiningGroups().getOrElse {
-                                // handle exception
-                                return@launch
-                            }
-
-                            updateState { it.copy(groups = getJoiningGroupsResult.groups) }
-                            selectGroup(getJoiningGroupsResult.groups[getJoiningGroupsResult.lastSelectedGroupIndex])
-                        }.invokeOnCompletion {
-                            updateState { it.copy(isLoading = false) }
-                        }
-
+                        loadInitialData()
                         postEffect(HomeUiEffect.CheckNotificationPermission)
                     }
                 }
@@ -95,43 +83,11 @@ class HomeViewModel(
                     }
 
                     is HomeUiEvent.Click.OnClickPrevDay -> {
-                        viewModelScope.launch {
-                            val date = uiState.selectedDate.minusDays(1)
-                            val getMyTodoSpecificDateResult = getMyTodoSpecificDate(
-                                groupId = uiState.selectedGroup.id,
-                                date = date.toFormattedString(DATE_FORMAT_FULL_YEAR)
-                            ).getOrElse {
-                                // handle exception
-                                return@launch
-                            }.todos
-
-                            updateState {
-                                it.copy(
-                                    selectedDate = date,
-                                    todoList = getMyTodoSpecificDateResult
-                                )
-                            }
-                        }
+                        loadTodosForDate(uiState.selectedDate.minusDays(1))
                     }
 
                     is HomeUiEvent.Click.OnClickNextDay -> {
-                        viewModelScope.launch {
-                            val date = uiState.selectedDate.plusDays(1)
-                            val getMyTodoSpecificDateResult = getMyTodoSpecificDate(
-                                groupId = uiState.selectedGroup.id,
-                                date = date.toFormattedString(DATE_FORMAT_FULL_YEAR)
-                            ).getOrElse {
-                                // handle exception
-                                return@launch
-                            }.todos
-
-                            updateState {
-                                it.copy(
-                                    selectedDate = date,
-                                    todoList = getMyTodoSpecificDateResult
-                                )
-                            }
-                        }
+                        loadTodosForDate(uiState.selectedDate.plusDays(1))
                     }
 
                     is HomeUiEvent.Click.OnClickDismissTooltip -> {
@@ -215,6 +171,52 @@ class HomeViewModel(
         }
     }
 
+    private fun loadInitialData() {
+        updateState { it.copy(isLoading = true) }
+
+        viewModelScope.launch {
+            val getJoiningGroupsResult = getJoiningGroups().getOrElse {
+                updateState { it.copy(isLoading = false) }
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { loadInitialData() }
+                    )
+                )
+                return@launch
+            }
+
+            updateState { it.copy(groups = getJoiningGroupsResult.groups) }
+            selectGroup(getJoiningGroupsResult.groups[getJoiningGroupsResult.lastSelectedGroupIndex])
+        }.invokeOnCompletion {
+            updateState { it.copy(isLoading = false) }
+        }
+    }
+
+    private fun loadTodosForDate(date: java.time.LocalDate) {
+        viewModelScope.launch {
+            val getMyTodoSpecificDateResult = getMyTodoSpecificDate(
+                groupId = uiState.selectedGroup.id,
+                date = date.toFormattedString(DATE_FORMAT_FULL_YEAR)
+            ).getOrElse {
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { loadTodosForDate(date) }
+                    )
+                )
+                return@launch
+            }.todos
+
+            updateState {
+                it.copy(
+                    selectedDate = date,
+                    todoList = getMyTodoSpecificDateResult
+                )
+            }
+        }
+    }
+
     private suspend fun selectGroup(group: Group) {
         if (uiState.selectedGroup.progressDay == 0) {
             launchTomorrowTimer()
@@ -228,12 +230,19 @@ class HomeViewModel(
             groupId = group.id,
             date = today.toFormattedString(DATE_FORMAT_FULL_YEAR)
         ).getOrElse {
-            // handle exception
+            postEffect(
+                UiEffect.NavigateToErrorWithCallback(
+                    error = Error.LoadData,
+                    onPositive = {
+                        viewModelScope.launch { selectGroup(group) }
+                    }
+                )
+            )
             return
         }.todos
 
         storeLastSelectedGroupId(group.id).getOrElse {
-            // handle exception
+            // 로컬 저장 실패는 무시
         }
 
         updateState {

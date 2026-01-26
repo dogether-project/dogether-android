@@ -26,10 +26,29 @@ import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head2_B
+import site.dogether.presentation.utils.CollectEffect
+import site.dogether.presentation.utils.LocalErrorCallbackManager
+import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 
 @Composable
 fun ErrorScreen(viewModel: ErrorViewModel = koinViewModel()) {
+    val navController = LocalNavHostController.current
+    val errorCallbackManager = LocalErrorCallbackManager.current
+    
+    viewModel.CollectEffect<ErrorUiEffect> { effect ->
+        when (effect) {
+            is ErrorUiEffect.ExecutePositiveCallback -> {
+                navController.popBackStack()
+                errorCallbackManager.executePositiveCallback()
+            }
+            is ErrorUiEffect.ExecuteNegativeCallback -> {
+                navController.popBackStack()
+                errorCallbackManager.executeNegativeCallback()
+            }
+        }
+    }
+    
     ErrorScreenContents(
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
@@ -88,7 +107,7 @@ private fun ErrorScreenContents(
                                 .height(50.dp),
                             radius = 8.dp,
                             text = stringResource(error.positiveButtonStringId),
-                            onClick = {}
+                            onClick = { onEvent(ErrorUiEvent.OnClickPositive) }
                         )
                     } else {
                         NegativeCTAButton(
@@ -97,7 +116,7 @@ private fun ErrorScreenContents(
                                 .height(50.dp),
                             radius = 8.dp,
                             text = stringResource(error.negativeButtonStringId),
-                            onClick = {}
+                            onClick = { onEvent(ErrorUiEvent.OnClickNegative) }
                         )
 
                         Spacer(modifier = Modifier.width(8.dp))
@@ -108,7 +127,7 @@ private fun ErrorScreenContents(
                                 .height(50.dp),
                             radius = 8.dp,
                             text = stringResource(error.positiveButtonStringId),
-                            onClick = {}
+                            onClick = { onEvent(ErrorUiEvent.OnClickPositive) }
                         )
                     }
                 }

@@ -62,7 +62,6 @@ sealed interface CheckTodoUiEvent : UiEvent {
 }
 
 sealed interface CheckTodoUiEffect : UiEffect {
-    data class ShowToast(val message: String) : CheckTodoUiEffect
     data object ReviewSubmitted : CheckTodoUiEffect
 }
 

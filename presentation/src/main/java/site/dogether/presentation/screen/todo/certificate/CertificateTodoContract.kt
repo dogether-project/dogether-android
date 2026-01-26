@@ -26,7 +26,6 @@ sealed interface CertificateTodoUiEvent : UiEvent {
 
 sealed interface CertificateTodoSideEffect : UiEffect {
     data object Back : CertificateTodoSideEffect
-    data class ShowToast(val text: String) : CertificateTodoSideEffect
     data object OpenGallery : CertificateTodoSideEffect
     data object OpenCamera : CertificateTodoSideEffect
     data object NavigateToNext : CertificateTodoSideEffect

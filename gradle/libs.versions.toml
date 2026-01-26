@@ -29,6 +29,9 @@ kotest = "5.9.1"
 # Mockk
 mockk = "1.13.8"
 
+# Coroutines
+coroutines = "1.10.2"
+
 # Konsist
 konsist = "0.17.3"
 
@@ -87,6 +90,9 @@ kotest-framework-engine = { group = "io.kotest", name = "kotest-framework-engine
 
 # Mockk
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+
+# Coroutines
+coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 
 # Kotlin reflect
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }

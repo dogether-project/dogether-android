@@ -10,7 +10,9 @@ import site.dogether.common.utils.orZero
 import site.dogether.domain.use_case.todo.GetMyTodosByDateUseCase
 import site.dogether.domain.use_case.user.GetUserInfoUseCase
 import site.dogether.presentation.base.BaseViewModel
+import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.screen.error.model.Error
 
 class MyCertInfoViewModel(
     private val getMyTodoListByDate: GetMyTodosByDateUseCase,
@@ -31,6 +33,10 @@ class MyCertInfoViewModel(
     }
 
     init {
+        loadData()
+    }
+
+    private fun loadData() {
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }
 
@@ -39,7 +45,13 @@ class MyCertInfoViewModel(
                     it.copy(accessToken = userInfo.accessToken)
                 }
             }.onFailure {
-
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { loadData() }
+                    )
+                )
+                return@launch
             }
 
             getMyTodoListByDate(
@@ -49,11 +61,17 @@ class MyCertInfoViewModel(
                 updateState {
                     it.copy(
                         todos = todos,
-                        selectedItemIndex = focusedTodoIndex
+                        selectedItemIndex = focusedTodoIndex,
+                        isLoading = false
                     )
                 }
             }.onFailure {
-
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { loadData() }
+                    )
+                )
             }
         }
     }

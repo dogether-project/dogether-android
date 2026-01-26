@@ -61,8 +61,8 @@ class SettingsViewModel(
                                     )
                                 )
                                 dismissWithdrawDialog()
-                            }.onFailure {
-                                // handle exception
+                            }.onFailure { error ->
+                                postEffect(UiEffect.ShowToast(error.message ?: "회원 탈퇴에 실패했습니다"))
                             }
                         }.invokeOnCompletion {
                             updateState { it.copy(isLoading = false) }

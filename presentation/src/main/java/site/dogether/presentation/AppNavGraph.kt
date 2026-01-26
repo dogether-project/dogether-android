@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import site.dogether.KEY_DATE
 import site.dogether.KEY_ENCODED_URI
+import site.dogether.KEY_ERROR_TYPE
 import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_JOIN_CODE
 import site.dogether.KEY_MEMBER_ID
@@ -67,6 +68,12 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
         ) { ParticipateGroupScreen() }
         composable(Screen.GROUP_PARTICIPATED) { GroupParticipatedScreen() }
         composable(Screen.ERROR) { ErrorScreen() }
+        composable(
+            route = "${Screen.ERROR}/{${KEY_ERROR_TYPE}}",
+            arguments = listOf(
+                navArgument(KEY_ERROR_TYPE) { type = NavType.StringType }
+            )
+        ) { ErrorScreen() }
         composable(Screen.HOME) { HomeScreen() }
         composable(Screen.MY_PAGE) { MyPageScreen() }
         composable(Screen.STATISTICS) { StatisticsScreen() }

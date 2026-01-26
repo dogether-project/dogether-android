@@ -6,10 +6,12 @@ import site.dogether.presentation.base.UiEvent
 
 data class MyPageUiState(
     val isLoading: Boolean = false,
-    val userInfo: UserInfo? = UserInfo("지호", ""),
+    val userInfo: UserInfo? = UserInfo("", ""),
 )
 
 sealed interface MyPageUiEvent : UiEvent {
+    data object OnStart : MyPageUiEvent
+
     sealed interface Click : MyPageUiEvent {
         data object OnClickStatistics : Click
 
