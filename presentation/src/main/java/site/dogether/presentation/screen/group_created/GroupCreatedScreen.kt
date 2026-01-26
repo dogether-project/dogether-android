@@ -61,7 +61,9 @@ fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
                 joinCode = uiEffect.joinCode
             )
 
-            is GroupCreatedUiEffect.NavigateToHome -> navHostController.navigate(Screen.HOME)
+            is GroupCreatedUiEffect.NavigateToHome -> navHostController.navigate(Screen.HOME) {
+                popUpTo(0) { inclusive = true }
+            }
         }
     }
 

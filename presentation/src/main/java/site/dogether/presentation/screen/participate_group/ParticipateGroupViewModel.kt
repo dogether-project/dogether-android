@@ -60,7 +60,7 @@ class ParticipateGroupViewModel(
                 return@launch
             }
 
-            postEffect(UiEffect.NavigateTo(Screen.HOME))
+            postEffect(UiEffect.NavigateTo(Screen.HOME, clearBackStack = true))
         }
     }
 }
