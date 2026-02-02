@@ -5,6 +5,7 @@ import site.dogether.presentation.base.UiEvent
 
 data class SplashUiState(
     val isPermissionDialogShowing: Boolean = false,
+    val deeplink: String? = null
 )
 
 sealed interface SplashUiEvent : UiEvent {

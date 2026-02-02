@@ -58,10 +58,6 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         currentIntent = intent
         extractDeeplinkInfo(intent)
-        // 초기 Intent가 푸시로 인입된 경우 처리
-        if (intent.extras != null) {
-            redirectFromPush(intent)
-        }
 
         setContent {
             DogetherAndroidTheme {
@@ -130,7 +126,9 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         currentIntent = intent
-        redirectFromPush(intent)
+        if (intent.extras != null) {
+            redirectFromPush(intent)
+        }
     }
 
     // Push로 인입된 유저의 리디렉션
