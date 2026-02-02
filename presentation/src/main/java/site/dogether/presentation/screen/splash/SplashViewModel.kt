@@ -76,7 +76,12 @@ class SplashViewModel(
                 }
 
             if (checkUpdateRequiredResult.isForceUpdateRequired) {
-                // force update
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { checkVersionAndNavigate(appVersion) }
+                    )
+                )
                 return@launch
             }
 
