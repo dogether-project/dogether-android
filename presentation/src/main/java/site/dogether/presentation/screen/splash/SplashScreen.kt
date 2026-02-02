@@ -43,9 +43,7 @@ fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
                     context = context,
                     onSuccess = { appVersion ->
                         onEvent(
-                            SplashUiEvent.Callback.OnGetAppVersion(
-                                appVersion
-                            )
+                            SplashUiEvent.Callback.OnGetAppVersion(appVersion)
                         )
                     },
                     onFailure = {

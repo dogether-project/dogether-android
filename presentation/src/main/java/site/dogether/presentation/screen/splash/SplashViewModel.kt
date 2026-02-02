@@ -26,7 +26,6 @@ class SplashViewModel(
 ) : BaseViewModel<SplashUiState>(SplashUiState()) {
 
     override val container: Container<SplashUiState, UiEffect> = container(SplashUiState())
-    private var deeplink = ""
 
     override fun onEvent(event: UiEvent) {
         super.onEvent(event)
@@ -51,7 +50,9 @@ class SplashViewModel(
             is SplashUiEvent.Deeplink -> {
                 when (event) {
                     is SplashUiEvent.Deeplink.OnDeeplinkReceived -> {
-                        deeplink = event.link.orEmpty()
+                        updateState {
+                            it.copy(deeplink = event.link.orEmpty())
+                        }
                     }
                 }
             }
@@ -66,38 +67,23 @@ class SplashViewModel(
         viewModelScope.launch {
             val checkUpdateRequiredResult =
                 checkUpdateRequired(appVersion).getOrElse {
-                    postEffect(
-                        UiEffect.NavigateToErrorWithCallback(
-                            error = Error.LoadData,
-                            onPositive = { checkVersionAndNavigate(appVersion) }
-                        )
-                    )
+                    handleError(error = Error.LoadData, appVersion = appVersion)
                     return@launch
                 }
 
             if (checkUpdateRequiredResult.isForceUpdateRequired) {
-                postEffect(
-                    UiEffect.NavigateToErrorWithCallback(
-                        error = Error.LoadData,
-                        onPositive = { checkVersionAndNavigate(appVersion) }
-                    )
-                )
+                handleError(error = Error.LoadData, appVersion = appVersion)
                 return@launch
             }
 
             delay(800L)
             // 딥링크에서 joinCode 추출
             val joinCode = runCatching {
-                deeplink.toUri().getQueryParameter(DeeplinkConstants.QUERY_CODE)
+                uiState.deeplink?.toUri()?.getQueryParameter(DeeplinkConstants.QUERY_CODE)
             }.getOrNull()
 
             val userInfo = getUserInfo().getOrElse {
-                postEffect(
-                    UiEffect.NavigateToErrorWithCallback(
-                        error = Error.LoadData,
-                        onPositive = { checkVersionAndNavigate(appVersion) }
-                    )
-                )
+                handleError(error = Error.LoadData, appVersion = appVersion)
                 return@launch
             }
 
@@ -112,17 +98,13 @@ class SplashViewModel(
             // 리뷰 대기가 있는 경우
             val getPendingReviewCertifications =
                 getPendingReviewCertifications().getOrElse {
-                    postEffect(
-                        UiEffect.NavigateToErrorWithCallback(
-                            error = Error.LoadData,
-                            onPositive = { checkVersionAndNavigate(appVersion) }
-                        )
-                    )
+                    handleError(error = Error.LoadData, appVersion = appVersion)
                     return@launch
                 }
 
             if (getPendingReviewCertifications.certifications.isNotEmpty()) {
                 postEffect(SplashUiEffect.NavigateToReviewCertification)
+                return@launch
             }
 
             val checkParticipatingResult = checkParticipating().getOrElse {
@@ -138,6 +120,7 @@ class SplashViewModel(
                 } else {
                     postEffect(SplashUiEffect.NavigateToParticipationMethod)
                 }
+                return@launch
             } else {
                 // 이미 그룹에 참여 중인 경우
                 if (joinCode != null) {
@@ -146,7 +129,17 @@ class SplashViewModel(
                 } else {
                     postEffect(SplashUiEffect.NavigateToHome)
                 }
+                return@launch
             }
         }
+    }
+
+    private fun handleError(error: Error, appVersion: String) {
+        postEffect(
+            UiEffect.NavigateToErrorWithCallback(
+                error = error,
+                onPositive = { checkVersionAndNavigate(appVersion) }
+            )
+        )
     }
 }
