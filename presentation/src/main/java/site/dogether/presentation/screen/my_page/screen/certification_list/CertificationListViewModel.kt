@@ -1,6 +1,10 @@
 package site.dogether.presentation.screen.my_page.screen.certification_list
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import site.dogether.domain.model.todo.Todo.Companion.STATUS_APPROVE
 import site.dogether.domain.model.todo.Todo.Companion.STATUS_REJECT
@@ -16,11 +20,24 @@ class CertificationListViewModel(
     private val getMyActivity: GetMyActivityUseCase
 ) : BaseViewModel<CertificationListUiState>(CertificationListUiState()) {
 
-    init {
-        loadNewMyActivityData(
+    private data class MyActivityQuery(
+        val sortBy: String,
+        val status: String?
+    )
+
+    private val queryFlow = MutableStateFlow(
+        MyActivityQuery(
             sortBy = uiState.selectedSortingMethod.serverString,
             status = null
         )
+    )
+
+    private val loadNextPageFlow = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    private var isPagingRequestInProgress = false
+
+    init {
+        collectInitialMyActivity()
+        collectNextPageRequest()
     }
 
     override fun onEvent(event: UiEvent) {
@@ -40,19 +57,15 @@ class CertificationListViewModel(
                                 isSelectSortingMethodBottomSheetShowing = false
                             )
                         }
-
-                        loadNewMyActivityData(
+                        requestMyActivityRefresh(
                             sortBy = event.sortingMethod.serverString,
                             status = chipToStatus(uiState.selectedChip)
                         )
                     }
 
                     is CertificationListUiEvent.Click.OnClickChip -> {
-                        updateState {
-                            it.copy(selectedChip = event.chip)
-                        }
-
-                        loadNewMyActivityData(
+                        updateState { it.copy(selectedChip = event.chip) }
+                        requestMyActivityRefresh(
                             sortBy = uiState.selectedSortingMethod.serverString,
                             status = chipToStatus(event.chip)
                         )
@@ -81,71 +94,7 @@ class CertificationListViewModel(
                     }
 
                     is CertificationListUiEvent.Callback.OnScrollReachedBottom -> {
-                        updateState { it.copy(isLoading = true) }
-
-                        viewModelScope.launch {
-                            getMyActivity(
-                                sortBy = uiState.selectedSortingMethod.serverString,
-                                status = chipToStatus(uiState.selectedChip),
-                                page = uiState.myActivity.pageInfo.recentPageNumber + 1
-                            ).onSuccess { myActivity ->
-                                if (myActivity.certificationsGroupedByTodoCompletedAt.isNotEmpty()) {
-                                    val newList = myActivity.certificationsGroupedByTodoCompletedAt
-                                    val existingList = uiState.myActivity.certificationsGroupedByTodoCompletedAt.toMutableList()
-
-                                    if (existingList.isNotEmpty() && newList.isNotEmpty() &&
-                                        existingList.last().createdAt == newList.first().createdAt
-                                    ) {
-                                        val lastItem = existingList.last()
-                                        val updatedCertifications = lastItem.certificationInfo + newList.first().certificationInfo
-                                        existingList[existingList.size - 1] = lastItem.copy(certificationInfo = updatedCertifications)
-
-                                        existingList.addAll(newList.drop(1))
-                                    } else {
-                                        existingList.addAll(newList)
-                                    }
-
-                                    updateState {
-                                        it.copy(
-                                            myActivity = uiState.myActivity.copy(
-                                                certificationsGroupedByTodoCompletedAt = existingList,
-                                                pageInfo = myActivity.pageInfo
-                                            )
-                                        )
-                                    }
-                                }
-
-                                if (myActivity.certificationsGroupedByGroupCreatedAt.isNotEmpty()) {
-                                    val newList = myActivity.certificationsGroupedByGroupCreatedAt
-                                    val existingList = uiState.myActivity.certificationsGroupedByGroupCreatedAt.toMutableList()
-
-                                    if (existingList.isNotEmpty() && newList.isNotEmpty() &&
-                                        existingList.last().groupName == newList.first().groupName
-                                    ) {
-                                        val lastItem = existingList.last()
-                                        val updatedCertifications = lastItem.certificationInfo + newList.first().certificationInfo
-                                        existingList[existingList.size - 1] = lastItem.copy(certificationInfo = updatedCertifications)
-
-                                        existingList.addAll(newList.drop(1))
-                                    } else {
-                                        existingList.addAll(newList)
-                                    }
-
-                                    updateState {
-                                        it.copy(
-                                            myActivity = uiState.myActivity.copy(
-                                                certificationsGroupedByGroupCreatedAt = existingList,
-                                                pageInfo = myActivity.pageInfo
-                                            )
-                                        )
-                                    }
-                                }
-                            }.onFailure { error ->
-                                postEffect(UiEffect.ShowToast(error.message ?: "인증 목록을 불러오는데 실패했습니다"))
-                            }
-                        }.invokeOnCompletion {
-                            updateState { it.copy(isLoading = false) }
-                        }
+                        loadNextPageFlow.tryEmit(Unit)
                     }
 
                     is CertificationListUiEvent.Callback.OnSwipeLeft -> {
@@ -164,30 +113,116 @@ class CertificationListViewModel(
         }
     }
 
-    private fun loadNewMyActivityData(
+    private fun collectInitialMyActivity() {
+        viewModelScope.launch {
+            queryFlow.collectLatest { query ->
+                loadNewMyActivityData(query)
+            }
+        }
+    }
+
+    private fun collectNextPageRequest() {
+        viewModelScope.launch {
+            loadNextPageFlow.collect {
+                loadNextPage()
+            }
+        }
+    }
+
+    private fun requestMyActivityRefresh(
         sortBy: String,
-        status: String? = null
+        status: String?
     ) {
+        queryFlow.update {
+            MyActivityQuery(
+                sortBy = sortBy,
+                status = status
+            )
+        }
+    }
+
+    private suspend fun loadNewMyActivityData(query: MyActivityQuery) {
         updateState { it.copy(isLoading = true) }
 
-        viewModelScope.launch {
-            getMyActivity(
-                sortBy = sortBy,
-                status = status,
-                page = 0
-            ).onSuccess { myActivity ->
-                updateState { it.copy(myActivity = myActivity) }
-            }.onFailure {
-                postEffect(
-                    UiEffect.NavigateToErrorWithCallback(
-                        error = Error.LoadData,
-                        onPositive = { loadNewMyActivityData(sortBy, status) }
+        getMyActivity(
+            sortBy = query.sortBy,
+            status = query.status,
+            page = 0
+        ).onSuccess { myActivity ->
+            updateState { it.copy(myActivity = myActivity) }
+        }.onFailure {
+            postEffect(
+                UiEffect.NavigateToErrorWithCallback(
+                    error = Error.LoadData,
+                    onPositive = {
+                        requestMyActivityRefresh(
+                            sortBy = query.sortBy,
+                            status = query.status
+                        )
+                    }
+                )
+            )
+        }
+
+        updateState { it.copy(isLoading = false) }
+    }
+
+    private suspend fun loadNextPage() {
+        if (uiState.isLoading || !uiState.myActivity.pageInfo.hasNext || isPagingRequestInProgress) return
+
+        isPagingRequestInProgress = true
+        updateState { it.copy(isLoading = true) }
+
+        val query = queryFlow.value
+        getMyActivity(
+            sortBy = query.sortBy,
+            status = query.status,
+            page = uiState.myActivity.pageInfo.recentPageNumber + 1
+        ).onSuccess { myActivity ->
+            updateState {
+                it.copy(
+                    myActivity = it.myActivity.copy(
+                        certificationsGroupedByTodoCompletedAt = mergeCertificationGroups(
+                            current = it.myActivity.certificationsGroupedByTodoCompletedAt,
+                            incoming = myActivity.certificationsGroupedByTodoCompletedAt
+                        ),
+                        certificationsGroupedByGroupCreatedAt = mergeCertificationGroups(
+                            current = it.myActivity.certificationsGroupedByGroupCreatedAt,
+                            incoming = myActivity.certificationsGroupedByGroupCreatedAt,
+                            keySelector = { group -> group.groupName }
+                        ),
+                        pageInfo = myActivity.pageInfo
                     )
                 )
             }
-        }.invokeOnCompletion {
-            updateState { it.copy(isLoading = false) }
+        }.onFailure { error ->
+            postEffect(UiEffect.ShowToast(error.message ?: "인증 목록을 불러오는데 실패했습니다"))
         }
+
+        isPagingRequestInProgress = false
+        updateState { it.copy(isLoading = false) }
+    }
+
+    private fun mergeCertificationGroups(
+        current: List<site.dogether.domain.model.todo.GroupedCertification>,
+        incoming: List<site.dogether.domain.model.todo.GroupedCertification>,
+        keySelector: (site.dogether.domain.model.todo.GroupedCertification) -> String = { group -> group.createdAt }
+    ): List<site.dogether.domain.model.todo.GroupedCertification> {
+        if (incoming.isEmpty()) return current
+        if (current.isEmpty()) return incoming
+
+        val merged = current.toMutableList()
+        if (keySelector(merged.last()) == keySelector(incoming.first())) {
+            val lastItem = merged.last()
+            merged[merged.lastIndex] = lastItem.copy(
+                certificationInfo = lastItem.certificationInfo + incoming.first().certificationInfo
+            )
+            merged.addAll(incoming.drop(1))
+            return merged
+        }
+
+        merged.addAll(incoming)
+        return merged
     }
 
     private fun chipToStatus(chip: Chip?): String? = when (chip) {
