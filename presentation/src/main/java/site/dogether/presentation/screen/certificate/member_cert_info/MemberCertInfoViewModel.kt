@@ -2,6 +2,7 @@ package site.dogether.presentation.screen.certificate.member_cert_info
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_MEMBER_ID
@@ -26,7 +27,7 @@ class MemberCertInfoViewModel(
         savedStateHandle.get<Int>(KEY_MEMBER_ID).orZero()
     }
 
-    private val name : String by lazy {
+    private val name: String by lazy {
         savedStateHandle.get<String>(KEY_MEMBER_NAME).orEmpty()
     }
 
@@ -45,7 +46,7 @@ class MemberCertInfoViewModel(
                 val initialIndex = memberTodoHistory.currentTodoHistoryToReadIndex
                 updateState {
                     it.copy(
-                        todos = memberTodoHistory.todos,
+                        todos = memberTodoHistory.todos.toImmutableList(),
                         selectedItemIndex = if (initialIndex < memberTodoHistory.todos.size) {
                             initialIndex
                         } else {

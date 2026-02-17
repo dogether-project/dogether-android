@@ -1,5 +1,8 @@
 package site.dogether.presentation.screen.home
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_SHORT_YEAR
 import site.dogether.common.utils.DateTimeUtils.toLocalDate
 import site.dogether.common.utils.DateTimeUtils.today
@@ -18,12 +21,12 @@ data class HomeUiState(
     val timerProgress: Float = 0f,
     val timerText: String = "",
     val selectedGroup: Group = Group(),
-    val todoList: List<Todo> = emptyList(),
+    val todoList: ImmutableList<Todo> = persistentListOf(),
     val selectedDate: LocalDate = today,
     val selectedChip: Chip = Chip.All,
     val isSelectGroupBottomSheetShowing: Boolean = false,
     val permissionDialogState: DialogState = DialogState(),
-    val groups: List<Group> = listOf(),
+    val groups: ImmutableList<Group> = persistentListOf(),
     val tooltipUiState: TooltipUiState = TooltipUiState(),
 ) {
     val isGoPrevDayPossible: Boolean
@@ -35,12 +38,12 @@ data class HomeUiState(
         } else false
     val isGoNextDayPossible: Boolean
         get() = selectedDate < today
-    val filteredTodoList: List<Todo>
+    val filteredTodoList: ImmutableList<Todo>
         get() = when (selectedChip) {
             Chip.All -> todoList
-            Chip.Approve -> todoList.filter { it.status == Todo.STATUS_APPROVE }
-            Chip.Reject -> todoList.filter { it.status == Todo.STATUS_REJECT }
-            Chip.ReviewPending -> todoList.filter { it.status == Todo.STATUS_REVIEW_PENDING }
+            Chip.Approve -> todoList.filter { it.status == Todo.STATUS_APPROVE }.toImmutableList()
+            Chip.Reject -> todoList.filter { it.status == Todo.STATUS_REJECT }.toImmutableList()
+            Chip.ReviewPending -> todoList.filter { it.status == Todo.STATUS_REVIEW_PENDING }.toImmutableList()
         }
 }
 

@@ -24,6 +24,5 @@ rootProject.name = "Dogether-Android"
 include(":app")
 include(":presentation")
 include(":domain")
-include(":domain")
 include(":common")
 include(":data")

@@ -1,5 +1,7 @@
 package site.dogether.presentation.screen.my_page.screen.certification_list
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import site.dogether.domain.model.todo.MyActivity
 import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.base.UiEffect
@@ -11,11 +13,11 @@ data class CertificationListUiState(
     val isLoading: Boolean = false,
     val myActivity: MyActivity = MyActivity(),
     val selectedSortingMethod: SortingMethod = SortingMethod.DescendTodoCompleted,
-    val chips: List<Chip> = listOf(Chip.ReviewPending, Chip.Approve, Chip.Reject),
+    val chips: ImmutableList<Chip> = persistentListOf(Chip.ReviewPending, Chip.Approve, Chip.Reject),
     val selectedChip: Chip? = null,
     val isSelectSortingMethodBottomSheetShowing: Boolean = false,
     val isDetailMode: Boolean = false,
-    val detailedCertifications: List<Todo> = listOf(),
+    val detailedCertifications: ImmutableList<Todo> = persistentListOf(),
     val selectedItemIndex: Int = 0,
     val detailTitle: String = "",
 )
@@ -29,7 +31,7 @@ sealed interface CertificationListUiEvent : UiEvent {
         data class OnClickChip(val chip: Chip?) : Click
 
         data class OnClickCertificationInfo(
-            val detailedCertifications: List<Todo>,
+            val detailedCertifications: ImmutableList<Todo>,
             val index: Int
         ) : Click
 

@@ -72,4 +72,7 @@ dependencies {
 
     // Chottulink
     implementation(libs.chottulink.sdk)
+
+    // Immutable List
+    implementation(libs.immutable.list)
 }

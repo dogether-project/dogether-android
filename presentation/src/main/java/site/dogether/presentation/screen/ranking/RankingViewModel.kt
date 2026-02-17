@@ -2,6 +2,7 @@ package site.dogether.presentation.screen.ranking
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import site.dogether.KEY_GROUP_ID
 import site.dogether.common.utils.orZero
@@ -59,8 +60,8 @@ class RankingViewModel(
 
                 updateState {
                     it.copy(
-                        inRankMembers = inRankArray.toList(),
-                        outRankMembers = outRankMembers,
+                        inRankMembers = inRankArray.toImmutableList(),
+                        outRankMembers = outRankMembers.toImmutableList(),
                     )
                 }
             }.onFailure {

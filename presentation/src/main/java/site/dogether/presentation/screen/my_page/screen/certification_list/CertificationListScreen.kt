@@ -59,6 +59,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.domain.model.todo.Todo
@@ -277,7 +278,7 @@ private fun ColumnScope.CertificationListContents(
                         onClick = {
                             onEvent(
                                 CertificationListUiEvent.Click.OnClickCertificationInfo(
-                                    detailedCertifications = list.certificationInfo,
+                                    detailedCertifications = list.certificationInfo.toImmutableList(),
                                     index = index
                                 )
                             )
@@ -310,7 +311,7 @@ private fun ColumnScope.CertificationListContents(
                         onClick = {
                             onEvent(
                                 CertificationListUiEvent.Click.OnClickCertificationInfo(
-                                    detailedCertifications = group.certificationInfo,
+                                    detailedCertifications = group.certificationInfo.toImmutableList(),
                                     index = index
                                 )
                             )

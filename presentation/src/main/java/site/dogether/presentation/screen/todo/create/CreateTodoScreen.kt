@@ -33,6 +33,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
+import kotlinx.collections.immutable.persistentListOf
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.domain.model.todo.Todo
@@ -366,11 +367,12 @@ private fun CreateTodoEmptyPreview() {
     showBackground = true,
     backgroundColor = 0xFF101010
 )
+
 @Composable
 private fun CreateTodoContentsPreview() {
     CreateTodoScreenContents(
         uiState = CreateTodoUiState(
-            todoItems = listOf(Todo(content = "투두리스트")),
+            todoItems = persistentListOf(Todo(content = "투두리스트")),
             addEnabled = true
         )
     )

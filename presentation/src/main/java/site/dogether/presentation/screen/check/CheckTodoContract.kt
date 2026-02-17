@@ -1,5 +1,7 @@
 package site.dogether.presentation.screen.check
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import site.dogether.common.utils.orZero
 import site.dogether.domain.model.todo.PendingReviewCertification
 import site.dogether.presentation.base.UiEffect
@@ -7,7 +9,7 @@ import site.dogether.presentation.base.UiEvent
 
 data class CheckTodoUiState(
     val isLoading: Boolean = false,
-    val certifications: List<PendingReviewCertification> = emptyList(),
+    val certifications: ImmutableList<PendingReviewCertification> = persistentListOf(),
     val currentIndex: Int = 0,
     val selectedReviewType: ReviewType? = null,
     val reviewFeedback: String = "",
