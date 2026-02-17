@@ -1,6 +1,7 @@
 package site.dogether.presentation.screen.home
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -186,7 +187,7 @@ class HomeViewModel(
                 return@launch
             }
 
-            updateState { it.copy(groups = getJoiningGroupsResult.groups) }
+            updateState { it.copy(groups = getJoiningGroupsResult.groups.toImmutableList()) }
             selectGroup(getJoiningGroupsResult.groups[getJoiningGroupsResult.lastSelectedGroupIndex])
         }.invokeOnCompletion {
             updateState { it.copy(isLoading = false) }
@@ -211,7 +212,7 @@ class HomeViewModel(
             updateState {
                 it.copy(
                     selectedDate = date,
-                    todoList = getMyTodoSpecificDateResult
+                    todoList = getMyTodoSpecificDateResult.toImmutableList()
                 )
             }
         }
@@ -248,7 +249,7 @@ class HomeViewModel(
         updateState {
             it.copy(
                 selectedGroup = group,
-                todoList = getMyTodoSpecificDateResult,
+                todoList = getMyTodoSpecificDateResult.toImmutableList(),
                 selectedDate = today,
                 selectedChip = Chip.All,
                 tooltipUiState = TooltipUiState(

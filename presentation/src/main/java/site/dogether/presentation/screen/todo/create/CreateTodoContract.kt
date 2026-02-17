@@ -1,5 +1,7 @@
 package site.dogether.presentation.screen.todo.create
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
@@ -8,7 +10,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 data class CreateTodoUiState(
-    val todoItems: List<Todo> = emptyList(),
+    val todoItems: ImmutableList<Todo> = persistentListOf(),
     val selectedDate: LocalDate = LocalDate.now(),
     val maxTodoCount: Int = 10,
     val addEnabled: Boolean = false,

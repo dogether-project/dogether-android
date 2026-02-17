@@ -1,12 +1,14 @@
 package site.dogether.presentation.screen.my_page.screen.certification_list.screen.certification_history
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 
 data class CertificationHistoryUiState(
     val isLoading: Boolean = false,
-    val todos: List<Todo> = listOf(),
+    val todos: ImmutableList<Todo> = persistentListOf(),
     val selectedItemIndex: Int = 0,
     val title: String = "",
 )

@@ -1,6 +1,7 @@
 package site.dogether.presentation.screen.check
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.todo.GetPendingReviewCertificationsUseCase
 import site.dogether.domain.use_case.todo.ReviewTodoUseCase
@@ -58,7 +59,11 @@ class CheckTodoViewModel(
             getPendingReviewCertifications().onSuccess { result ->
                 updateState {
                     it.copy(
-                        isLoading = false, certifications = result.certifications, currentIndex = 0, selectedReviewType = null, reviewFeedback = ""
+                        isLoading = false,
+                        certifications = result.certifications.toImmutableList(),
+                        currentIndex = 0,
+                        selectedReviewType = null,
+                        reviewFeedback = ""
                     )
                 }
             }.onFailure {

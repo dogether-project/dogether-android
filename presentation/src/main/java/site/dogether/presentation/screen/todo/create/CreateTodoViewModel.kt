@@ -2,6 +2,7 @@ package site.dogether.presentation.screen.todo.create
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_SELECTED_DATE
@@ -101,7 +102,7 @@ class CreateTodoViewModel(
                     return@launch
                 }.let { todoList ->
                     updateState { state ->
-                        state.copy(todoItems = todoList.todos)
+                        state.copy(todoItems = todoList.todos.toImmutableList())
                     }
                 }
         }
@@ -114,7 +115,7 @@ class CreateTodoViewModel(
                 val updatedItems = state.todoItems.toMutableList()
                 updatedItems.removeAt(index)
                 state.copy(
-                    todoItems = updatedItems,
+                    todoItems = updatedItems.toImmutableList(),
                     ctaEnabled = updatedItems.any { it.id == 0L }
                 )
             } else {
@@ -139,7 +140,7 @@ class CreateTodoViewModel(
                 val updatedItems = state.todoItems.toMutableList()
                 updatedItems.add(Todo(content = state.todoText))
                 state.copy(
-                    todoItems = updatedItems,
+                    todoItems = updatedItems.toImmutableList(),
                     todoText = "",
                     ctaEnabled = updatedItems.any { it.id == 0L }
                 )

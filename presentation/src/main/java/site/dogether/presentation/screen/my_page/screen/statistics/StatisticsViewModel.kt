@@ -1,6 +1,7 @@
 package site.dogether.presentation.screen.my_page.screen.statistics
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.domain.use_case.user.GetGroupStatisticsUseCase
@@ -60,7 +61,7 @@ class StatisticsViewModel(
 
                 updateState {
                     it.copy(
-                        groups = joiningGroups.groups,
+                        groups = joiningGroups.groups.toImmutableList(),
                         selectedGroup = selectedGroup
                     )
                 }

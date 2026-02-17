@@ -2,6 +2,7 @@ package site.dogether.presentation.screen.certificate.my_cert_info
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import site.dogether.KEY_DATE
 import site.dogether.KEY_GROUP_ID
@@ -60,7 +61,7 @@ class MyCertInfoViewModel(
             ).onSuccess { todos ->
                 updateState {
                     it.copy(
-                        todos = todos,
+                        todos = todos.toImmutableList(),
                         selectedItemIndex = focusedTodoIndex,
                         isLoading = false
                     )

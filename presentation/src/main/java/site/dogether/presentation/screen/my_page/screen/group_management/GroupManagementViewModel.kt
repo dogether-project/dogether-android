@@ -1,6 +1,7 @@
 package site.dogether.presentation.screen.my_page.screen.group_management
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.domain.use_case.group.WithdrawGroupUseCase
@@ -34,7 +35,7 @@ class GroupManagementViewModel(
                 return@launch
             }
 
-            updateState { it.copy(groups = getJoiningGroupsResult.groups) }
+            updateState { it.copy(groups = getJoiningGroupsResult.groups.toImmutableList()) }
         }.invokeOnCompletion {
             updateState { it.copy(isLoading = false) }
         }
@@ -118,7 +119,7 @@ class GroupManagementViewModel(
                 return@launch
             }
 
-            updateState { it.copy(groups = getJoiningGroupsResult.groups) }
+            updateState { it.copy(groups = getJoiningGroupsResult.groups.toImmutableList()) }
         }.invokeOnCompletion {
             updateState { it.copy(isLoading = false) }
         }
