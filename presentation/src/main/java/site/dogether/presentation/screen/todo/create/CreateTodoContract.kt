@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.todo.create
 
+import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import site.dogether.domain.model.todo.Todo
@@ -9,6 +10,7 @@ import site.dogether.presentation.model.dialog_state.DialogState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@Immutable
 data class CreateTodoUiState(
     val todoItems: ImmutableList<Todo> = persistentListOf(),
     val selectedDate: LocalDate = LocalDate.now(),

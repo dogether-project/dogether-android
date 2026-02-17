@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.my_page.screen.group_management
 
+import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import site.dogether.domain.model.group.Group
@@ -7,6 +8,7 @@ import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.dialog_state.WithdrawGroupDialogState
 
+@Immutable
 data class GroupManagementUiState(
     val isLoading: Boolean = false,
     val groups: ImmutableList<Group> = persistentListOf(),

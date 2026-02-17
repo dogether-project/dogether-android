@@ -1,9 +1,11 @@
 package site.dogether.presentation.screen.my_page.screen.settings
 
+import androidx.compose.runtime.Immutable
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.dialog_state.DialogState
 
+@Immutable
 data class SettingsUiState(
     val isLoading: Boolean = false,
     val logoutDialogState: DialogState = DialogState(),

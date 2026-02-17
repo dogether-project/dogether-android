@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.my_page.screen.statistics
 
+import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import site.dogether.domain.model.group.Group
@@ -7,6 +8,7 @@ import site.dogether.domain.model.user.GroupStatistics
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 
+@Immutable
 data class StatisticsUiState(
     val isLoading: Boolean = false,
     val groups: ImmutableList<Group> = persistentListOf(),
