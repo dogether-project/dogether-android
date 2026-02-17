@@ -242,6 +242,10 @@ private fun ColumnScope.CertificationListContents(
 
     val gridState = rememberLazyGridState()
 
+    LaunchedEffect(uiState.selectedSortingMethod, uiState.selectedChip) {
+        gridState.scrollToItem(0)
+    }
+
     LazyVerticalGrid(
         modifier = Modifier
             .padding(top = 8.dp)
