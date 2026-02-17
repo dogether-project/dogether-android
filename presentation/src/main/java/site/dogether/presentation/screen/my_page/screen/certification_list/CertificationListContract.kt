@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.my_page.screen.certification_list
 
+import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import site.dogether.domain.model.todo.MyActivity
@@ -9,6 +10,7 @@ import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.Chip
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.SortingMethod
 
+@Immutable
 data class CertificationListUiState(
     val isLoading: Boolean = false,
     val myActivity: MyActivity = MyActivity(),

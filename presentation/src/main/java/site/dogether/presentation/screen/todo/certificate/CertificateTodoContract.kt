@@ -1,9 +1,11 @@
 package site.dogether.presentation.screen.todo.certificate
 
 import android.net.Uri
+import androidx.compose.runtime.Immutable
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 
+@Immutable
 data class CertificateTodoUiState(
     val todoId: Int = -1,
     val todoTitle: String = "",

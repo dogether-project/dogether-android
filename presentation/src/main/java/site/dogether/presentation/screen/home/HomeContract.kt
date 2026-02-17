@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.home
 
+import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -16,6 +17,7 @@ import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.TooltipUiState
 import java.time.LocalDate
 
+@Immutable
 data class HomeUiState(
     val isLoading: Boolean = false,
     val timerProgress: Float = 0f,

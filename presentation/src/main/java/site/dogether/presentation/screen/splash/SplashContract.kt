@@ -1,8 +1,10 @@
 package site.dogether.presentation.screen.splash
 
+import androidx.compose.runtime.Immutable
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 
+@Immutable
 data class SplashUiState(
     val isPermissionDialogShowing: Boolean = false,
     val deeplink: String? = null

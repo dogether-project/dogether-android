@@ -1,8 +1,10 @@
 package site.dogether.presentation.screen.on_boarding
 
+import androidx.compose.runtime.Immutable
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 
+@Immutable
 data class OnBoardingUiState(
     val isLoading: Boolean = false,
 )

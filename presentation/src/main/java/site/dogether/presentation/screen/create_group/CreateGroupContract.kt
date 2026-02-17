@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.create_group
 
+import androidx.compose.runtime.Immutable
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.model.dialog_state.DialogState
@@ -7,6 +8,7 @@ import site.dogether.presentation.model.dialog_state.DialogState
 const val MinimumMemberCount = 2
 const val MaximumMemberCount = 20
 
+@Immutable
 data class CreateGroupUiState(
     val isLoading: Boolean = false,
     val currentPage: Int = 0,

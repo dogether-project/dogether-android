@@ -1,8 +1,10 @@
 package site.dogether.presentation.screen.participation_method
 
+import androidx.compose.runtime.Immutable
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 
+@Immutable
 data class ParticipationMethodUiState(
     val isLoading: Boolean = false,
     val isParticipatingGroupExist: Boolean = false,
