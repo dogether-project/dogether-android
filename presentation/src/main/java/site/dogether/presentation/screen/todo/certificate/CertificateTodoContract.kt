@@ -26,9 +26,12 @@ sealed interface CertificateTodoUiEvent : UiEvent {
     data object Next : CertificateTodoUiEvent
 }
 
-sealed interface CertificateTodoSideEffect : UiEffect {
-    data object Back : CertificateTodoSideEffect
-    data object OpenGallery : CertificateTodoSideEffect
-    data object OpenCamera : CertificateTodoSideEffect
-    data object NavigateToNext : CertificateTodoSideEffect
+sealed interface CertificateTodoUiEffect : UiEffect {
+    data object Back : CertificateTodoUiEffect
+
+    data object OpenGallery : CertificateTodoUiEffect
+
+    data object OpenCamera : CertificateTodoUiEffect
+
+    data object NavigateToNext : CertificateTodoUiEffect
 }

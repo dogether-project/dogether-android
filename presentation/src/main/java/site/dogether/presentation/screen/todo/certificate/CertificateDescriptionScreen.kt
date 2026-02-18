@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
@@ -36,6 +35,7 @@ import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
 
@@ -51,17 +51,17 @@ fun CertificateDescriptionScreen(
         viewModel.onEvent(CertificateDescriptionUiEvent.Lifecycle.OnStart)
     }
 
-    viewModel.collectSideEffect { sideEffect ->
-        when (sideEffect) {
-            is CertificateDescriptionSideEffect.Back -> {
+    viewModel.CollectEffect<CertificateDescriptionUiEffect> { uiEffect ->
+        when (uiEffect) {
+            is CertificateDescriptionUiEffect.Back -> {
                 navController.popBackStack()
             }
 
-            is CertificateDescriptionSideEffect.NavigateToNext -> {
+            is CertificateDescriptionUiEffect.NavigateToNext -> {
                 navController.popBackStack()
             }
 
-            is CertificateDescriptionSideEffect.NavigateToHome -> {
+            is CertificateDescriptionUiEffect.NavigateToHome -> {
                 // 홈으로 이동 (인증 플로우 완료)
                 navController.navigate("home") {
                     popUpTo("home") { inclusive = true }

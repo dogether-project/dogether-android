@@ -167,7 +167,7 @@ class CertificateDescriptionViewModel(
                         state.copy(isLoading = false)
                     }
                     postEffect(UiEffect.ShowToast("인증을 완료했어요!"))
-                    postEffect(CertificateDescriptionSideEffect.NavigateToHome)
+                    postEffect(CertificateDescriptionUiEffect.NavigateToHome)
                 },
                 onFailure = {
                     updateState { state ->
