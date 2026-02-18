@@ -13,7 +13,6 @@ data class MyCertInfoUiState(
     val todos: ImmutableList<Todo> = persistentListOf(),
     val selectedItemIndex: Int = 0,
     val title: String = "",
-    val accessToken: String = "",
 )
 
 sealed interface MyCertInfoUiEvent : UiEvent {
