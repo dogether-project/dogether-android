@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.home
 
+import android.net.Uri
 import android.app.Activity
 import android.Manifest
 import android.content.Context
@@ -171,7 +172,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             // 투두 인증 페이지로 이동
             is HomeUiEffect.NavigateToCertificateTodo -> {
                 navHostController.navigate(
-                    "${Screen.CERTIFICATE_TODO}/${uiEffect.todoId}/${uiEffect.todoTitle}"
+                    "${Screen.CERTIFICATE_TODO}/${uiEffect.todoId}/${Uri.encode(uiEffect.todoTitle)}"
                 )
             }
 

@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.ranking
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -65,7 +66,7 @@ fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) },
         onNavigateToMemberCertInfo = { groupId, memberId, memberName ->
-            navHostController.navigate("${Screen.MEMBER_CERT_INFO}/$groupId/$memberId/$memberName")
+            navHostController.navigate("${Screen.MEMBER_CERT_INFO}/$groupId/$memberId/${Uri.encode(memberName)}")
         }
     )
 }

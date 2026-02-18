@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.certificate.my_cert_info
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -76,7 +77,7 @@ fun MyCertInfoScreen(viewModel: MyCertInfoViewModel = koinViewModel()) {
     viewModel.CollectEffect<MyCertInfoUiEffect> { uiEffect ->
         when (uiEffect) {
             is MyCertInfoUiEffect.NavigateToCertificateTodo -> {
-                navHostController.navigate("${Screen.CERTIFICATE_TODO}/${uiEffect.todoId}/${uiEffect.todoTitle}")
+                navHostController.navigate("${Screen.CERTIFICATE_TODO}/${uiEffect.todoId}/${Uri.encode(uiEffect.todoTitle)}")
             }
         }
     }

@@ -1,5 +1,6 @@
 package site.dogether.presentation.screen.certificate.member_cert_info
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.toImmutableList
@@ -28,7 +29,7 @@ class MemberCertInfoViewModel(
     }
 
     private val name: String by lazy {
-        savedStateHandle.get<String>(KEY_MEMBER_NAME).orEmpty()
+        Uri.decode(savedStateHandle.get<String>(KEY_MEMBER_NAME).orEmpty())
     }
 
     init {

@@ -15,7 +15,7 @@ class CertificateTodoViewModel(savedStateHandle: SavedStateHandle) : BaseViewMod
     }
 
     val todoTitle: String by lazy {
-        savedStateHandle.get<String>(KEY_TODO_TITLE).orEmpty()
+        Uri.decode(savedStateHandle.get<String>(KEY_TODO_TITLE).orEmpty())
     }
 
     override fun onEvent(event: UiEvent) {
