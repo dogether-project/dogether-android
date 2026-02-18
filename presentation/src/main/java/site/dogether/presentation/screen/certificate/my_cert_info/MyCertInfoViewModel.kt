@@ -9,7 +9,6 @@ import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_TODO_INDEX
 import site.dogether.common.utils.orZero
 import site.dogether.domain.use_case.todo.GetMyTodosByDateUseCase
-import site.dogether.domain.use_case.user.GetUserInfoUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
@@ -17,7 +16,6 @@ import site.dogether.presentation.screen.error.model.Error
 
 class MyCertInfoViewModel(
     private val getMyTodoListByDate: GetMyTodosByDateUseCase,
-    private val getUserInfo: GetUserInfoUseCase,
     private val savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<MyCertInfoUiState>(MyCertInfoUiState()) {
 
@@ -40,20 +38,6 @@ class MyCertInfoViewModel(
     private fun loadData() {
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }
-
-            getUserInfo().onSuccess { userInfo ->
-                updateState {
-                    it.copy(accessToken = userInfo.accessToken)
-                }
-            }.onFailure {
-                postEffect(
-                    UiEffect.NavigateToErrorWithCallback(
-                        error = Error.LoadData,
-                        onPositive = { loadData() }
-                    )
-                )
-                return@launch
-            }
 
             getMyTodoListByDate(
                 groupId = groupId,
