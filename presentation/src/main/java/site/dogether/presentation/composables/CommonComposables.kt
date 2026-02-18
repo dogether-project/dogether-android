@@ -641,7 +641,7 @@ fun CertInfoRowItem(
                     .data(todo.certificationMediaUrl)
                     .build(),
                 contentScale = ContentScale.Inside,
-                contentDescription = null
+                contentDescription = "image_certification"
             )
         } else {
             Image(
@@ -649,7 +649,7 @@ fun CertInfoRowItem(
                     .padding(10.dp)
                     .fillMaxSize(),
                 painter = painterResource(R.drawable.img_dosik_empty),
-                contentDescription = null
+                contentDescription = "image_empty"
             )
         }
     }

@@ -177,7 +177,7 @@ private fun MemberCertInfoScreenContents(
                                     .data(selectedTodo.certificationMediaUrl)
                                     .build(),
                                 contentScale = ContentScale.Inside,
-                                contentDescription = null
+                                contentDescription = "image_certification"
                             )
 
                             Box(
@@ -204,7 +204,7 @@ private fun MemberCertInfoScreenContents(
                                     .padding(top = 40.dp)
                                     .size(220.dp),
                                 painter = painterResource(R.drawable.img_dosik_empty),
-                                contentDescription = null
+                                contentDescription = "image_empty"
                             )
 
                             Text(
@@ -241,7 +241,7 @@ private fun MemberCertInfoScreenContents(
                             Icon(
                                 painter = painterResource(iconId),
                                 tint = Color.Black,
-                                contentDescription = null
+                                contentDescription = "icon_chip"
                             )
                         }
 

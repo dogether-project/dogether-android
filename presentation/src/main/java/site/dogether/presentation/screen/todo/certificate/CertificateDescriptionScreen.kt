@@ -115,7 +115,7 @@ private fun CertificateDescriptionScreenContents(
             Image(
                 modifier = Modifier.size(16.dp),
                 painter = painterResource(R.drawable.ic_caution),
-                contentDescription = null
+                contentDescription = "icon_caution"
             )
 
             Spacer(modifier = Modifier.width(4.dp))
