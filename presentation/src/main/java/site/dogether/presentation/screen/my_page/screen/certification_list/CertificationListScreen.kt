@@ -723,7 +723,7 @@ private fun DetailModeScreen(
                                         .data(selectedTodo.certificationMediaUrl)
                                         .build(),
                                     contentScale = ContentScale.Inside,
-                                    contentDescription = null
+                                    contentDescription = "image_certification"
                                 )
 
                                 Box(
@@ -750,7 +750,7 @@ private fun DetailModeScreen(
                                         .padding(top = 40.dp)
                                         .size(220.dp),
                                     painter = painterResource(R.drawable.img_dosik_empty),
-                                    contentDescription = null
+                                    contentDescription = "image_empty"
                                 )
 
                                 Text(
