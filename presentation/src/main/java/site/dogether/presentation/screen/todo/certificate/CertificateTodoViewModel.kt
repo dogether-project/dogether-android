@@ -31,16 +31,16 @@ class CertificateTodoViewModel(savedStateHandle: SavedStateHandle) : BaseViewMod
             }
 
             is CertificateTodoUiEvent.SelectFromGallery -> {
-                postEffect(CertificateTodoSideEffect.OpenGallery)
+                postEffect(CertificateTodoUiEffect.OpenGallery)
             }
 
             is CertificateTodoUiEvent.TakePhoto -> {
-                postEffect(CertificateTodoSideEffect.OpenCamera)
+                postEffect(CertificateTodoUiEffect.OpenCamera)
             }
 
             is CertificateTodoUiEvent.Next -> {
                 if (uiState.selectedImageUri != null) {
-                    postEffect(CertificateTodoSideEffect.NavigateToNext)
+                    postEffect(CertificateTodoUiEffect.NavigateToNext)
                 } else {
                     postEffect(UiEffect.ShowToast("인증 사진을 선택해주세요"))
                 }

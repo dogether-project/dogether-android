@@ -22,11 +22,14 @@ sealed interface CertificateDescriptionUiEvent : UiEvent {
     }
 
     data class UpdateDescription(val text: String) : CertificateDescriptionUiEvent
+
     data object SubmitCertificate : CertificateDescriptionUiEvent
 }
 
-sealed interface CertificateDescriptionSideEffect : UiEffect {
-    data object Back : CertificateDescriptionSideEffect
-    data object NavigateToNext : CertificateDescriptionSideEffect
-    data object NavigateToHome : CertificateDescriptionSideEffect
+sealed interface CertificateDescriptionUiEffect : UiEffect {
+    data object Back : CertificateDescriptionUiEffect
+
+    data object NavigateToNext : CertificateDescriptionUiEffect
+
+    data object NavigateToHome : CertificateDescriptionUiEffect
 }

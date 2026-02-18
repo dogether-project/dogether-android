@@ -42,7 +42,6 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
@@ -54,6 +53,7 @@ import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBorderDefault
 import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorTextDefault
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.clickableWithoutRipple
@@ -132,11 +132,11 @@ fun CertificateTodoScreen(
         }
     }
 
-    viewModel.collectSideEffect { sideEffect ->
-        when (sideEffect) {
-            is CertificateTodoSideEffect.Back -> Unit
+    viewModel.CollectEffect<CertificateTodoUiEffect> { uiEffect ->
+        when (uiEffect) {
+            is CertificateTodoUiEffect.Back -> Unit
 
-            is CertificateTodoSideEffect.OpenGallery -> {
+            is CertificateTodoUiEffect.OpenGallery -> {
                 if (storagePermissionState.status.isGranted) {
                     imagePickerLauncher.launch("image/*")
                 } else {
@@ -145,7 +145,7 @@ fun CertificateTodoScreen(
                 }
             }
 
-            is CertificateTodoSideEffect.OpenCamera -> {
+            is CertificateTodoUiEffect.OpenCamera -> {
                 if (cameraPermissionState.status.isGranted) {
                     cameraImageUri?.let { uri ->
                         cameraLauncher.launch(uri)
@@ -158,7 +158,7 @@ fun CertificateTodoScreen(
                 }
             }
 
-            is CertificateTodoSideEffect.NavigateToNext -> {
+            is CertificateTodoUiEffect.NavigateToNext -> {
                 uiState.selectedImageUri?.let { uri ->
                     // URI를 URL 인코딩하여 네비게이션
                     val encodedUri = URLEncoder.encode(uri.toString(), "UTF-8")
