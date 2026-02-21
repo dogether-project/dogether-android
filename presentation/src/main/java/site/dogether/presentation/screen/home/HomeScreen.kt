@@ -74,6 +74,7 @@ import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_SHORT_YEAR
 import site.dogether.common.utils.DateTimeUtils.toFormattedString
 import site.dogether.common.utils.DateTimeUtils.today
 import site.dogether.common.utils.DeeplinkUtil
+import site.dogether.domain.model.group.Group.Companion.STATUS_D_DAY
 import site.dogether.domain.model.group.Group.Companion.STATUS_FINISHED
 import site.dogether.domain.model.group.Group.Companion.STATUS_READY
 import site.dogether.domain.model.group.Group.Companion.STATUS_RUNNING
@@ -757,7 +758,7 @@ private fun AnchoredBottomSheet(
                     )
                 }
 
-                STATUS_RUNNING -> {
+                STATUS_RUNNING, STATUS_D_DAY -> {
                     if (selectedDate != today && todoList.isEmpty()) {
                         NoTodoContents()
                     } else {
