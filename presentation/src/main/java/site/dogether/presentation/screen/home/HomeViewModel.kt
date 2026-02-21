@@ -13,8 +13,6 @@ import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_FULL_YEAR
 import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_FULL_YEAR_DASHED
 import site.dogether.common.utils.DateTimeUtils.toFormattedString
 import site.dogether.common.utils.DateTimeUtils.today
-import site.dogether.common.utils.DateTimeUtils.todayWithTime
-import site.dogether.common.utils.DateTimeUtils.tomorrowMidnight
 import site.dogether.domain.model.group.Group
 import site.dogether.domain.model.group.Group.Companion.STATUS_D_DAY
 import site.dogether.domain.model.group.Group.Companion.STATUS_FINISHED
@@ -30,6 +28,8 @@ import site.dogether.presentation.screen.error.model.Error
 import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.TooltipUiState
 import java.time.Duration.between
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class HomeViewModel(
     private val defaultDispatcher: CoroutineDispatcher,
@@ -147,13 +147,22 @@ class HomeViewModel(
     }
 
     private fun launchTomorrowTimer() {
+        if (::timerJob.isInitialized) {
+            timerJob.cancel()
+        }
+
         val totalSecondsInDay = HoursPerDay * MinutesPerHour * SecondsPerMinute
-        var remainingSeconds = between(todayWithTime, tomorrowMidnight).seconds
 
         timerJob = viewModelScope.launch(defaultDispatcher) {
-            while (remainingSeconds > 0) {
-                delay(1000L)
-                remainingSeconds--
+            while (true) {
+                val now = LocalDateTime.now()
+                val midnight = LocalDate.now().plusDays(1).atStartOfDay()
+                val remainingSeconds = between(now, midnight).seconds
+
+                if (remainingSeconds <= 0) {
+                    updateState { it.copy(timerProgress = 0f, timerText = "00:00:00") }
+                    break
+                }
 
                 val hours = remainingSeconds / (MinutesPerHour * SecondsPerMinute)
                 val minutes = (remainingSeconds % (MinutesPerHour * SecondsPerMinute)) / SecondsPerMinute
@@ -168,6 +177,8 @@ class HomeViewModel(
                         timerText = text
                     )
                 }
+
+                delay(1000L)
             }
         }
     }
@@ -219,12 +230,12 @@ class HomeViewModel(
     }
 
     private suspend fun selectGroup(group: Group) {
-        if (uiState.selectedGroup.progressDay == 0) {
+        if (::timerJob.isInitialized) {
+            timerJob.cancel()
+        }
+
+        if (group.progressDay == 0) {
             launchTomorrowTimer()
-        } else {
-            if (::timerJob.isInitialized) {
-                timerJob.cancel()
-            }
         }
 
         val getMyTodoSpecificDateResult = getMyTodoSpecificDate(
