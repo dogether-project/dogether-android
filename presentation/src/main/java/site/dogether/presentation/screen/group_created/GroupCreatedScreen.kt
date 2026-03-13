@@ -36,6 +36,7 @@ import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.CTAButton
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBgSurface
 import site.dogether.presentation.theme.ColorBorderDisabled
@@ -47,7 +48,6 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
@@ -158,7 +158,7 @@ private fun GroupCreatedScreenContents(
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .minimumInteractiveComponentSize()
-                            .clickableWithoutRipple { onEvent(GroupCreatedUiEvent.Click.OnClickShare) },
+                            .throttledClickable { onEvent(GroupCreatedUiEvent.Click.OnClickShare) },
                         painter = painterResource(R.drawable.ic_export),
                         tint = ColorIconSecondary,
                         contentDescription = "icon_export"

@@ -48,6 +48,7 @@ import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorBorderDefault
@@ -56,7 +57,6 @@ import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
-import site.dogether.presentation.utils.clickableWithoutRipple
 import java.io.File
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
@@ -329,7 +329,7 @@ private fun ActionButton(
                 color = ColorBorderDefault,
                 shape = RoundedCornerShape(8.dp)
             )
-            .clickableWithoutRipple { if (isEnabled) onClick() }
+            .throttledClickable { if (isEnabled) onClick() }
             .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically

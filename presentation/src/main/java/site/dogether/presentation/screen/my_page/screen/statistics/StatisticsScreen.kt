@@ -47,6 +47,7 @@ import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.composables.node.skeleton
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.Body2_S
@@ -71,7 +72,6 @@ import site.dogether.presentation.theme.Grey600
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
@@ -150,7 +150,7 @@ private fun StatisticsContents(
                 Icon(
                     modifier = Modifier
                         .padding(start = 4.dp)
-                        .clickableWithoutRipple { onEvent(StatisticsUiEvent.Click.OnClickSelectGroup) },
+                        .throttledClickable { onEvent(StatisticsUiEvent.Click.OnClickSelectGroup) },
                     painter = painterResource(R.drawable.ic_arrow_down),
                     tint = ColorIconElevated,
                     contentDescription = "icon_arrow_down"
@@ -535,7 +535,7 @@ private fun ColumnScope.NoGroupContents() {
                     vertical = 12.dp,
                     horizontal = 40.dp
                 )
-                .clickableWithoutRipple {},
+                .throttledClickable {},
         ) {
             Text(
                 modifier = Modifier.align(Alignment.Center),

@@ -39,6 +39,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.screen.on_boarding.model.OnBoardingPage
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
@@ -53,7 +54,6 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
 
 private val PAGE_LIST: List<OnBoardingPage> = OnBoardingPage.entries
 
@@ -202,7 +202,7 @@ private fun OnBoardingScreenContents(
                 .fillMaxWidth()
                 .height(50.dp)
                 .background(ColorKakaoYellow)
-                .clickableWithoutRipple { onEvent(OnBoardingUiEvent.Click.OnClickKakaoLogin) },
+                .throttledClickable { onEvent(OnBoardingUiEvent.Click.OnClickKakaoLogin) },
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {

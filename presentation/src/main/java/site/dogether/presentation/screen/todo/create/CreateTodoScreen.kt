@@ -43,6 +43,7 @@ import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBorderDefault
@@ -57,7 +58,6 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
-import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun CreateTodoScreen(
@@ -256,7 +256,7 @@ private fun TodoListItem(
                 Icon(
                     modifier = Modifier
                         .size(24.dp)
-                        .clickableWithoutRipple { onDelete() },
+                        .throttledClickable { onDelete() },
                     painter = painterResource(R.drawable.ic_close),
                     contentDescription = "delete_todo",
                     tint = ColorTextSecondary
@@ -279,7 +279,7 @@ private fun AddTodoButton(
                     ?: ColorBorderDefault.copy(alpha = 0.2f),
                 shape = RoundedCornerShape(corner = CornerSize(10.dp)),
             )
-            .clickableWithoutRipple {
+            .throttledClickable {
                 if (isEnabled) {
                     onClick()
                 }

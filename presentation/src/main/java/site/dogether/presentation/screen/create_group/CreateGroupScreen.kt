@@ -43,6 +43,7 @@ import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
 import site.dogether.presentation.composables.GroupInfoBoard
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.screen.create_group.model.CreateGroupPage
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_S
@@ -62,7 +63,6 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.hideKeyboardOnTap
 
 private val PAGE_LIST: List<CreateGroupPage> = CreateGroupPage.entries
@@ -271,7 +271,7 @@ private fun MaximumMemberCountCalculateButton(
             .clip(RoundedCornerShape(8.dp))
             .size(40.dp)
             .background(ColorBgSurface)
-            .clickableWithoutRipple { onClick() }
+            .throttledClickable { onClick() }
     ) {
         Icon(
             modifier = Modifier.align(Alignment.Center),
@@ -395,7 +395,7 @@ private fun RowScope.DurationButton(
                 top = 12.dp,
                 bottom = 12.dp
             )
-            .clickableWithoutRipple { onClick() }
+            .throttledClickable { onClick() }
     ) {
         Text(
             modifier = Modifier.align(Alignment.CenterStart),
@@ -433,7 +433,7 @@ private fun RowScope.LaunchFromButton(
                 bottom = 26.dp,
                 start = 20.dp,
             )
-            .clickableWithoutRipple { onClick() }
+            .throttledClickable { onClick() }
     ) {
         Icon(
             painter = painterResource(if (isLaunchFromToday) R.drawable.ic_launch_from_today else R.drawable.ic_launch_from_tomorrow),

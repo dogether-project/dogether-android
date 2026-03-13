@@ -36,6 +36,7 @@ import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_S
@@ -49,7 +50,6 @@ import site.dogether.presentation.theme.ColorTextDisabled
 import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
-import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
@@ -173,7 +173,7 @@ private fun RankingScreenContents(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickableWithoutRipple {
+                            .throttledClickable {
                                 onNavigateToMemberCertInfo(
                                     uiState.groupId,
                                     member.memberId,
@@ -244,7 +244,7 @@ private fun RowScope.RankingMemberCard(
     Box(
         modifier = Modifier
             .weight(1f)
-            .clickableWithoutRipple(onClick)
+            .throttledClickable { onClick() }
     ) {
         Column(
             modifier = modifier

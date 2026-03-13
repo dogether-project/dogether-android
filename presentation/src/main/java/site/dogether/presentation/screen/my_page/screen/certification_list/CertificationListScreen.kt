@@ -5,7 +5,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -71,6 +70,7 @@ import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CertInfoRowItem
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.Chip
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.SortingMethod
 import site.dogether.presentation.theme.Body1_B
@@ -99,7 +99,6 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.animateScrollToItemCenteredFixedWidth
-import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.toPx
 import kotlin.math.roundToInt
 
@@ -410,7 +409,7 @@ private fun SortingMethodChipItem(
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(50.dp))
-            .clickableWithoutRipple { onClick() }
+            .throttledClickable { onClick() }
             .border(
                 width = 1.dp,
                 color = ColorBorderSecondary,
@@ -451,7 +450,7 @@ private fun ChipItem(
         modifier = modifier
             .clip(RoundedCornerShape(50.dp))
             .background(if (isSelected) chip.color else Color.Transparent)
-            .clickableWithoutRipple { onClick?.invoke() }
+            .throttledClickable { onClick?.invoke() }
             .border(
                 width = 1.dp,
                 color = if (isSelected) Color.Transparent else ColorBorderSecondary,
@@ -546,7 +545,7 @@ private fun SortingMethodItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .clickableWithoutRipple { onClick(sortingMethod) },
+            .throttledClickable { onClick(sortingMethod) },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -575,7 +574,7 @@ private fun CertificationItem(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
             .aspectRatio(1f)
-            .clickable { onClick() }
+            .throttledClickable { onClick() }
     ) {
         AsyncImage(
             model = certificationInfo.certificationMediaUrl,

@@ -65,6 +65,7 @@ import site.dogether.domain.model.group.Group
 import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.node.skeleton
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
@@ -91,8 +92,7 @@ import site.dogether.presentation.theme.Grey900
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Small_S
-import site.dogether.presentation.utils.clickableWithoutRipple
-import site.dogether.presentation.utils.conditionedClickableWithoutRipple
+import site.dogether.presentation.utils.conditionedThrottledClickable
 
 @Composable
 fun CTAButton(
@@ -108,7 +108,7 @@ fun CTAButton(
             Modifier
                 .clip(RoundedCornerShape(radius))
                 .background(if (isEnabled) color else ColorBgDisabled)
-                .conditionedClickableWithoutRipple(isEnabled) { onClick() })
+                .conditionedThrottledClickable(isEnabled) { onClick() })
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
@@ -144,7 +144,7 @@ fun NegativeCTAButton(
             Modifier
                 .clip(RoundedCornerShape(radius))
                 .background(ColorBgDisabled)
-                .clickableWithoutRipple { onClick() })
+                .throttledClickable { onClick() })
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
@@ -319,7 +319,7 @@ fun BackButton(onClick: () -> Unit) {
     Icon(
         modifier = Modifier
             .minimumInteractiveComponentSize()
-            .clickableWithoutRipple { onClick() },
+            .throttledClickable { onClick() },
         painter = painterResource(R.drawable.ic_arrow_back),
         tint = ColorIconDefault,
         contentDescription = "icon_arrow_back"
@@ -551,7 +551,7 @@ fun SelectGroupBottomSheet(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
-                        .clickableWithoutRipple { onClickAddGroup() },
+                        .throttledClickable { onClickAddGroup() },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -582,7 +582,7 @@ private fun GroupItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .clickableWithoutRipple { onClick() },
+            .throttledClickable { onClick() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -630,7 +630,7 @@ fun CertInfoRowItem(
                 color = if (isSelected) ColorBorderDefault else Color.Transparent,
                 shape = RoundedCornerShape(12.dp)
             )
-            .clickableWithoutRipple { onClick(index) }
+            .throttledClickable { onClick(index) }
     ) {
         if (todo.certificationMediaUrl.isNotEmpty()) {
             AsyncImage(
@@ -715,7 +715,7 @@ fun DogetherSnackbar(
                 color = Grey900,
                 shape = RoundedCornerShape(12.dp)
             )
-            .clickableWithoutRipple { onDismiss() }
+            .throttledClickable { onDismiss() }
     ) {
         Row(
             modifier = Modifier

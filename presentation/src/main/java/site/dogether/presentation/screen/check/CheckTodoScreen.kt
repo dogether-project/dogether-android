@@ -44,6 +44,7 @@ import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
@@ -62,7 +63,6 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
-import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun CheckTodoScreen(viewModel: CheckTodoViewModel = koinViewModel()) {
@@ -449,7 +449,7 @@ private fun ReviewButton(
                 color = Color.Transparent.takeIf { isSelected } ?: ColorBorderDefault,
                 shape = RoundedCornerShape(12.dp)
             )
-            .clickableWithoutRipple { onClick() },
+            .throttledClickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -507,7 +507,7 @@ private fun FeedbackDialog(
                     modifier = Modifier
                         .size(24.dp)
                         .align(Alignment.End)
-                        .clickableWithoutRipple { onDismiss() },
+                        .throttledClickable { onDismiss() },
                     painter = painterResource(R.drawable.ic_close),
                     contentDescription = "close",
                     tint = ColorTextDefault,

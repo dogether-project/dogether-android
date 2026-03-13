@@ -1,7 +1,7 @@
 package site.dogether.presentation.screen.home
 
-import android.app.Activity
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
@@ -10,7 +10,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -92,6 +91,7 @@ import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.composables.node.skeleton
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 import site.dogether.presentation.screen.home.state.PersistentTooltipStateImpl
@@ -128,8 +128,7 @@ import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.alphaByProgress
 import site.dogether.presentation.utils.bottomSheetSnappable
-import site.dogether.presentation.utils.clickableWithoutRipple
-import site.dogether.presentation.utils.conditionedClickableWithoutRipple
+import site.dogether.presentation.utils.conditionedThrottledClickable
 import site.dogether.presentation.utils.isPermissionGranted
 import site.dogether.presentation.utils.toDp
 import java.time.LocalDate
@@ -326,7 +325,7 @@ private fun HomeScreenContents(
                 },
                 end = {
                     Icon(
-                        modifier = Modifier.clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickMyPage) },
+                        modifier = Modifier.throttledClickable { onEvent(HomeUiEvent.Click.OnClickMyPage) },
                         painter = painterResource(R.drawable.ic_my),
                         tint = ColorIconDefault,
                         contentDescription = "icon_my"
@@ -349,7 +348,7 @@ private fun HomeScreenContents(
                             .padding(top = 6.dp)
                             .fillMaxWidth()
                             .skeleton(uiState.isLoading)
-                            .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickSelectGroup) },
+                            .throttledClickable { onEvent(HomeUiEvent.Click.OnClickSelectGroup) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -385,7 +384,7 @@ private fun HomeScreenContents(
                             modifier =
                                 Modifier
                                     .padding(start = 16.dp)
-                                    .clickable {
+                                    .throttledClickable {
                                         copyInviteCode(
                                             context = context,
                                             inviteCode = uiState.selectedGroup.joinCode
@@ -415,10 +414,11 @@ private fun HomeScreenContents(
                                         widthDp = 36.dp,
                                         heightDp = 22.dp
                                     ),
-                                verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-                                        text = uiState.selectedGroup.joinCode,
-                                        style = Body1_S.copy(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = uiState.selectedGroup.joinCode,
+                                    style = Body1_S.copy(
                                         lineHeightStyle = LineHeightStyle.Default.copy(
                                             trim = LineHeightStyle.Trim.Both
                                         )
@@ -513,7 +513,7 @@ private fun HomeScreenContents(
                     .height(48.dp)
                     .background(ColorBgSurface)
                     .padding(horizontal = 16.dp)
-                    .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickRanking) },
+                    .throttledClickable { onEvent(HomeUiEvent.Click.OnClickRanking) },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -618,7 +618,7 @@ private fun DosikTooltip(
                 modifier = Modifier
                     .padding(start = 4.dp)
                     .size(12.dp)
-                    .clickableWithoutRipple { onClickDismiss() },
+                    .throttledClickable { onClickDismiss() },
                 painter = painterResource(R.drawable.ic_close),
                 tint = ColorIconInverse,
                 contentDescription = "icon_close"
@@ -687,8 +687,8 @@ private fun AnchoredBottomSheet(
             .fillMaxWidth()
             .height(
                 (sheetState.frameHeight
-                        - sheetState.sheetOffsetY
-                        + sheetState.statusBarHeight).toDp()
+                  - sheetState.sheetOffsetY
+                  + sheetState.statusBarHeight).toDp()
             )
             .nestedScroll(connection)
             .bottomSheetSnappable(
@@ -708,7 +708,7 @@ private fun AnchoredBottomSheet(
                     .clip(RoundedCornerShape(8.dp))
                     .size(24.dp)
                     .background(ColorBgSurface)
-                    .conditionedClickableWithoutRipple(isGoPrevDayPossible) { onEvent(HomeUiEvent.Click.OnClickPrevDay) }
+                    .conditionedThrottledClickable(isGoPrevDayPossible) { onEvent(HomeUiEvent.Click.OnClickPrevDay) }
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.Center),
@@ -737,7 +737,7 @@ private fun AnchoredBottomSheet(
                     .clip(RoundedCornerShape(8.dp))
                     .size(24.dp)
                     .background(ColorBgSurface)
-                    .conditionedClickableWithoutRipple(isGoNextDayPossible) { onEvent(HomeUiEvent.Click.OnClickNextDay) }
+                    .conditionedThrottledClickable(isGoNextDayPossible) { onEvent(HomeUiEvent.Click.OnClickNextDay) }
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.Center),
@@ -927,7 +927,7 @@ private fun ColumnScope.TodoListContents(
         modifier = Modifier
             .weight(1f)
             .verticalScroll(rememberScrollState())
-            .clickable { onEvent(HomeUiEvent.Click.OnClickCreateTodo) },
+            .throttledClickable { onEvent(HomeUiEvent.Click.OnClickCreateTodo) },
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         filteredTodoList.forEachIndexed { index, todo ->
@@ -1015,7 +1015,7 @@ private fun ChipItem(
         modifier = Modifier
             .clip(RoundedCornerShape(50.dp))
             .background(if (isSelected) color else Color.Transparent)
-            .clickableWithoutRipple { onClick() }
+            .throttledClickable { onClick() }
             .border(
                 width = 1.dp,
                 color = if (isSelected) Color.Transparent else ColorBorderSecondary,
@@ -1059,7 +1059,7 @@ private fun TodoItem(
             .height(64.dp)
             .background(ColorBgSurface)
             .padding(horizontal = 16.dp)
-            .clickable { onEvent(HomeUiEvent.Click.OnClickTodo(index)) },
+            .throttledClickable { onEvent(HomeUiEvent.Click.OnClickTodo(index)) },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -1113,7 +1113,7 @@ private fun TodoItem(
                         horizontal = 12.dp,
                         vertical = (3.5).dp
                     )
-                    .clickable {
+                    .throttledClickable {
                         onEvent(HomeUiEvent.Click.OnClickCertificateTodo(todo.id, todo.content))
                     }
             ) {

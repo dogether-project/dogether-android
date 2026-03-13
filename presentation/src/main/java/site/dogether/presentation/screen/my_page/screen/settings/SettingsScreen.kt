@@ -24,6 +24,7 @@ import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.ColorIconElevated
@@ -31,7 +32,6 @@ import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.Red400
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
@@ -150,7 +150,7 @@ private fun SettingsMenuItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp)
-            .clickableWithoutRipple { onClick() },
+            .throttledClickable { onClick() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
