@@ -21,7 +21,7 @@
     <string name="title_error_participate_group">그룹 참여에 실패했어요.</string>
     <string name="title_error_already_participated">이미 참여한 그룹이에요.</string>
     <string name="title_error_full_house">그룹 인원이 가득 찼어요.</string>
-    <string name="title_error_invalid_group">참여할 수 없는 그룹이에요.</string>
+    <string name="title_error_group_invalid">참여할 수 없는 그룹이에요.</string>
     <string name="title_launch_from_tomorrow">내일부터 투두를 시작할 수 있어요!</string>
     <string name="title_create_todo_from_today">오늘의 투두를 작성해보세요</string>
     <string name="title_no_todo">해당 날짜에 작성된 투두가 없어요</string>
@@ -100,6 +100,7 @@
     <string name="cta_button_add_group">그룹 추가하기</string>
     <string name="cta_button_navigate_to_statistics">통계 보러가기</string>
     <string name="cta_button_withdraw">탈퇴하기</string>
+    <string name="cta_button_retype">다시 입력하기</string>
 
     <string name="cta_button_title_create_group">그룹 만들기</string>
     <string name="cta_button_title_participate_with_code">초대 코드로 참여하기</string>
