@@ -37,6 +37,8 @@ class CreateTodoViewModel(
     }
 
     override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is CreateTodoUiEvent.Lifecycle -> {
                 updateState {

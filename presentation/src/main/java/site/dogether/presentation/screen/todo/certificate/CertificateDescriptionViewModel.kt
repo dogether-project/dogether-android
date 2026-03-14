@@ -35,6 +35,8 @@ class CertificateDescriptionViewModel(
     }
 
     override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is CertificateDescriptionUiEvent.Lifecycle -> {
                 updateState { state ->
