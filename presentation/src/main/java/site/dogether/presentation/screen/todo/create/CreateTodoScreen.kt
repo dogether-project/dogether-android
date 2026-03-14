@@ -133,7 +133,7 @@ private fun CreateTodoScreenContents(
             text = buildAnnotatedString {
                 append(stringResource(R.string.create_todo_add_count_prefix))
                 withStyle(SpanStyle(color = ColorTextPrimary)) {
-                    append("${uiState.todoItems.filter { it.content.isNotBlank() }.size}")
+                    append(" ${uiState.todoItems.filter { it.content.isNotBlank() }.size}")
                 }
                 withStyle(SpanStyle(color = ColorTextSecondary)) {
                     append("/${uiState.maxTodoCount}")
