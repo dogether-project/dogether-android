@@ -24,10 +24,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.domain.model.user.RankingMember
@@ -50,6 +54,7 @@ import site.dogether.presentation.theme.ColorTextDisabled
 import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
+import site.dogether.presentation.utils.conditionedThrottledClickable
 
 @Composable
 fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
@@ -239,12 +244,13 @@ private fun RowScope.RankingMemberCard(
     rankingMember: RankingMember,
     onClick: () -> Unit = {},
 ) {
+    val context = LocalContext.current
     val isValid = rankingMember.rank in 1..3
 
     Box(
         modifier = Modifier
             .weight(1f)
-            .throttledClickable { onClick() }
+            .conditionedThrottledClickable(rankingMember.memberId != 0) { onClick() }
     ) {
         Column(
             modifier = modifier
@@ -266,7 +272,14 @@ private fun RowScope.RankingMemberCard(
                             shape = CircleShape
                         )
                 ) {
-
+                    AsyncImage(
+                        modifier = Modifier,
+                        model = ImageRequest.Builder(context)
+                            .data(rankingMember.profileImageUrl)
+                            .build(),
+                        contentScale = ContentScale.Inside,
+                        contentDescription = "image_profile"
+                    )
                 }
             } else {
                 Box(

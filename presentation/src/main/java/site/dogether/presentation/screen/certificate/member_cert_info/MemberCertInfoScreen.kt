@@ -36,7 +36,6 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import kotlin.math.roundToInt
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.domain.model.todo.Todo
@@ -60,6 +59,7 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.toPx
+import kotlin.math.roundToInt
 
 @Composable
 fun MemberCertInfoScreen(viewModel: MemberCertInfoViewModel = koinViewModel()) {
@@ -88,10 +88,12 @@ private fun MemberCertInfoScreenContents(
     val itemWidthPx = 48.dp.toPx().roundToInt()
 
     LaunchedEffect(uiState.selectedItemIndex) {
-        lazyListState.animateScrollToItemCenteredFixedWidth(
-            index = uiState.selectedItemIndex,
-            itemWidthPx = itemWidthPx
-        )
+        if (uiState.selectedItemIndex >= 0 && uiState.todos.isNotEmpty()) {
+            lazyListState.animateScrollToItemCenteredFixedWidth(
+                index = uiState.selectedItemIndex,
+                itemWidthPx = itemWidthPx
+            )
+        }
     }
 
     Column(
