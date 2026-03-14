@@ -80,7 +80,7 @@ class HomeViewModel(
 
                     is HomeUiEvent.Click.OnClickAddGroup -> {
                         updateState { it.copy(isSelectGroupBottomSheetShowing = false) }
-                        postEffect(UiEffect.NavigateTo(Screen.PARTICIPATION_METHOD))
+                        postEffect(UiEffect.NavigateTo("${Screen.PARTICIPATION_METHOD}/${true}"))
                     }
 
                     is HomeUiEvent.Click.OnClickPrevDay -> {

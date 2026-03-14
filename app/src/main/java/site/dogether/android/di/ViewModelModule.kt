@@ -48,7 +48,7 @@ val viewModelModule = module {
             storeGroupJoinCodeUseCase = get()
         )
     }
-    viewModel { ParticipationMethodViewModel() }
+    viewModel { ParticipationMethodViewModel(savedStateHandle = get()) }
     viewModel {
         CreateGroupViewModel(createGroup = get())
     }
