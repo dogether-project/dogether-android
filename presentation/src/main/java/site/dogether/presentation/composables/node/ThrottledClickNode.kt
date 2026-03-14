@@ -1,36 +1,31 @@
 package site.dogether.presentation.composables.node
-
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerEvent
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
+import androidx.compose.ui.node.DelegatingNode
 import androidx.compose.ui.node.ModifierNodeElement
-import androidx.compose.ui.node.PointerInputModifierNode
 import androidx.compose.ui.platform.InspectorInfo
-import androidx.compose.ui.unit.IntSize
 
 class ThrottledClickableNode(
     var throttleTime: Long,
     var onClick: () -> Unit
-) : PointerInputModifierNode, Modifier.Node() {
+) : DelegatingNode() {
 
     private var lastClickTime = 0L
 
-    override fun onPointerEvent(
-        pointerEvent: PointerEvent,
-        pass: PointerEventPass,
-        bounds: IntSize
-    ) {
-        if (pass == PointerEventPass.Main && pointerEvent.type == PointerEventType.Release) {
-            val currentTime = System.currentTimeMillis()
-            if (currentTime - lastClickTime > throttleTime) {
-                lastClickTime = currentTime
-                onClick()
+    init {
+        delegate(
+            SuspendingPointerInputModifierNode {
+                detectTapGestures {
+                    val currentTime = System.currentTimeMillis()
+                    if (currentTime - lastClickTime > throttleTime) {
+                        lastClickTime = currentTime
+                        onClick()
+                    }
+                }
             }
-        }
+        )
     }
-
-    override fun onCancelPointerInput() = Unit
 }
 
 data class ThrottledClickableElement(
