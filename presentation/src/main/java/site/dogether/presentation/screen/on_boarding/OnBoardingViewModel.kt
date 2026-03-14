@@ -8,6 +8,7 @@ import site.dogether.domain.use_case.user.GetGroupJoinCodeUseCase
 import site.dogether.domain.use_case.user.LoginWithKakaoUseCase
 import site.dogether.domain.use_case.user.StoreGroupJoinCodeUseCase
 import site.dogether.domain.use_case.user.StoreUserInfoUseCase
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
@@ -110,7 +111,7 @@ class OnBoardingViewModel(
             } else {
                 // 딥링크가 없으면 기존 로직대로 진행
                 if (checkParticipatingResult.shouldParticipating) {
-                    postEffect(OnBoardingUiEffect.NavigateToParticipationMethod)
+                    postEffect(UiEffect.NavigateTo("${Screen.PARTICIPATION_METHOD}/${false}"))
                 } else {
                     postEffect(OnBoardingUiEffect.NavigateToHome)
                 }

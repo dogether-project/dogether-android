@@ -112,7 +112,7 @@ class GroupManagementViewModel(
             if (getJoiningGroupsResult.groups.isEmpty()) {
                 postEffect(
                     UiEffect.NavigateTo(
-                        screen = Screen.PARTICIPATION_METHOD,
+                        screen = "${Screen.PARTICIPATION_METHOD}/${false}",
                         clearBackStack = true
                     )
                 )
