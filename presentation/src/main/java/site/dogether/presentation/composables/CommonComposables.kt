@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -512,12 +514,14 @@ fun SelectGroupBottomSheet(
         dragHandle = null,
         containerColor = ColorBgSurface,
         scrimColor = ColorBgDim,
-        onDismissRequest = { onDismissRequest() }
+        onDismissRequest = { onDismissRequest() },
+        contentWindowInsets = { WindowInsets(0.dp) }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(ColorBgSurface)
+                .navigationBarsPadding()
                 .padding(
                     top = 24.dp,
                     start = 24.dp,

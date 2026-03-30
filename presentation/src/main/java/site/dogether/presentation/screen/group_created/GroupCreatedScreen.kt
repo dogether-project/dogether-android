@@ -114,7 +114,6 @@ private fun GroupCreatedScreenContents(
             modifier = Modifier
                 .padding(top = 68.dp)
                 .fillMaxWidth()
-                .statusBarsPadding()
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

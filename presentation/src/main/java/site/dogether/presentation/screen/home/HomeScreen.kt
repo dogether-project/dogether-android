@@ -143,11 +143,6 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val context = LocalContext.current
     val navHostController = LocalNavHostController.current
 
-    // 백버튼 누르면 앱 완전 종료
-    BackHandler {
-        (context as? Activity)?.finishAffinity()
-    }
-
     viewModel.CollectEffect<HomeUiEffect> { uiEffect ->
         when (uiEffect) {
             is HomeUiEffect.CheckNotificationPermission -> checkNotificationPermission(
@@ -220,6 +215,11 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
         uiState = uiState,
         onEvent = onEvent
     )
+
+    // 백버튼 누르면 앱 완전 종료
+    BackHandler {
+        (context as? Activity)?.finishAffinity()
+    }
 }
 
 private fun checkNotificationPermission(
@@ -387,6 +387,7 @@ private fun HomeScreenContents(
                                     .throttledClickable {
                                         copyInviteCode(
                                             context = context,
+                                            groupName = uiState.selectedGroup.name,
                                             inviteCode = uiState.selectedGroup.joinCode
                                         )
                                     }
@@ -687,8 +688,8 @@ private fun AnchoredBottomSheet(
             .fillMaxWidth()
             .height(
                 (sheetState.frameHeight
-                  - sheetState.sheetOffsetY
-                  + sheetState.statusBarHeight).toDp()
+                        - sheetState.sheetOffsetY
+                        + sheetState.statusBarHeight).toDp()
             )
             .nestedScroll(connection)
             .bottomSheetSnappable(
@@ -1197,7 +1198,11 @@ private fun FinishedContents() {
     }
 }
 
-private fun copyInviteCode(context: Context, inviteCode: String) {
+private fun copyInviteCode(
+    context: Context,
+    groupName: String,
+    inviteCode: String
+) {
     ChottuLink.createDynamicLink()
         .setLink(DeeplinkUtil.generateInviteDeeplink(inviteCode).toUri())
         .setDomain(DeeplinkUtil.DEEPLINK_DOMAIN)
@@ -1213,6 +1218,7 @@ private fun copyInviteCode(context: Context, inviteCode: String) {
                     putExtra(
                         Intent.EXTRA_TEXT,
                         DeeplinkUtil.generateInviteText(
+                            groupName = groupName,
                             code = inviteCode,
                             url = result.uri.toString()
                         )
