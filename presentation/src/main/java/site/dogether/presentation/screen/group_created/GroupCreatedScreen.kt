@@ -2,6 +2,7 @@ package site.dogether.presentation.screen.group_created
 
 import android.content.Context
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -52,7 +53,7 @@ import site.dogether.presentation.utils.ScreenPreview
 @Composable
 fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
     val context = LocalContext.current
-    val navHostController = LocalNavHostController.current
+    val navController = LocalNavHostController.current
 
     viewModel.CollectEffect<GroupCreatedUiEffect> { uiEffect ->
         when (uiEffect) {
@@ -60,10 +61,6 @@ fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
                 context = context,
                 joinCode = uiEffect.joinCode
             )
-
-            is GroupCreatedUiEffect.NavigateToHome -> navHostController.navigate(Screen.HOME) {
-                popUpTo(0) { inclusive = true }
-            }
         }
     }
 
@@ -71,6 +68,14 @@ fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
+
+    BackHandler {
+        navController.navigate(Screen.PARTICIPATION_METHOD) {
+            popUpTo(Screen.PARTICIPATION_METHOD) {
+                inclusive = true
+            }
+        }
+    }
 }
 
 private fun shareJoinCode(context: Context, joinCode: String) {

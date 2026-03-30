@@ -42,6 +42,7 @@ import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
 import site.dogether.presentation.composables.GroupInfoBoard
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.screen.create_group.model.CreateGroupPage
@@ -70,22 +71,21 @@ private val PAGE_LIST: List<CreateGroupPage> = CreateGroupPage.entries
 @Composable
 fun CreateGroupScreen(viewModel: CreateGroupViewModel = koinViewModel()) {
     val navHostController = LocalNavHostController.current
+    val uiState = viewModel.collectAsState().value
 
     viewModel.CollectEffect<CreateGroupUiEffect> { uiEffect ->
         when (uiEffect) {
             is CreateGroupUiEffect.NavigateToBack -> navHostController.popBackStack()
-
-            is CreateGroupUiEffect.NavigateToGroupCreated -> navHostController.navigate("${Screen.GROUP_CREATED}/${uiEffect.joinCode}")
         }
     }
 
     CreateGroupScreenContents(
-        uiState = viewModel.collectAsState().value,
+        uiState = uiState,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
 
     InitDialog(
-        uiState = viewModel.collectAsState().value,
+        uiState = uiState,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
 }
@@ -503,6 +503,10 @@ private fun InitDialog(
             onClickPositive = { onEvent(CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogPositive) },
             onDismissRequest = { onEvent(CreateGroupUiEvent.Callback.OnDuplicatedNameDialogDismissRequested) }
         )
+    }
+
+    if (uiState.isLoading) {
+        LoadingDialog()
     }
 }
 

@@ -8,7 +8,6 @@
     <string name="title_create_group_purpose">어떤 그룹을 만들까요?</string>
     <string name="title_create_group_schedule">어떤 일정으로 진행할까요?</string>
     <string name="title_create_group_check">그룹 정보를 확인해주세요</string>
-    <string name="title_create_group_complete">그룹 생성 완료 !\n팀원들에게 코드를 공유해보세요</string>
     <string name="title_group_created">그룹 생성 완료 !\n팀원들에게 코드를 공유해보세요</string>
     <string name="title_participate_group">그룹 가입하기</string>
     <string name="title_type_join_code">초대코드 입력</string>
