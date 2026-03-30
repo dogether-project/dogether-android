@@ -34,10 +34,12 @@ sealed interface CertificationListUiEvent : UiEvent {
 
         data class OnClickCertificationInfo(
             val detailedCertifications: ImmutableList<Todo>,
-            val index: Int
+            val index: Int,
+            val date: String,
+            val groupName: String
         ) : Click
 
-        data object OnClickBackButtonWhenDetailMode : Click
+        data object OnClickBackWhenDetailMode : Click
     }
 
     sealed interface Callback : CertificationListUiEvent {
