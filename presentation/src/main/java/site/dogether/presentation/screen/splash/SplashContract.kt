@@ -35,7 +35,5 @@ sealed interface SplashUiEffect : UiEffect {
 
     data object NavigateToHome : SplashUiEffect
 
-    data object NavigateToParticipationMethod : SplashUiEffect
-
     data class NavigateToParticipateGroup(val joinCode: String) : SplashUiEffect
 }

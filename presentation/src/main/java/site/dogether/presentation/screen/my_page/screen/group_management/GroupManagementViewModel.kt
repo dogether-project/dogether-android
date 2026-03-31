@@ -66,6 +66,10 @@ class GroupManagementViewModel(
                         withdrawGroupAction()
                         dismissWithdrawDialog()
                     }
+
+                    is GroupManagementUiEvent.Click.OnClickCreateGroup -> {
+                        postEffect(UiEffect.NavigateTo("${Screen.PARTICIPATION_METHOD}/${false}"))
+                    }
                 }
             }
 

@@ -62,10 +62,6 @@ fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
                 navHostController
             )
 
-            is SplashUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(
-                navHostController
-            )
-
             is SplashUiEffect.NavigateToParticipateGroup -> {
                 navHostController.navigate("${Screen.PARTICIPATE_GROUP}/${uiEffect.joinCode}")
             }
@@ -97,10 +93,6 @@ private fun navigateToHome(navHostController: NavHostController) {
     navHostController.navigate(Screen.HOME) {
         popUpTo(0) { inclusive = true }
     }
-}
-
-private fun navigateToParticipationMethod(navHostController: NavHostController) {
-    navHostController.navigate(Screen.PARTICIPATION_METHOD)
 }
 
 private fun navigateToReviewCertification(navHostController: NavHostController) {

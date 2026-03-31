@@ -769,3 +769,56 @@ private fun DogetherSnackbarPreview() {
         onDismiss = {}
     )
 }
+
+@Composable
+fun NoGroupContents(onClickCreateGroup: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier.size(150.dp),
+            painter = painterResource(R.drawable.img_dosik_empty),
+            contentDescription = "image_dosik_empty"
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 32.dp),
+            text = stringResource(R.string.title_no_group),
+            style = Head2_B,
+            color = ColorTextSubtle
+        )
+
+        Text(
+            text = stringResource(R.string.body_no_group),
+            style = Body2_R,
+            color = ColorTextSecondary
+        )
+
+        Box(
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(ColorBgPrimary)
+                .padding(
+                    vertical = 12.dp,
+                    horizontal = 40.dp
+                )
+                .throttledClickable { onClickCreateGroup() },
+        ) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = stringResource(R.string.cta_button_create_group_2),
+                style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+                color = ColorTextBlack
+            )
+        }
+    }
+}
+
+@Preview(backgroundColor = 0x101010, showBackground = true)
+@Composable
+private fun NoGroupContentsPreview() {
+    NoGroupContents {  }
+}

@@ -22,6 +22,8 @@ sealed interface GroupManagementUiEvent : UiEvent {
         data object OnClickWithdrawDialogNegative : Click
 
         data object OnClickWithdrawDialogPositive : Click
+
+        data object OnClickCreateGroup : Click
     }
 
     sealed interface Callback : GroupManagementUiEvent {

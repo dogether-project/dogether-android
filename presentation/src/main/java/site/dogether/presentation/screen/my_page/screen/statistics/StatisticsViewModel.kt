@@ -5,6 +5,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.domain.use_case.user.GetGroupStatisticsUseCase
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
@@ -34,6 +35,10 @@ class StatisticsViewModel(
                         }
                         getGroupStatistics(event.group.id)
                     }
+
+                    is StatisticsUiEvent.Click.OnClickCreateGroup -> {
+                        postEffect(UiEffect.NavigateTo("${Screen.PARTICIPATION_METHOD}/${false}"))
+                    }
                 }
             }
 
@@ -56,6 +61,8 @@ class StatisticsViewModel(
 
         viewModelScope.launch {
             getJoiningGroupsUseCase().onSuccess { joiningGroups ->
+                if (joiningGroups.lastSelectedGroupIndex == -1) return@launch
+
                 val selectedGroup = joiningGroups.groups[joiningGroups.lastSelectedGroupIndex]
                 val groupId = selectedGroup.id
 

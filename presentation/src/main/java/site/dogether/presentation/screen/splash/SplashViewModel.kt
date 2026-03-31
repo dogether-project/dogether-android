@@ -12,6 +12,7 @@ import site.dogether.domain.use_case.todo.GetPendingReviewCertificationsUseCase
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.GetUserInfoUseCase
 import site.dogether.domain.use_case.user.StoreGroupJoinCodeUseCase
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
@@ -118,7 +119,12 @@ class SplashViewModel(
                     // 딥링크로 받은 코드를 이용해서 코드 입력 페이지로 이동
                     postEffect(SplashUiEffect.NavigateToParticipateGroup(joinCode))
                 } else {
-                    postEffect(SplashUiEffect.NavigateToParticipationMethod)
+                    postEffect(
+                        UiEffect.NavigateTo(
+                            screen = "${Screen.PARTICIPATION_METHOD}/${false}",
+                            clearBackStack = true
+                        )
+                    )
                 }
                 return@launch
             } else {

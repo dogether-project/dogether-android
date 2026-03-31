@@ -25,6 +25,7 @@ import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
+import site.dogether.presentation.composables.NoGroupContents
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body2_S
@@ -74,19 +75,23 @@ private fun GroupManagementScreenContents(
             centerText = stringResource(R.string.title_group_management)
         )
 
-        LazyColumn(
-            modifier = Modifier
-                .padding(top = 4.dp)
-                .fillMaxWidth()
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(uiState.groups) { group ->
-                GroupItem(
-                    group = group,
-                    onClickWithdraw = { groupId -> onEvent(GroupManagementUiEvent.Click.OnClickWithdraw(groupId)) }
-                )
+        if (uiState.groups.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(uiState.groups) { group ->
+                    GroupItem(
+                        group = group,
+                        onClickWithdraw = { groupId -> onEvent(GroupManagementUiEvent.Click.OnClickWithdraw(groupId)) }
+                    )
+                }
             }
+        } else {
+            NoGroupContents(onClickCreateGroup = { onEvent(GroupManagementUiEvent.Click.OnClickCreateGroup) })
         }
     }
 }
