@@ -27,14 +27,22 @@ class RankingViewModel(
         super.onEvent(event)
 
         when (event) {
-            is RankingUiEvent.Click.OnClickMember -> {
-                postEffect(UiEffect.NavigateTo("${Screen.MEMBER_CERT_INFO}/${event.groupId}/${event.memberId}/${event.memberName}"))
+            is RankingUiEvent.Click -> {
+                when (event) {
+                    is RankingUiEvent.Click.OnClickMember -> {
+                        postEffect(UiEffect.NavigateTo("${Screen.MEMBER_CERT_INFO}/${event.groupId}/${event.memberId}/${event.memberName}"))
+                    }
+                }
+            }
+
+            is RankingUiEvent.Lifecycle -> {
+                when (event) {
+                    is RankingUiEvent.Lifecycle.OnFirstComposition -> {
+                        loadRanking()
+                    }
+                }
             }
         }
-    }
-
-    init {
-        loadRanking()
     }
 
     private fun loadRanking() {

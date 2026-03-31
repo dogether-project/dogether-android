@@ -21,9 +21,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -36,6 +38,8 @@ import coil.request.ImageRequest
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.domain.model.user.RankingMember
+import site.dogether.domain.model.user.RankingMember.Companion.HISTORY_READ_STATUS_READ_ALL
+import site.dogether.domain.model.user.RankingMember.Companion.HISTORY_READ_STATUS_READ_YET
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
@@ -67,6 +71,10 @@ fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(RankingUiEvent.Lifecycle.OnFirstComposition)
+    }
 }
 
 @Composable
@@ -207,7 +215,11 @@ private fun RankingScreenContents(
                                     .size(50.dp)
                                     .border(
                                         width = 1.dp,
-                                        brush = BrushProfileBorder,
+                                        brush = when (member.historyReadStatus) {
+                                            HISTORY_READ_STATUS_READ_ALL -> SolidColor(ColorBorderDisabled)
+                                            HISTORY_READ_STATUS_READ_YET -> BrushProfileBorder
+                                            else -> SolidColor(Color.Transparent)
+                                        },
                                         shape = CircleShape
                                     )
                             ) {
@@ -285,7 +297,11 @@ private fun RowScope.RankingMemberCard(
                         .size(60.dp)
                         .border(
                             width = 2.dp,
-                            brush = BrushProfileBorder,
+                            brush = when (rankingMember.historyReadStatus) {
+                                HISTORY_READ_STATUS_READ_ALL -> SolidColor(ColorBorderDisabled)
+                                HISTORY_READ_STATUS_READ_YET -> BrushProfileBorder
+                                else -> SolidColor(Color.Transparent)
+                            },
                             shape = CircleShape
                         )
                 ) {

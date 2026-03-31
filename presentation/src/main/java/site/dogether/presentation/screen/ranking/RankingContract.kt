@@ -27,6 +27,10 @@ sealed interface RankingUiEvent : UiEvent {
             val memberName: String
         ) : Click
     }
+
+    sealed interface Lifecycle : RankingUiEvent {
+        data object OnFirstComposition : Lifecycle
+    }
 }
 
 sealed interface RankingUiEffect : UiEffect {

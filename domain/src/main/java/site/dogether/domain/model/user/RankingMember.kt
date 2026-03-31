@@ -9,4 +9,10 @@ data class RankingMember(
     val name: String = "",
     val historyReadStatus: String = "",
     val achievementRate: Int = 0
-) : DomainModel
+) : DomainModel {
+    companion object {
+        const val HISTORY_READ_STATUS_NULL = "NULL"
+        const val HISTORY_READ_STATUS_READ_ALL = "READ_ALL"
+        const val HISTORY_READ_STATUS_READ_YET = "READ_YET"
+    }
+}
