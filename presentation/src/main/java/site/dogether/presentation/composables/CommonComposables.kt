@@ -105,12 +105,18 @@ fun CTAButton(
     color: Color = ColorBgPrimary,
     onClick: () -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
+
     Box(
         modifier = modifier.then(
             Modifier
                 .clip(RoundedCornerShape(radius))
                 .background(if (isEnabled) color else ColorBgDisabled)
-                .conditionedThrottledClickable(isEnabled) { onClick() })
+                .conditionedThrottledClickable(isEnabled) {
+                    focusManager.clearFocus()
+                    onClick()
+                }
+        )
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
