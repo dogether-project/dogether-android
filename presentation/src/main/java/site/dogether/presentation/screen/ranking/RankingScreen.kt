@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -36,7 +37,6 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.domain.model.user.RankingMember
 import site.dogether.presentation.R
-import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
@@ -53,13 +53,10 @@ import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextDisabled
 import site.dogether.presentation.theme.ColorTextPrimary
 import site.dogether.presentation.utils.CollectEffect
-import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.conditionedThrottledClickable
 
 @Composable
 fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
-    val navHostController = LocalNavHostController.current
-
     viewModel.CollectEffect<RankingUiEffect> { uiEffect ->
         when (uiEffect) {
             else -> Unit
@@ -68,10 +65,7 @@ fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
 
     RankingScreenContents(
         uiState = viewModel.collectAsState().value,
-        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) },
-        onNavigateToMemberCertInfo = { groupId, memberId, memberName ->
-            navHostController.navigate("${Screen.MEMBER_CERT_INFO}/$groupId/$memberId/$memberName")
-        }
+        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
 }
 
@@ -79,8 +73,9 @@ fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
 private fun RankingScreenContents(
     uiState: RankingUiState,
     onEvent: (UiEvent) -> Unit,
-    onNavigateToMemberCertInfo: (groupId: Int, memberId: Int, memberName: String) -> Unit
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -103,10 +98,12 @@ private fun RankingScreenContents(
                 isLoading = uiState.isLoading,
                 rankingMember = inRankMembers[1],
                 onClick = {
-                    onNavigateToMemberCertInfo(
-                        uiState.groupId,
-                        inRankMembers[1].memberId,
-                        inRankMembers[1].name
+                    onEvent(
+                        RankingUiEvent.Click.OnClickMember(
+                            groupId = uiState.groupId,
+                            memberId = inRankMembers[1].memberId,
+                            memberName = inRankMembers[1].name
+                        )
                     )
                 }
             )
@@ -115,10 +112,12 @@ private fun RankingScreenContents(
                 isLoading = uiState.isLoading,
                 rankingMember = inRankMembers[0],
                 onClick = {
-                    onNavigateToMemberCertInfo(
-                        uiState.groupId,
-                        inRankMembers[0].memberId,
-                        inRankMembers[0].name
+                    onEvent(
+                        RankingUiEvent.Click.OnClickMember(
+                            groupId = uiState.groupId,
+                            memberId = inRankMembers[0].memberId,
+                            memberName = inRankMembers[0].name
+                        )
                     )
                 }
             )
@@ -128,10 +127,12 @@ private fun RankingScreenContents(
                 isLoading = uiState.isLoading,
                 rankingMember = inRankMembers[2],
                 onClick = {
-                    onNavigateToMemberCertInfo(
-                        uiState.groupId,
-                        inRankMembers[2].memberId,
-                        inRankMembers[2].name
+                    onEvent(
+                        RankingUiEvent.Click.OnClickMember(
+                            groupId = uiState.groupId,
+                            memberId = inRankMembers[2].memberId,
+                            memberName = inRankMembers[2].name
+                        )
                     )
                 }
             )
@@ -179,16 +180,21 @@ private fun RankingScreenContents(
                         modifier = Modifier
                             .fillMaxWidth()
                             .throttledClickable {
-                                onNavigateToMemberCertInfo(
-                                    uiState.groupId,
-                                    member.memberId,
-                                    member.name
+                                onEvent(
+                                    RankingUiEvent.Click.OnClickMember(
+                                        groupId = uiState.groupId,
+                                        memberId = member.memberId,
+                                        memberName = member.name
+                                    )
                                 )
                             },
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Text(
                                 text = member.rank.toString(),
                                 style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default),
@@ -204,13 +210,24 @@ private fun RankingScreenContents(
                                         brush = BrushProfileBorder,
                                         shape = CircleShape
                                     )
-                            )
+                            ) {
+                                AsyncImage(
+                                    modifier = Modifier,
+                                    model = ImageRequest.Builder(context)
+                                        .data(member.profileImageUrl)
+                                        .build(),
+                                    contentScale = ContentScale.Inside,
+                                    contentDescription = "image_profile"
+                                )
+                            }
 
                             Text(
                                 modifier = Modifier.padding(start = 12.dp),
                                 text = member.name,
                                 style = Body1_S,
-                                color = ColorTextDefault
+                                color = ColorTextDefault,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
 
@@ -295,10 +312,16 @@ private fun RowScope.RankingMemberCard(
             }
 
             Text(
-                modifier = Modifier.padding(top = 12.dp),
+                modifier = Modifier.padding(
+                    top = 12.dp,
+                    start = 4.dp,
+                    end = 4.dp
+                ),
                 text = if (isValid) rankingMember.name else "-",
                 style = Body1_B,
                 color = ColorTextDefault,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             Text(

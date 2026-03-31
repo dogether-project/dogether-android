@@ -8,6 +8,7 @@ import site.dogether.KEY_GROUP_ID
 import site.dogether.common.utils.orZero
 import site.dogether.domain.model.user.RankingMember
 import site.dogether.domain.use_case.group.GetRankingUseCase
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
@@ -26,7 +27,9 @@ class RankingViewModel(
         super.onEvent(event)
 
         when (event) {
-            else -> Unit
+            is RankingUiEvent.Click.OnClickMember -> {
+                postEffect(UiEffect.NavigateTo("${Screen.MEMBER_CERT_INFO}/${event.groupId}/${event.memberId}/${event.memberName}"))
+            }
         }
     }
 

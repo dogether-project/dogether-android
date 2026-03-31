@@ -20,7 +20,13 @@ data class RankingUiState(
 )
 
 sealed interface RankingUiEvent : UiEvent {
-
+    sealed interface Click : RankingUiEvent {
+        data class OnClickMember(
+            val groupId: Int,
+            val memberId: Int,
+            val memberName: String
+        ) : Click
+    }
 }
 
 sealed interface RankingUiEffect : UiEffect {
