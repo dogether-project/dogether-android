@@ -54,12 +54,7 @@ class SettingsViewModel(
                             updateState { it.copy(isLoading = true) }
                             withdraw().onSuccess {
                                 postEffect(SettingsUiEffect.WithdrawWithKakao)
-                                postEffect(
-                                    UiEffect.NavigateTo(
-                                        screen = Screen.ON_BOARDING,
-                                        clearBackStack = true
-                                    )
-                                )
+                                postEffect(SettingsUiEffect.NavigateToOnBoarding)
                                 dismissWithdrawDialog()
                             }.onFailure { error ->
                                 postEffect(UiEffect.ShowToast(error.message ?: "회원 탈퇴에 실패했습니다"))
