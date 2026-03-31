@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -57,9 +56,10 @@ fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
 
     viewModel.CollectEffect<GroupCreatedUiEffect> { uiEffect ->
         when (uiEffect) {
-            is GroupCreatedUiEffect.ShareJoinCode -> shareJoinCode(
+            is GroupCreatedUiEffect.ShareJoinCode -> shareInviteCode(
                 context = context,
-                joinCode = uiEffect.joinCode
+                groupName = uiEffect.groupName,
+                joinCode = uiEffect.joinCode,
             )
         }
     }
@@ -78,7 +78,11 @@ fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
     }
 }
 
-private fun shareJoinCode(context: Context, joinCode: String) {
+private fun shareInviteCode(
+    context: Context,
+    groupName: String,
+    joinCode: String
+) {
     ChottuLink.createDynamicLink()
         .setLink(DeeplinkUtil.generateInviteDeeplink(joinCode).toUri())
         .setDomain(DeeplinkUtil.DEEPLINK_DOMAIN)
@@ -88,10 +92,17 @@ private fun shareJoinCode(context: Context, joinCode: String) {
                 val sendIntent: Intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(
-                        Intent.EXTRA_SUBJECT,
+                        Intent.EXTRA_TITLE,
                         context.getString(R.string.intent_title_share_join_code)
                     )
-                    putExtra(Intent.EXTRA_TEXT, result.uri.toString())
+                    putExtra(
+                        Intent.EXTRA_TEXT,
+                        DeeplinkUtil.generateInviteText(
+                            groupName = groupName,
+                            code = joinCode,
+                            url = result.uri.toString()
+                        )
+                    )
                     type = "text/plain"
                 }
 
@@ -101,6 +112,9 @@ private fun shareJoinCode(context: Context, joinCode: String) {
                 )
                 context.startActivity(shareIntent)
             }
+        }
+        .addOnFailureListener { exception ->
+            exception.printStackTrace()
         }
 }
 

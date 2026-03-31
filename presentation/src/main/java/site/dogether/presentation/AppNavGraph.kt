@@ -9,6 +9,7 @@ import site.dogether.KEY_DATE
 import site.dogether.KEY_ENCODED_URI
 import site.dogether.KEY_ERROR_TYPE
 import site.dogether.KEY_GROUP_ID
+import site.dogether.KEY_GROUP_NAME
 import site.dogether.KEY_IS_PARTICIPATING_GROUP_EXIST
 import site.dogether.KEY_JOIN_CODE
 import site.dogether.KEY_MEMBER_ID
@@ -61,8 +62,10 @@ fun AppNavGraph(startDestination: String = Screen.SPLASH) {
         ) { ParticipationMethodScreen() }
         composable(Screen.CREATE_GROUP) { CreateGroupScreen() }
         composable(
-            route = "${Screen.GROUP_CREATED}/{${KEY_JOIN_CODE}}",
-            arguments = listOf(navArgument(KEY_JOIN_CODE) { type = NavType.StringType }
+            route = "${Screen.GROUP_CREATED}/{${KEY_GROUP_NAME}}/{${KEY_JOIN_CODE}}",
+            arguments = listOf(
+                navArgument(KEY_GROUP_NAME) { type = NavType.StringType },
+                navArgument(KEY_JOIN_CODE) { type = NavType.StringType }
             )
         ) { GroupCreatedScreen() }
         composable(Screen.PARTICIPATE_GROUP) { ParticipateGroupScreen() }

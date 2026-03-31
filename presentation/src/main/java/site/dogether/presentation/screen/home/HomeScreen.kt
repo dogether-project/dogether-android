@@ -385,10 +385,10 @@ private fun HomeScreenContents(
                                 Modifier
                                     .padding(start = 16.dp)
                                     .throttledClickable {
-                                        copyInviteCode(
+                                        shareJoinCode(
                                             context = context,
                                             groupName = uiState.selectedGroup.name,
-                                            inviteCode = uiState.selectedGroup.joinCode
+                                            joinCode = uiState.selectedGroup.joinCode
                                         )
                                     }
                         ) {
@@ -1198,13 +1198,13 @@ private fun FinishedContents() {
     }
 }
 
-private fun copyInviteCode(
+private fun shareJoinCode(
     context: Context,
     groupName: String,
-    inviteCode: String
+    joinCode: String
 ) {
     ChottuLink.createDynamicLink()
-        .setLink(DeeplinkUtil.generateInviteDeeplink(inviteCode).toUri())
+        .setLink(DeeplinkUtil.generateInviteDeeplink(joinCode).toUri())
         .setDomain(DeeplinkUtil.DEEPLINK_DOMAIN)
         .build()
         .addOnSuccessListener {
@@ -1212,14 +1212,14 @@ private fun copyInviteCode(
                 val sendIntent: Intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(
-                        Intent.EXTRA_SUBJECT,
+                        Intent.EXTRA_TITLE,
                         context.getString(R.string.intent_title_share_join_code)
                     )
                     putExtra(
                         Intent.EXTRA_TEXT,
                         DeeplinkUtil.generateInviteText(
                             groupName = groupName,
-                            code = inviteCode,
+                            code = joinCode,
                             url = result.uri.toString()
                         )
                     )

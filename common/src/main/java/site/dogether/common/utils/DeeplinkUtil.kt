@@ -16,7 +16,6 @@ object DeeplinkUtil {
             "%s"
     const val DEEPLINK_DOMAIN = "dogether-app.chottu.link"
 
-
     fun generateInviteDeeplink(code: String): String {
         return FORMAT_DEEPLINK_INVITE.format(code)
     }

@@ -107,7 +107,7 @@ class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseVi
                 return@launch
             }
 
-            postEffect(UiEffect.NavigateTo("${Screen.GROUP_CREATED}/${createGroupResult.joinCode}"))
+            postEffect(UiEffect.NavigateTo("${Screen.GROUP_CREATED}/${uiState.name}/${createGroupResult.joinCode}"))
         }.invokeOnCompletion {
             updateState { it.copy(isLoading = false) }
         }
