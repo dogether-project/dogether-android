@@ -92,7 +92,12 @@ class SplashViewModel(
                 // 토큰 없을 때는 딥링크 정보를 저장하고 온보딩으로 이동
                 // 로그인 이후에 그룹 가입 절차로 이동시에 여기서 받은 코드 입력하도록 처리
                 joinCode?.let { storeGroupJoinCodeUseCase(it) }
-                postEffect(SplashUiEffect.NavigateToOnBoarding)
+                postEffect(
+                    UiEffect.NavigateTo(
+                        screen = Screen.ON_BOARDING,
+                        clearBackStack = true
+                    )
+                )
                 return@launch
             }
 
@@ -104,12 +109,22 @@ class SplashViewModel(
                 }
 
             if (getPendingReviewCertifications.certifications.isNotEmpty()) {
-                postEffect(SplashUiEffect.NavigateToReviewCertification)
+                postEffect(
+                    UiEffect.NavigateTo(
+                        screen = Screen.CHECK_TODO,
+                        clearBackStack = true
+                    )
+                )
                 return@launch
             }
 
             val checkParticipatingResult = checkParticipating().getOrElse {
-                postEffect(SplashUiEffect.NavigateToOnBoarding)
+                postEffect(
+                    UiEffect.NavigateTo(
+                        screen = Screen.ON_BOARDING,
+                        clearBackStack = true
+                    )
+                )
                 return@launch
             }
 
@@ -117,7 +132,12 @@ class SplashViewModel(
                 // 그룹 참여가 필요한 경우
                 if (joinCode != null) {
                     // 딥링크로 받은 코드를 이용해서 코드 입력 페이지로 이동
-                    postEffect(SplashUiEffect.NavigateToParticipateGroup(joinCode))
+                    postEffect(
+                        UiEffect.NavigateTo(
+                            screen = "${Screen.PARTICIPATE_GROUP}/${joinCode}",
+                            clearBackStack = true
+                        )
+                    )
                 } else {
                     postEffect(
                         UiEffect.NavigateTo(
@@ -131,9 +151,19 @@ class SplashViewModel(
                 // 이미 그룹에 참여 중인 경우
                 if (joinCode != null) {
                     // 딥링크로 받은 코드를 이용해서 코드 입력 페이지로 이동
-                    postEffect(SplashUiEffect.NavigateToParticipateGroup(joinCode))
+                    postEffect(
+                        UiEffect.NavigateTo(
+                            screen = "${Screen.PARTICIPATE_GROUP}/${joinCode}",
+                            clearBackStack = true
+                        )
+                    )
                 } else {
-                    postEffect(SplashUiEffect.NavigateToHome)
+                    postEffect(
+                        UiEffect.NavigateTo(
+                            screen = Screen.HOME,
+                            clearBackStack = true
+                        )
+                    )
                 }
                 return@launch
             }
