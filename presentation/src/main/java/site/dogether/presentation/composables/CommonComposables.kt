@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -771,9 +772,11 @@ private fun DogetherSnackbarPreview() {
 }
 
 @Composable
-fun NoGroupContents(onClickCreateGroup: () -> Unit) {
+fun ColumnScope.NoGroupContents(onClickCreateGroup: () -> Unit) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -820,5 +823,7 @@ fun NoGroupContents(onClickCreateGroup: () -> Unit) {
 @Preview(backgroundColor = 0x101010, showBackground = true)
 @Composable
 private fun NoGroupContentsPreview() {
-    NoGroupContents {  }
+    Column(modifier = Modifier.fillMaxSize()) {
+        NoGroupContents { }
+    }
 }

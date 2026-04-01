@@ -56,6 +56,7 @@ import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextInverse
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.toPx
@@ -98,6 +99,7 @@ private fun MemberCertInfoScreenContents(
 
     Column(
         modifier = Modifier
+            .padding(horizontal = 16.dp)
             .fillMaxSize()
             .pointerInput(uiState.todos.size, uiState.selectedItemIndex) {
                 detectHorizontalDragGestures { change, dragAmount ->
@@ -121,30 +123,30 @@ private fun MemberCertInfoScreenContents(
             centerText = stringResource(R.string.title_member_cert_info).format(uiState.name)
         )
 
-        Column(
-            modifier = Modifier
-                .padding(top = 12.dp)
-                .weight(1f)
-        ) {
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                state = lazyListState
+        if (uiState.todos.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .weight(1f)
             ) {
-                itemsIndexed(uiState.todos) { index, todo ->
-                    CertInfoRowItem(
-                        index = index,
-                        isSelected = index == uiState.selectedItemIndex,
-                        todo = todo,
-                        onClick = { clickedItemIndex ->
-                            onEvent(MemberCertInfoUiEvent.Click.OnClickItem(clickedItemIndex))
-                        }
-                    )
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    state = lazyListState
+                ) {
+                    itemsIndexed(uiState.todos) { index, todo ->
+                        CertInfoRowItem(
+                            index = index,
+                            isSelected = index == uiState.selectedItemIndex,
+                            todo = todo,
+                            onClick = { clickedItemIndex ->
+                                onEvent(MemberCertInfoUiEvent.Click.OnClickItem(clickedItemIndex))
+                            }
+                        )
+                    }
                 }
-            }
 
-            if (uiState.todos.isNotEmpty()) {
                 val selectedTodo = uiState.todos[uiState.selectedItemIndex]
 
                 Column(
@@ -281,6 +283,25 @@ private fun MemberCertInfoScreenContents(
                         }
                     }
                 }
+            }
+        } else {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier.size(150.dp),
+                    painter = painterResource(R.drawable.img_dosik_empty),
+                    contentDescription = "image_dosik_empty"
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 32.dp),
+                    text = stringResource(R.string.title_certification_info_list_not_exist),
+                    style = Head2_B,
+                    color = ColorTextSubtle
+                )
             }
         }
     }

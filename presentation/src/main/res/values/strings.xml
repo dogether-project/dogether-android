@@ -31,6 +31,7 @@
     <string name="title_no_group">소속된 그룹이 없어요</string>
     <string name="title_certification_list">인증 목록</string>
     <string name="title_certification_list_not_exist">아직 작성된 투두가 없어요</string>
+    <string name="title_certification_info_list_not_exist">아직 작성된 인증 정보가 없어요</string>
     <string name="title_sorting_method">정렬</string>
     <string name="title_settings">설정</string>
     <string name="title_group_management">그룹 관리</string>
