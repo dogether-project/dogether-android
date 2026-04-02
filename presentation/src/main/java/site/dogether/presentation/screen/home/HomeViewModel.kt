@@ -205,7 +205,7 @@ class HomeViewModel(
         }
     }
 
-    private fun loadTodosForDate(date: java.time.LocalDate) {
+    private fun loadTodosForDate(date: LocalDate) {
         viewModelScope.launch {
             val getMyTodoSpecificDateResult = getMyTodoSpecificDate(
                 groupId = uiState.selectedGroup.id,
@@ -223,7 +223,8 @@ class HomeViewModel(
             updateState {
                 it.copy(
                     selectedDate = date,
-                    todoList = getMyTodoSpecificDateResult.toImmutableList()
+                    todoList = getMyTodoSpecificDateResult.toImmutableList(),
+                    isTodaySelected = date == today
                 )
             }
         }

@@ -567,6 +567,7 @@ private fun HomeScreenContents(
             timerProgress = uiState.timerProgress,
             isGoPrevDayPossible = uiState.isGoPrevDayPossible,
             isGoNextDayPossible = uiState.isGoNextDayPossible,
+            isTodaySelected = uiState.isTodaySelected,
             onEvent = onEvent
         )
     }
@@ -672,6 +673,7 @@ private fun AnchoredBottomSheet(
     timerProgress: Float,
     isGoPrevDayPossible: Boolean,
     isGoNextDayPossible: Boolean,
+    isTodaySelected: Boolean,
     onEvent: (UiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -767,6 +769,7 @@ private fun AnchoredBottomSheet(
                             todoList = todoList,
                             filteredTodoList = filteredTodoList,
                             selectedChip = selectedChip,
+                            isTodaySelected = isTodaySelected,
                             onEvent = onEvent
                         )
                     }
@@ -858,6 +861,7 @@ private fun TodoContents(
     todoList: List<Todo>,
     filteredTodoList: List<Todo>,
     selectedChip: Chip,
+    isTodaySelected: Boolean,
     onEvent: (UiEvent) -> Unit,
 ) {
     Column(
@@ -869,6 +873,7 @@ private fun TodoContents(
                 todoList = todoList,
                 filteredTodoList = filteredTodoList,
                 selectedChip = selectedChip,
+                isTodaySelected = isTodaySelected,
                 onEvent = onEvent
             )
         } else {
@@ -882,6 +887,7 @@ private fun ColumnScope.TodoListContents(
     todoList: List<Todo>,
     filteredTodoList: List<Todo>,
     selectedChip: Chip,
+    isTodaySelected: Boolean,
     onEvent: (UiEvent) -> Unit,
 ) {
     Row(
@@ -935,6 +941,7 @@ private fun ColumnScope.TodoListContents(
             TodoItem(
                 todo = todo,
                 index = index,
+                isCertificateButtonShowing = isTodaySelected,
                 onEvent = onEvent
             )
         }
@@ -1051,6 +1058,7 @@ private fun ChipItem(
 private fun TodoItem(
     todo: Todo,
     index: Int,
+    isCertificateButtonShowing: Boolean,
     onEvent: (UiEvent) -> Unit,
 ) {
     Row(
@@ -1105,7 +1113,7 @@ private fun TodoItem(
             )
         }
 
-        if (todo.status == STATUS_CERTIFY_PENDING) {
+        if (todo.status == STATUS_CERTIFY_PENDING && isCertificateButtonShowing) {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))

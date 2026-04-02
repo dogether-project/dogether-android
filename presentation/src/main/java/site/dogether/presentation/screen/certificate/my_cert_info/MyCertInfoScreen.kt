@@ -312,7 +312,7 @@ private fun MyCertInfoScreenContents(
                                         .align(BottomCenter)
                                         .fillMaxWidth()
                                         .height(50.dp),
-                                    isEnabled = true,
+                                    isEnabled = uiState.isToday,
                                     text = stringResource(R.string.cta_button_certificate),
                                     onClick = { onEvent(MyCertInfoUiEvent.Click.OnClickCertificate) }
                                 )
