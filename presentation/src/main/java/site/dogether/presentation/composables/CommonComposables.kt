@@ -324,6 +324,120 @@ private fun DogetherTextFieldPreview() {
 }
 
 @Composable
+fun BottomEndCounterDogetherTextField(
+    modifier: Modifier,
+    value: String,
+    onValueChanged: (String) -> Unit,
+    onDone: (() -> Unit)? = null,
+    textStyle: TextStyle = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+    textColor: Color = ColorTextDefault,
+    hintText: String,
+    hintTextStyle: TextStyle = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+    hintTextColor: Color = ColorTextSecondary,
+    singleLine: Boolean = true,
+    lengthLimit: Int = 0,
+) {
+    val focusManager = LocalFocusManager.current
+    var borderColorState by remember { mutableStateOf(Color.Transparent) }
+
+    var inner by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(text = value, selection = TextRange(value.length)))
+    }
+
+    LaunchedEffect(value) {
+        if (inner.composition == null && value != inner.text) {
+            inner = inner.copy(text = value, selection = TextRange(value.length))
+        }
+    }
+
+    Box(
+        modifier
+            .clip(RoundedCornerShape(12.dp))
+            .onFocusChanged { focusState ->
+                borderColorState =
+                    if (focusState.hasFocus) ColorBorderPrimary else Color.Transparent
+            }
+            .background(ColorBgElevated)
+            .border(
+                width = (1.5).dp,
+                shape = RoundedCornerShape(12.dp),
+                color = borderColorState
+            )
+    ) {
+        BasicTextField(
+            modifier = Modifier
+                .padding(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 34.dp
+                )
+                .fillMaxWidth(),
+            value = inner,
+            cursorBrush = SolidColor(Color.White),
+            onValueChange = { newValue ->
+                when (lengthLimit) {
+                    0 -> {
+                        onValueChanged(newValue.text)
+                    }
+
+                    else -> {
+                        val limitedText = newValue.text.take(lengthLimit)
+                        val fixed = newValue.copy(text = limitedText)
+                        inner = fixed
+                        if (limitedText != value) onValueChanged(limitedText)
+                    }
+                }
+            },
+            singleLine = singleLine,
+            textStyle = textStyle.copy(color = textColor),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                    onDone?.invoke()
+                }
+            ),
+            decorationBox = {
+                Box {
+                    if (inner.text.isEmpty()) {
+                        Text(text = hintText, style = hintTextStyle, color = hintTextColor)
+                    } else {
+                        it()
+                    }
+                }
+            }
+        )
+
+        if (lengthLimit > 0) {
+            Text(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.BottomEnd),
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(color = ColorTextPrimary)) { append("${inner.text.length}") }
+                    withStyle(SpanStyle(color = ColorTextSecondary)) { append("/$lengthLimit") }
+                },
+                style = Small_S.copy(lineHeightStyle = LineHeightStyle.Default)
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun BottomEndCounterDogetherTextFieldPreview() {
+    BottomEndCounterDogetherTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        value = "",
+        onValueChanged = {},
+        hintText = "힌트"
+    )
+}
+
+@Composable
 fun BackButton(onClick: () -> Unit) {
     Icon(
         modifier = Modifier

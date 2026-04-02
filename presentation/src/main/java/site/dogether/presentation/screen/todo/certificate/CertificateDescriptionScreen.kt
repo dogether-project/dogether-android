@@ -28,9 +28,11 @@ import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
+import site.dogether.presentation.composables.BottomEndCounterDogetherTextField
 import site.dogether.presentation.composables.CTAButton
-import site.dogether.presentation.composables.DogetherTextField
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextSecondary
@@ -75,6 +77,8 @@ fun CertificateDescriptionScreen(
         onEvent = viewModel::onEvent,
         context = context
     )
+
+    InitDialog(uiState)
 }
 
 @Composable
@@ -95,7 +99,6 @@ private fun CertificateDescriptionScreenContents(
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        // 제목
         Text(
             text = context.getString(R.string.certificate_description_title),
             style = Head1_B.copy(lineHeightStyle = LineHeightStyle.Default),
@@ -104,7 +107,7 @@ private fun CertificateDescriptionScreenContents(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -131,14 +134,14 @@ private fun CertificateDescriptionScreenContents(
         Spacer(modifier = Modifier.height(48.dp))
 
         // 설명 입력 필드
-        DogetherTextField(
+        BottomEndCounterDogetherTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp),
             value = uiState.description,
-            onValueChanged = { text ->
-                onEvent(CertificateDescriptionUiEvent.UpdateDescription(text))
-            },
+            textStyle = Body1_S.copy(textAlign = TextAlign.Start),
+            hintTextStyle = Body1_S.copy(textAlign = TextAlign.Start),
+            onValueChanged = { text -> onEvent(CertificateDescriptionUiEvent.UpdateDescription(text)) },
             hintText = context.getString(R.string.certificate_description_hint),
             lengthLimit = 40,
             singleLine = false
@@ -157,6 +160,13 @@ private fun CertificateDescriptionScreenContents(
         )
 
         Spacer(modifier = Modifier.height(20.dp))
+    }
+}
+
+@Composable
+private fun InitDialog(uiState: CertificateDescriptionUiState) {
+    if (uiState.isLoading) {
+        LoadingDialog()
     }
 }
 

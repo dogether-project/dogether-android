@@ -51,9 +51,12 @@ import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.ColorBgElevated
-import site.dogether.presentation.theme.ColorBorderDefault
+import site.dogether.presentation.theme.ColorBorderDisabled
 import site.dogether.presentation.theme.ColorIconDefault
+import site.dogether.presentation.theme.ColorIconElevated
 import site.dogether.presentation.theme.ColorTextDefault
+import site.dogether.presentation.theme.ColorTextSubtle
+import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
@@ -212,7 +215,7 @@ private fun CertificateTodoScreenContents(
         ) {
             Text(
                 text = uiState.todoTitle,
-                style = Body1_S,
+                style = Head1_B,
                 color = ColorTextDefault,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -270,7 +273,7 @@ private fun PhotoUploadArea(
             )
             .border(
                 width = 1.dp,
-                color = ColorBorderDefault,
+                color = ColorBorderDisabled,
                 shape = RoundedCornerShape(12.dp)
             ),
         contentAlignment = Alignment.Center
@@ -286,22 +289,22 @@ private fun PhotoUploadArea(
             )
         } ?: run {
             Column(
+                modifier = Modifier.padding(30.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Image(
-                    modifier = Modifier.size(120.dp),
-                    painter = painterResource(R.drawable.img_no_todo),
+                    modifier = Modifier.weight(1f),
+                    painter = painterResource(R.drawable.img_dosik_cam),
                     contentDescription = "certification_placeholder",
                     contentScale = ContentScale.Fit
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
-
                 Text(
+                    modifier = Modifier.padding(top = 24.dp),
                     text = context.getString(R.string.certificate_todo_upload_placeholder),
                     style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
-                    color = ColorTextDefault,
+                    color = ColorTextSubtle,
                     textAlign = TextAlign.Center
                 )
             }
@@ -314,22 +317,16 @@ private fun ActionButton(
     modifier: Modifier = Modifier,
     icon: Int,
     text: String,
-    isEnabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     Row(
         modifier = modifier
             .height(48.dp)
             .background(
-                color = if (isEnabled) ColorBgElevated else ColorBgElevated.copy(alpha = 0.5f),
+                color = ColorBgElevated,
                 shape = RoundedCornerShape(8.dp)
             )
-            .border(
-                width = 1.dp,
-                color = ColorBorderDefault,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .throttledClickable { if (isEnabled) onClick() }
+            .throttledClickable { onClick() }
             .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
@@ -338,7 +335,7 @@ private fun ActionButton(
             modifier = Modifier.size(20.dp),
             painter = painterResource(icon),
             contentDescription = text,
-            tint = if (isEnabled) ColorIconDefault else ColorIconDefault.copy(alpha = 0.5f)
+            tint = ColorIconDefault
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -346,7 +343,7 @@ private fun ActionButton(
         Text(
             text = text,
             style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
-            color = if (isEnabled) ColorTextDefault else ColorTextDefault.copy(alpha = 0.5f)
+            color = ColorIconElevated
         )
     }
 }
