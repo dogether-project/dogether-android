@@ -130,8 +130,7 @@ class CreateTodoViewModel(
         updateState { state ->
             state.copy(
                 todoText = text,
-                addEnabled =
-                    text.isNotBlank() && state.todoItems.map { it.content }.none { it == text }
+                addEnabled = text.isNotBlank() && state.todoItems.map { it.content }.none { it == text }
             )
         }
     }

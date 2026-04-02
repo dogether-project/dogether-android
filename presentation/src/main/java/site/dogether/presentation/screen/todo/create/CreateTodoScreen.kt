@@ -69,9 +69,9 @@ fun CreateTodoScreen(
         viewModel.onEvent(CreateTodoUiEvent.Lifecycle.OnStart)
     }
 
-    viewModel.CollectEffect<CreateTodoSideEffect> { sideEffect ->
+    viewModel.CollectEffect<CreateTodoUiEffect> { sideEffect ->
         when (sideEffect) {
-            is CreateTodoSideEffect.Back -> Unit
+            is CreateTodoUiEffect.Back -> Unit
         }
     }
 
@@ -155,9 +155,7 @@ private fun CreateTodoScreenContents(
                     .weight(1f)
                     .height(56.dp),
                 value = uiState.todoText,
-                onValueChanged = { text ->
-                    onEvent(CreateTodoUiEvent.UpdateTodoText(text))
-                },
+                onValueChanged = { text -> onEvent(CreateTodoUiEvent.UpdateTodoText(text)) },
                 hintText = stringResource(R.string.create_todo_input_hint),
                 lengthLimit = 20,
             )
@@ -166,9 +164,7 @@ private fun CreateTodoScreenContents(
 
             AddTodoButton(
                 isEnabled = uiState.todoText.isNotBlank(),
-                onClick = {
-                    onEvent(CreateTodoUiEvent.AddTodoItem)
-                }
+                onClick = { onEvent(CreateTodoUiEvent.AddTodoItem) }
             )
         }
 

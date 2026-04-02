@@ -239,8 +239,11 @@ fun DogetherTextField(
     }
 
     LaunchedEffect(value) {
-        if (inner.composition == null && value != inner.text) {
-            inner = inner.copy(text = value, selection = TextRange(value.length))
+        if (value.isEmpty() || (inner.composition == null && value != inner.text)) {
+            inner = TextFieldValue(
+                text = value,
+                selection = TextRange(value.length)
+            )
         }
     }
 
@@ -345,8 +348,11 @@ fun BottomEndCounterDogetherTextField(
     }
 
     LaunchedEffect(value) {
-        if (inner.composition == null && value != inner.text) {
-            inner = inner.copy(text = value, selection = TextRange(value.length))
+        if (value.isEmpty() || (inner.composition == null && value != inner.text)) {
+            inner = TextFieldValue(
+                text = value,
+                selection = TextRange(value.length)
+            )
         }
     }
 

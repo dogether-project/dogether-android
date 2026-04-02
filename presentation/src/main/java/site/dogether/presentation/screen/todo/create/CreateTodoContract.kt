@@ -39,6 +39,6 @@ sealed interface CreateTodoUiEvent : UiEvent {
     }
 }
 
-sealed interface CreateTodoSideEffect : UiEffect {
-    data object Back : CreateTodoSideEffect
+sealed interface CreateTodoUiEffect : UiEffect {
+    data object Back : CreateTodoUiEffect
 }
