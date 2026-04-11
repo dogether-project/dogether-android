@@ -146,6 +146,10 @@ class HomeViewModel(
         }
     }
 
+    override fun onDateChanged(date: LocalDate) {
+        loadInitialData()
+    }
+
     private fun launchTomorrowTimer() {
         if (::timerJob.isInitialized) {
             timerJob.cancel()

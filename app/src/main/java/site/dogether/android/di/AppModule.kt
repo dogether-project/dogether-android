@@ -7,5 +7,6 @@ val appModule = listOf(
     localDataSourceModule,
     apiRouteModule,
     networkModule,
-    dispatcherModule
+    dispatcherModule,
+    utilModule
 )

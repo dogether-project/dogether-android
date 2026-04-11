@@ -13,6 +13,7 @@ import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.error.model.Error
+import java.time.LocalDate
 
 class RankingViewModel(
     savedStateHandle: SavedStateHandle,
@@ -43,6 +44,10 @@ class RankingViewModel(
                 }
             }
         }
+    }
+
+    override fun onDateChanged(date: LocalDate) {
+        loadRanking()
     }
 
     private fun loadRanking() {

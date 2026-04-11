@@ -9,6 +9,7 @@ import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.error.model.Error
+import java.time.LocalDate
 
 class CheckTodoViewModel(
     private val getPendingReviewCertifications: GetPendingReviewCertificationsUseCase,
@@ -50,6 +51,10 @@ class CheckTodoViewModel(
                 submitReview()
             }
         }
+    }
+
+    override fun onDateChanged(date: LocalDate) {
+        loadPendingReviewCertifications()
     }
 
     private fun loadPendingReviewCertifications() {
