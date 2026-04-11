@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -202,7 +203,7 @@ private fun CertificateTodoScreenContents(
         PhotoUploadArea(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(400.dp),
+                .aspectRatio(1f),
             imageUri = uiState.selectedImageUri,
             context = context
         )
@@ -285,7 +286,7 @@ private fun PhotoUploadArea(
                     .fillMaxSize(),
                 painter = rememberAsyncImagePainter(model = imageUri),
                 contentDescription = "certification_image",
-                contentScale = ContentScale.FillWidth
+                contentScale = ContentScale.Fit
             )
         } ?: run {
             Column(

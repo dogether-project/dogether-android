@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -63,6 +64,7 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
+import site.dogether.presentation.utils.ScreenPreview
 
 @Composable
 fun CheckTodoScreen(viewModel: CheckTodoViewModel = koinViewModel()) {
@@ -243,7 +245,7 @@ private fun CertificationReviewContent(
         CertificationImageArea(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(340.dp),
+                .aspectRatio(1f),
             imageUrl = uiState.certificationMediaUrl,
             content = uiState.certificationContent,
             memberName = uiState.memberName,
@@ -353,7 +355,7 @@ private fun CertificationImageArea(
                     .data(imageUrl)
                     .build(),
                 contentDescription = "certification_image",
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Fit
             )
 
             // 하단 그라데이션 및 텍스트
@@ -583,3 +585,8 @@ private fun FeedbackDialog(
     }
 }
 
+@ScreenPreview
+@Composable
+fun Preview() {
+    CheckTodoScreen()
+}

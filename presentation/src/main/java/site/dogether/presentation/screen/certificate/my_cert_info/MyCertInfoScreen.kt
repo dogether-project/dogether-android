@@ -196,7 +196,7 @@ private fun MyCertInfoScreenContents(
                                 model = ImageRequest.Builder(context)
                                     .data(selectedTodo.certificationMediaUrl)
                                     .build(),
-                                contentScale = ContentScale.Inside,
+                                contentScale = ContentScale.Fit,
                                 contentDescription = "image_certification"
                             )
 
