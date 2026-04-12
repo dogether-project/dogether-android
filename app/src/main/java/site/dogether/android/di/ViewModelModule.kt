@@ -97,6 +97,7 @@ val viewModelModule = module {
     viewModel {
         MemberCertInfoViewModel(
             getMemberTodoHistory = get(),
+            readTodoUseCase = get(),
             savedStateHandle = get()
         )
     }

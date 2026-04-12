@@ -9,6 +9,7 @@ import site.dogether.KEY_MEMBER_ID
 import site.dogether.KEY_MEMBER_NAME
 import site.dogether.common.utils.orZero
 import site.dogether.domain.use_case.todo.GetMemberTodoHistoryUseCase
+import site.dogether.domain.use_case.todo.ReadTodoUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
@@ -16,6 +17,7 @@ import site.dogether.presentation.screen.error.model.Error
 
 class MemberCertInfoViewModel(
     private val getMemberTodoHistory: GetMemberTodoHistoryUseCase,
+    private val readTodoUseCase: ReadTodoUseCase,
     private val savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<MemberCertInfoUiState>(MemberCertInfoUiState()) {
 
@@ -44,16 +46,22 @@ class MemberCertInfoViewModel(
                 memberId = memberId
             ).onSuccess { memberTodoHistory ->
                 val initialIndex = memberTodoHistory.currentTodoHistoryToReadIndex
+                val safeIndex = if (initialIndex < memberTodoHistory.todos.size) {
+                    initialIndex
+                } else {
+                    0
+                }
+                
                 updateState {
                     it.copy(
                         todos = memberTodoHistory.todos.toImmutableList(),
-                        selectedItemIndex = if (initialIndex < memberTodoHistory.todos.size) {
-                            initialIndex
-                        } else {
-                            0
-                        },
+                        selectedItemIndex = safeIndex,
                         isLoading = false
                     )
+                }
+
+                if (memberTodoHistory.todos.isNotEmpty()) {
+                    readAndMark(safeIndex)
                 }
             }.onFailure {
                 updateState { it.copy(isLoading = false) }
@@ -67,6 +75,22 @@ class MemberCertInfoViewModel(
         }
     }
 
+    private fun readAndMark(index: Int) {
+        if (index !in uiState.todos.indices) return
+
+        val todoToRead = uiState.todos[index]
+        if (!todoToRead.isRead) {
+            val updatedTodos = uiState.todos.toMutableList()
+            updatedTodos[index] = todoToRead.copy(isRead = true)
+            
+            updateState { it.copy(todos = updatedTodos.toImmutableList()) }
+
+            viewModelScope.launch {
+                readTodoUseCase(todoToRead.id)
+            }
+        }
+    }
+
     override fun onEvent(event: UiEvent) {
         super.onEvent(event)
 
@@ -75,6 +99,7 @@ class MemberCertInfoViewModel(
                 when (event) {
                     is MemberCertInfoUiEvent.Click.OnClickItem -> {
                         updateState { it.copy(selectedItemIndex = event.index) }
+                        readAndMark(event.index)
                     }
                 }
             }
@@ -83,13 +108,17 @@ class MemberCertInfoViewModel(
                 when (event) {
                     is MemberCertInfoUiEvent.Callback.OnSwipeLeft -> {
                         if (uiState.selectedItemIndex < uiState.todos.lastIndex) {
-                            updateState { it.copy(selectedItemIndex = it.selectedItemIndex + 1) }
+                            val newIndex = uiState.selectedItemIndex + 1
+                            updateState { it.copy(selectedItemIndex = newIndex) }
+                            readAndMark(newIndex)
                         }
                     }
 
                     is MemberCertInfoUiEvent.Callback.OnSwipeRight -> {
                         if (uiState.selectedItemIndex > 0) {
-                            updateState { it.copy(selectedItemIndex = it.selectedItemIndex - 1) }
+                            val newIndex = uiState.selectedItemIndex - 1
+                            updateState { it.copy(selectedItemIndex = newIndex) }
+                            readAndMark(newIndex)
                         }
                     }
                 }

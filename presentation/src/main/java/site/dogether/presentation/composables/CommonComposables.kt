@@ -783,6 +783,15 @@ fun CertInfoRowItem(
                 contentDescription = "image_empty"
             )
         }
+
+        if (todo.isRead) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Grey900.copy(alpha = 0.8f))
+            )
+        }
     }
 }
 
