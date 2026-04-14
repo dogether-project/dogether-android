@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,7 +44,9 @@ import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
@@ -62,7 +65,7 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
-import site.dogether.presentation.utils.clickableWithoutRipple
+import site.dogether.presentation.utils.ScreenPreview
 
 @Composable
 fun CheckTodoScreen(viewModel: CheckTodoViewModel = koinViewModel()) {
@@ -87,6 +90,8 @@ fun CheckTodoScreen(viewModel: CheckTodoViewModel = koinViewModel()) {
         onEvent = viewModel::onEvent,
         context = context
     )
+
+    InitDialog(uiState)
 }
 
 @Composable
@@ -243,7 +248,7 @@ private fun CertificationReviewContent(
         CertificationImageArea(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(340.dp),
+                .aspectRatio(1f),
             imageUrl = uiState.certificationMediaUrl,
             content = uiState.certificationContent,
             memberName = uiState.memberName,
@@ -322,6 +327,12 @@ private fun CertificationReviewContent(
     }
 }
 
+@Composable
+private fun InitDialog(uiState: CheckTodoUiState) {
+    if (uiState.isLoading) {
+        LoadingDialog()
+    }
+}
 
 @Composable
 private fun CertificationImageArea(
@@ -353,7 +364,7 @@ private fun CertificationImageArea(
                     .data(imageUrl)
                     .build(),
                 contentDescription = "certification_image",
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Fit
             )
 
             // 하단 그라데이션 및 텍스트
@@ -449,7 +460,7 @@ private fun ReviewButton(
                 color = Color.Transparent.takeIf { isSelected } ?: ColorBorderDefault,
                 shape = RoundedCornerShape(12.dp)
             )
-            .clickableWithoutRipple { onClick() },
+            .throttledClickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -507,7 +518,7 @@ private fun FeedbackDialog(
                     modifier = Modifier
                         .size(24.dp)
                         .align(Alignment.End)
-                        .clickableWithoutRipple { onDismiss() },
+                        .throttledClickable { onDismiss() },
                     painter = painterResource(R.drawable.ic_close),
                     contentDescription = "close",
                     tint = ColorTextDefault,
@@ -583,3 +594,8 @@ private fun FeedbackDialog(
     }
 }
 
+@ScreenPreview
+@Composable
+fun Preview() {
+    CheckTodoScreen()
+}

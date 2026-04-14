@@ -19,7 +19,8 @@ sealed interface GroupCreatedUiEvent : UiEvent {
 }
 
 sealed interface GroupCreatedUiEffect : UiEffect {
-    data class ShareJoinCode(val joinCode: String) : GroupCreatedUiEffect
-
-    data object NavigateToHome : GroupCreatedUiEffect
+    data class ShareJoinCode(
+        val groupName: String,
+        val joinCode: String
+    ) : GroupCreatedUiEffect
 }

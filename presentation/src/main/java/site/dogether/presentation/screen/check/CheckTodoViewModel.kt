@@ -9,6 +9,7 @@ import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.error.model.Error
+import java.time.LocalDate
 
 class CheckTodoViewModel(
     private val getPendingReviewCertifications: GetPendingReviewCertificationsUseCase,
@@ -52,6 +53,10 @@ class CheckTodoViewModel(
         }
     }
 
+    override fun onDateChanged(date: LocalDate) {
+        loadPendingReviewCertifications()
+    }
+
     private fun loadPendingReviewCertifications() {
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }
@@ -59,7 +64,6 @@ class CheckTodoViewModel(
             getPendingReviewCertifications().onSuccess { result ->
                 updateState {
                     it.copy(
-                        isLoading = false,
                         certifications = result.certifications.toImmutableList(),
                         currentIndex = 0,
                         selectedReviewType = null,
@@ -67,7 +71,6 @@ class CheckTodoViewModel(
                     )
                 }
             }.onFailure {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,
@@ -75,6 +78,8 @@ class CheckTodoViewModel(
                     )
                 )
             }
+        }.invokeOnCompletion {
+            updateState { it.copy(isLoading = false) }
         }
     }
 
@@ -102,7 +107,6 @@ class CheckTodoViewModel(
             ).onSuccess {
                 handleReviewSuccess()
             }.onFailure {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,
@@ -110,6 +114,8 @@ class CheckTodoViewModel(
                     )
                 )
             }
+        }.invokeOnCompletion {
+            updateState { it.copy(isLoading = false) }
         }
     }
 

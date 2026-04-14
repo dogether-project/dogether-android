@@ -39,6 +39,8 @@ import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.composables.LoadingDialog
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.screen.on_boarding.model.OnBoardingPage
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
@@ -53,12 +55,12 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
 
 private val PAGE_LIST: List<OnBoardingPage> = OnBoardingPage.entries
 
 @Composable
 fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
     val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
     val navHostController = LocalNavHostController.current
@@ -86,8 +88,6 @@ fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
 
             is OnBoardingUiEffect.NavigateToHome -> navigateToHome(navHostController)
 
-            is OnBoardingUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(navHostController)
-
             is OnBoardingUiEffect.NavigateToParticipateGroup -> {
                 navHostController.navigate("${Screen.PARTICIPATE_GROUP}/${uiEffect.joinCode}")
             }
@@ -95,9 +95,11 @@ fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
     }
 
     OnBoardingScreenContents(
-        uiState = viewModel.collectAsState().value,
+        uiState = uiState,
         onEvent = onEvent
     )
+
+    InitDialog(uiState)
 }
 
 private fun kakaoLoginCallback(onEvent: (UiEvent) -> Unit): (OAuthToken?, Throwable?) -> Unit = { token, error ->
@@ -145,10 +147,6 @@ private fun navigateToHome(navHostController: NavHostController) {
     navHostController.navigate(Screen.HOME) {
         popUpTo(0) { inclusive = false }
     }
-}
-
-private fun navigateToParticipationMethod(navHostController: NavHostController) {
-    navHostController.navigate(Screen.PARTICIPATION_METHOD)
 }
 
 @Composable
@@ -202,7 +200,7 @@ private fun OnBoardingScreenContents(
                 .fillMaxWidth()
                 .height(50.dp)
                 .background(ColorKakaoYellow)
-                .clickableWithoutRipple { onEvent(OnBoardingUiEvent.Click.OnClickKakaoLogin) },
+                .throttledClickable { onEvent(OnBoardingUiEvent.Click.OnClickKakaoLogin) },
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -219,6 +217,13 @@ private fun OnBoardingScreenContents(
                 color = ColorKakaoLabel
             )
         }
+    }
+}
+
+@Composable
+private fun InitDialog(uiState: OnBoardingUiState) {
+    if (uiState.isLoading) {
+        LoadingDialog()
     }
 }
 

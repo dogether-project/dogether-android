@@ -7,6 +7,9 @@ import kotlinx.coroutines.launch
 import site.dogether.KEY_DATE
 import site.dogether.KEY_GROUP_ID
 import site.dogether.KEY_TODO_INDEX
+import site.dogether.common.utils.DateTimeUtils.DATE_FORMAT_FULL_YEAR_DASHED
+import site.dogether.common.utils.DateTimeUtils.toLocalDate
+import site.dogether.common.utils.DateTimeUtils.today
 import site.dogether.common.utils.orZero
 import site.dogether.domain.use_case.todo.GetMyTodosByDateUseCase
 import site.dogether.presentation.base.BaseViewModel
@@ -37,7 +40,12 @@ class MyCertInfoViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            updateState { it.copy(isLoading = true) }
+            updateState {
+                it.copy(
+                    isLoading = true,
+                    isToday = date.toLocalDate(DATE_FORMAT_FULL_YEAR_DASHED) == today
+                )
+            }
 
             getMyTodoListByDate(
                 groupId = groupId,
@@ -47,7 +55,6 @@ class MyCertInfoViewModel(
                     it.copy(
                         todos = todos.toImmutableList(),
                         selectedItemIndex = focusedTodoIndex,
-                        isLoading = false
                     )
                 }
             }.onFailure {
@@ -58,6 +65,8 @@ class MyCertInfoViewModel(
                     )
                 )
             }
+        }.invokeOnCompletion {
+            updateState { it.copy(isLoading = false) }
         }
     }
 

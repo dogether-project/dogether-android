@@ -45,18 +45,20 @@ class MyPageViewModel(
 
     private fun getUserInfo() {
         viewModelScope.launch {
-            getUserInfoUseCase()
-                .onSuccess { result ->
-                    updateState { it.copy(userInfo = result) }
-                }
-                .onFailure {
-                    postEffect(
-                        UiEffect.NavigateToErrorWithCallback(
-                            error = Error.LoadData,
-                            onPositive = { getUserInfo() }
-                        )
+            updateState { it.copy(isLoading = true) }
+
+            getUserInfoUseCase().onSuccess { result ->
+                updateState { it.copy(userInfo = result) }
+            }.onFailure {
+                postEffect(
+                    UiEffect.NavigateToErrorWithCallback(
+                        error = Error.LoadData,
+                        onPositive = { getUserInfo() }
                     )
-                }
+                )
+            }
+        }.invokeOnCompletion {
+            updateState { it.copy(isLoading = false) }
         }
     }
 }

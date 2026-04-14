@@ -2,6 +2,7 @@ package site.dogether.presentation.screen.group_created
 
 import android.content.Context
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -36,6 +36,7 @@ import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.CTAButton
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBgSurface
 import site.dogether.presentation.theme.ColorBorderDisabled
@@ -47,23 +48,19 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
     val context = LocalContext.current
-    val navHostController = LocalNavHostController.current
+    val navController = LocalNavHostController.current
 
     viewModel.CollectEffect<GroupCreatedUiEffect> { uiEffect ->
         when (uiEffect) {
-            is GroupCreatedUiEffect.ShareJoinCode -> shareJoinCode(
+            is GroupCreatedUiEffect.ShareJoinCode -> shareInviteCode(
                 context = context,
-                joinCode = uiEffect.joinCode
+                groupName = uiEffect.groupName,
+                joinCode = uiEffect.joinCode,
             )
-
-            is GroupCreatedUiEffect.NavigateToHome -> navHostController.navigate(Screen.HOME) {
-                popUpTo(0) { inclusive = true }
-            }
         }
     }
 
@@ -71,9 +68,21 @@ fun GroupCreatedScreen(viewModel: GroupCreatedViewModel = koinViewModel()) {
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
+
+    BackHandler {
+        navController.navigate(Screen.PARTICIPATION_METHOD) {
+            popUpTo(Screen.PARTICIPATION_METHOD) {
+                inclusive = true
+            }
+        }
+    }
 }
 
-private fun shareJoinCode(context: Context, joinCode: String) {
+private fun shareInviteCode(
+    context: Context,
+    groupName: String,
+    joinCode: String
+) {
     ChottuLink.createDynamicLink()
         .setLink(DeeplinkUtil.generateInviteDeeplink(joinCode).toUri())
         .setDomain(DeeplinkUtil.DEEPLINK_DOMAIN)
@@ -83,10 +92,17 @@ private fun shareJoinCode(context: Context, joinCode: String) {
                 val sendIntent: Intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(
-                        Intent.EXTRA_SUBJECT,
+                        Intent.EXTRA_TITLE,
                         context.getString(R.string.intent_title_share_join_code)
                     )
-                    putExtra(Intent.EXTRA_TEXT, result.uri.toString())
+                    putExtra(
+                        Intent.EXTRA_TEXT,
+                        DeeplinkUtil.generateInviteText(
+                            groupName = groupName,
+                            code = joinCode,
+                            url = result.uri.toString()
+                        )
+                    )
                     type = "text/plain"
                 }
 
@@ -96,6 +112,9 @@ private fun shareJoinCode(context: Context, joinCode: String) {
                 )
                 context.startActivity(shareIntent)
             }
+        }
+        .addOnFailureListener { exception ->
+            exception.printStackTrace()
         }
 }
 
@@ -109,7 +128,6 @@ private fun GroupCreatedScreenContents(
             modifier = Modifier
                 .padding(top = 68.dp)
                 .fillMaxWidth()
-                .statusBarsPadding()
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -158,7 +176,7 @@ private fun GroupCreatedScreenContents(
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .minimumInteractiveComponentSize()
-                            .clickableWithoutRipple { onEvent(GroupCreatedUiEvent.Click.OnClickShare) },
+                            .throttledClickable { onEvent(GroupCreatedUiEvent.Click.OnClickShare) },
                         painter = painterResource(R.drawable.ic_export),
                         tint = ColorIconSecondary,
                         contentDescription = "icon_export"

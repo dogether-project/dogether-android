@@ -80,7 +80,7 @@ class HomeViewModel(
 
                     is HomeUiEvent.Click.OnClickAddGroup -> {
                         updateState { it.copy(isSelectGroupBottomSheetShowing = false) }
-                        postEffect(UiEffect.NavigateTo(Screen.PARTICIPATION_METHOD))
+                        postEffect(UiEffect.NavigateTo("${Screen.PARTICIPATION_METHOD}/${true}"))
                     }
 
                     is HomeUiEvent.Click.OnClickPrevDay -> {
@@ -146,6 +146,10 @@ class HomeViewModel(
         }
     }
 
+    override fun onDateChanged(date: LocalDate) {
+        loadInitialData()
+    }
+
     private fun launchTomorrowTimer() {
         if (::timerJob.isInitialized) {
             timerJob.cancel()
@@ -184,11 +188,10 @@ class HomeViewModel(
     }
 
     private fun loadInitialData() {
-        updateState { it.copy(isLoading = true) }
-
         viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
+
             val getJoiningGroupsResult = getJoiningGroups().getOrElse {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,
@@ -205,7 +208,7 @@ class HomeViewModel(
         }
     }
 
-    private fun loadTodosForDate(date: java.time.LocalDate) {
+    private fun loadTodosForDate(date: LocalDate) {
         viewModelScope.launch {
             val getMyTodoSpecificDateResult = getMyTodoSpecificDate(
                 groupId = uiState.selectedGroup.id,
@@ -223,7 +226,8 @@ class HomeViewModel(
             updateState {
                 it.copy(
                     selectedDate = date,
-                    todoList = getMyTodoSpecificDateResult.toImmutableList()
+                    todoList = getMyTodoSpecificDateResult.toImmutableList(),
+                    isTodaySelected = date == today
                 )
             }
         }

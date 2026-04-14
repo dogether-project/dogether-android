@@ -15,9 +15,11 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.ColorTextDefault
@@ -32,6 +34,11 @@ fun ParticipateGroupScreen(viewModel: ParticipateGroupViewModel = koinViewModel(
     viewModel.CollectEffect<ParticipateGroupUiEffect> {}
 
     ParticipateGroupScreenContents(
+        uiState = viewModel.collectAsState().value,
+        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+    )
+
+    InitDialog(
         uiState = viewModel.collectAsState().value,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
@@ -93,6 +100,28 @@ private fun ParticipateGroupScreenContents(
             isEnabled = uiState.isValid,
             onClick = { onEvent(ParticipateGroupUiEvent.Click.OnClickParticipate) }
         )
+    }
+
+}
+
+@Composable
+private fun InitDialog(
+    uiState: ParticipateGroupUiState,
+    onEvent: (UiEvent) -> Unit
+) {
+    if (uiState.actionDialogState.isShowing) {
+        ActionDialog(
+            title = stringResource(uiState.actionDialogState.titleStringId),
+            body = stringResource(uiState.actionDialogState.bodyStringId),
+            negativeText = stringResource(uiState.actionDialogState.negativeTextStringId),
+            positiveText = stringResource(uiState.actionDialogState.positiveTextStringId),
+            onClickNegative = { onEvent(ParticipateGroupUiEvent.Click.OnClickActionDialogNegative) },
+            onClickPositive = { onEvent(ParticipateGroupUiEvent.Click.OnClickActionDialogPositive) }
+        )
+    }
+
+    if (uiState.isLoading) {
+        LoadingDialog()
     }
 }
 

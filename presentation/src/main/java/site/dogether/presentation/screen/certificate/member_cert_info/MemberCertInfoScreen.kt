@@ -36,7 +36,6 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import kotlin.math.roundToInt
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.domain.model.todo.Todo
@@ -44,6 +43,7 @@ import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CertInfoRowItem
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.screen.certificate.my_cert_info.model.Chip
 import site.dogether.presentation.theme.Body1_R
@@ -57,9 +57,11 @@ import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextInverse
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
+import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.toPx
+import kotlin.math.roundToInt
 
 @Composable
 fun MemberCertInfoScreen(viewModel: MemberCertInfoViewModel = koinViewModel()) {
@@ -76,6 +78,8 @@ fun MemberCertInfoScreen(viewModel: MemberCertInfoViewModel = koinViewModel()) {
         uiState = uiState,
         onEvent = onEvent
     )
+
+    InitDialog(uiState)
 }
 
 @Composable
@@ -88,14 +92,17 @@ private fun MemberCertInfoScreenContents(
     val itemWidthPx = 48.dp.toPx().roundToInt()
 
     LaunchedEffect(uiState.selectedItemIndex) {
-        lazyListState.animateScrollToItemCenteredFixedWidth(
-            index = uiState.selectedItemIndex,
-            itemWidthPx = itemWidthPx
-        )
+        if (uiState.selectedItemIndex >= 0 && uiState.todos.isNotEmpty()) {
+            lazyListState.animateScrollToItemCenteredFixedWidth(
+                index = uiState.selectedItemIndex,
+                itemWidthPx = itemWidthPx
+            )
+        }
     }
 
     Column(
         modifier = Modifier
+            .padding(horizontal = 16.dp)
             .fillMaxSize()
             .pointerInput(uiState.todos.size, uiState.selectedItemIndex) {
                 detectHorizontalDragGestures { change, dragAmount ->
@@ -116,35 +123,33 @@ private fun MemberCertInfoScreenContents(
     ) {
         TopBar(
             start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
-            centerText = stringResource(R.string.title_member_cert_info).format(
-                uiState.name
-            )
+            centerText = stringResource(R.string.title_member_cert_info).format(uiState.name)
         )
 
-        Column(
-            modifier = Modifier
-                .padding(top = 12.dp)
-                .weight(1f)
-        ) {
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                state = lazyListState
+        if (uiState.todos.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .weight(1f)
             ) {
-                itemsIndexed(uiState.todos) { index, todo ->
-                    CertInfoRowItem(
-                        index = index,
-                        isSelected = index == uiState.selectedItemIndex,
-                        todo = todo,
-                        onClick = { clickedItemIndex ->
-                            onEvent(MemberCertInfoUiEvent.Click.OnClickItem(clickedItemIndex))
-                        }
-                    )
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    state = lazyListState
+                ) {
+                    itemsIndexed(uiState.todos) { index, todo ->
+                        CertInfoRowItem(
+                            index = index,
+                            isSelected = index == uiState.selectedItemIndex,
+                            todo = todo,
+                            onClick = { clickedItemIndex ->
+                                onEvent(MemberCertInfoUiEvent.Click.OnClickItem(clickedItemIndex))
+                            }
+                        )
+                    }
                 }
-            }
 
-            if (uiState.todos.isNotEmpty()) {
                 val selectedTodo = uiState.todos[uiState.selectedItemIndex]
 
                 Column(
@@ -176,7 +181,7 @@ private fun MemberCertInfoScreenContents(
                                 model = ImageRequest.Builder(context)
                                     .data(selectedTodo.certificationMediaUrl)
                                     .build(),
-                                contentScale = ContentScale.Inside,
+                                contentScale = ContentScale.Fit,
                                 contentDescription = "image_certification"
                             )
 
@@ -282,7 +287,33 @@ private fun MemberCertInfoScreenContents(
                     }
                 }
             }
+        } else {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier.size(150.dp),
+                    painter = painterResource(R.drawable.img_dosik_empty),
+                    contentDescription = "image_dosik_empty"
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 32.dp),
+                    text = stringResource(R.string.title_certification_info_list_not_exist),
+                    style = Head2_B,
+                    color = ColorTextSubtle
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun InitDialog(uiState: MemberCertInfoUiState) {
+    if (uiState.isLoading) {
+        LoadingDialog()
     }
 }
 

@@ -28,7 +28,9 @@ import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.screen.my_page.model.Menu
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
@@ -42,12 +44,12 @@ import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
 
 private val MENU_LIST: List<Menu> = Menu.entries
 
 @Composable
 fun MyPageScreen(viewModel: MyPageViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
     val navHostController = LocalNavHostController.current
 
     LifecycleEvent(Lifecycle.Event.ON_START) {
@@ -67,9 +69,11 @@ fun MyPageScreen(viewModel: MyPageViewModel = koinViewModel()) {
     }
 
     MyPageScreenContents(
-        uiState = viewModel.collectAsState().value,
+        uiState = uiState,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
+
+    InitDialog(uiState)
 }
 
 @Composable
@@ -171,6 +175,13 @@ private fun MyPageScreenContents(
 }
 
 @Composable
+private fun InitDialog(uiState: MyPageUiState) {
+    if (uiState.isLoading) {
+        LoadingDialog()
+    }
+}
+
+@Composable
 private fun MenuItem(
     menu: Menu,
     tint: Color,
@@ -186,7 +197,7 @@ private fun MenuItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp)
-            .clickableWithoutRipple { onClick() },
+            .throttledClickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

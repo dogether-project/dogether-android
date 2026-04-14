@@ -22,6 +22,8 @@ sealed interface StatisticsUiEvent : UiEvent {
         data object OnClickSelectGroup : Click
 
         data class OnClickGroupItem(val group: Group) : Click
+
+        data object OnClickCreateGroup : Click
     }
 
     sealed interface Callback : StatisticsUiEvent {

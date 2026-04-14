@@ -28,14 +28,4 @@ sealed interface SplashUiEvent : UiEvent {
 
 sealed interface SplashUiEffect : UiEffect {
     data object GetAppVersion : SplashUiEffect
-
-    data object NavigateToOnBoarding : SplashUiEffect
-
-    data object NavigateToReviewCertification : SplashUiEffect
-
-    data object NavigateToHome : SplashUiEffect
-
-    data object NavigateToParticipationMethod : SplashUiEffect
-
-    data class NavigateToParticipateGroup(val joinCode: String) : SplashUiEffect
 }

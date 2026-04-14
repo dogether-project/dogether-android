@@ -47,6 +47,7 @@ import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.CertInfoRowItem
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.screen.certificate.my_cert_info.model.Chip
 import site.dogether.presentation.theme.Body1_R
@@ -85,6 +86,8 @@ fun MyCertInfoScreen(viewModel: MyCertInfoViewModel = koinViewModel()) {
         uiState = uiState,
         onEvent = onEvent
     )
+
+    InitDialog(uiState)
 }
 
 @Composable
@@ -196,7 +199,7 @@ private fun MyCertInfoScreenContents(
                                 model = ImageRequest.Builder(context)
                                     .data(selectedTodo.certificationMediaUrl)
                                     .build(),
-                                contentScale = ContentScale.Inside,
+                                contentScale = ContentScale.Fit,
                                 contentDescription = "image_certification"
                             )
 
@@ -312,7 +315,7 @@ private fun MyCertInfoScreenContents(
                                         .align(BottomCenter)
                                         .fillMaxWidth()
                                         .height(50.dp),
-                                    isEnabled = true,
+                                    isEnabled = uiState.isToday,
                                     text = stringResource(R.string.cta_button_certificate),
                                     onClick = { onEvent(MyCertInfoUiEvent.Click.OnClickCertificate) }
                                 )
@@ -322,6 +325,13 @@ private fun MyCertInfoScreenContents(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun InitDialog(uiState: MyCertInfoUiState) {
+    if (uiState.isLoading) {
+        LoadingDialog()
     }
 }
 

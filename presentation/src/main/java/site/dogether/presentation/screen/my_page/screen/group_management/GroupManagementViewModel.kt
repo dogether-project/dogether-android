@@ -25,7 +25,6 @@ class GroupManagementViewModel(
             updateState { it.copy(isLoading = true) }
 
             val getJoiningGroupsResult = getJoiningGroups().getOrElse {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,
@@ -66,6 +65,10 @@ class GroupManagementViewModel(
                         withdrawGroupAction()
                         dismissWithdrawDialog()
                     }
+
+                    is GroupManagementUiEvent.Click.OnClickCreateGroup -> {
+                        postEffect(UiEffect.NavigateTo("${Screen.PARTICIPATION_METHOD}/${false}"))
+                    }
                 }
             }
 
@@ -88,7 +91,6 @@ class GroupManagementViewModel(
             updateState { it.copy(isLoading = true) }
 
             withdrawGroup(uiState.withdrawGroupDialogState.groupId).getOrElse {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,
@@ -99,7 +101,6 @@ class GroupManagementViewModel(
             }
 
             val getJoiningGroupsResult = getJoiningGroups().getOrElse {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,
@@ -112,7 +113,7 @@ class GroupManagementViewModel(
             if (getJoiningGroupsResult.groups.isEmpty()) {
                 postEffect(
                     UiEffect.NavigateTo(
-                        screen = Screen.PARTICIPATION_METHOD,
+                        screen = "${Screen.PARTICIPATION_METHOD}/${false}",
                         clearBackStack = true
                     )
                 )

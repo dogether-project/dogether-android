@@ -11,22 +11,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.Lifecycle
-import androidx.navigation.NavHostController
 import org.koin.androidx.compose.koinViewModel
 import site.dogether.presentation.R
-import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
 import site.dogether.presentation.utils.LocalDeeplinkInfo
-import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 
 @Composable
 fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
     val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
-    val navHostController = LocalNavHostController.current
     val deeplinkInfo = LocalDeeplinkInfo.current
 
     // 딥링크 정보가 있으면 ViewModel에 전달
@@ -53,22 +49,6 @@ fun SplashScreen(viewModel: SplashViewModel = koinViewModel()) {
                     }
                 )
             }
-
-            is SplashUiEffect.NavigateToOnBoarding -> navigateToOnBoarding(navHostController)
-
-            is SplashUiEffect.NavigateToHome -> navigateToHome(navHostController)
-
-            is SplashUiEffect.NavigateToReviewCertification -> navigateToReviewCertification(
-                navHostController
-            )
-
-            is SplashUiEffect.NavigateToParticipationMethod -> navigateToParticipationMethod(
-                navHostController
-            )
-
-            is SplashUiEffect.NavigateToParticipateGroup -> {
-                navHostController.navigate("${Screen.PARTICIPATE_GROUP}/${uiEffect.joinCode}")
-            }
         }
     }
 
@@ -87,24 +67,6 @@ private fun getAppVersion(
     context.packageManager.getPackageInfo(context.packageName, 0).versionName?.let { appVersion ->
         onSuccess(appVersion)
     } ?: onFailure()
-}
-
-private fun navigateToOnBoarding(navHostController: NavHostController) {
-    navHostController.navigate(Screen.ON_BOARDING)
-}
-
-private fun navigateToHome(navHostController: NavHostController) {
-    navHostController.navigate(Screen.HOME) {
-        popUpTo(0) { inclusive = true }
-    }
-}
-
-private fun navigateToParticipationMethod(navHostController: NavHostController) {
-    navHostController.navigate(Screen.PARTICIPATION_METHOD)
-}
-
-private fun navigateToReviewCertification(navHostController: NavHostController) {
-    navHostController.navigate(Screen.CHECK_TODO)
 }
 
 @Composable

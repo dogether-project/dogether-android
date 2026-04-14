@@ -43,6 +43,7 @@ import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_S
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBorderDefault
@@ -57,7 +58,6 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
-import site.dogether.presentation.utils.clickableWithoutRipple
 
 @Composable
 fun CreateTodoScreen(
@@ -69,9 +69,9 @@ fun CreateTodoScreen(
         viewModel.onEvent(CreateTodoUiEvent.Lifecycle.OnStart)
     }
 
-    viewModel.CollectEffect<CreateTodoSideEffect> { sideEffect ->
+    viewModel.CollectEffect<CreateTodoUiEffect> { sideEffect ->
         when (sideEffect) {
-            is CreateTodoSideEffect.Back -> Unit
+            is CreateTodoUiEffect.Back -> Unit
         }
     }
 
@@ -80,7 +80,7 @@ fun CreateTodoScreen(
         onEvent = viewModel::onEvent
     )
 
-    CheckDialog(
+    InitDialog(
         uiState = uiState,
         onEvent = viewModel::onEvent
     )
@@ -133,7 +133,7 @@ private fun CreateTodoScreenContents(
             text = buildAnnotatedString {
                 append(stringResource(R.string.create_todo_add_count_prefix))
                 withStyle(SpanStyle(color = ColorTextPrimary)) {
-                    append("${uiState.todoItems.filter { it.content.isNotBlank() }.size}")
+                    append(" ${uiState.todoItems.filter { it.content.isNotBlank() }.size}")
                 }
                 withStyle(SpanStyle(color = ColorTextSecondary)) {
                     append("/${uiState.maxTodoCount}")
@@ -155,9 +155,7 @@ private fun CreateTodoScreenContents(
                     .weight(1f)
                     .height(56.dp),
                 value = uiState.todoText,
-                onValueChanged = { text ->
-                    onEvent(CreateTodoUiEvent.UpdateTodoText(text))
-                },
+                onValueChanged = { text -> onEvent(CreateTodoUiEvent.UpdateTodoText(text)) },
                 hintText = stringResource(R.string.create_todo_input_hint),
                 lengthLimit = 20,
             )
@@ -166,9 +164,7 @@ private fun CreateTodoScreenContents(
 
             AddTodoButton(
                 isEnabled = uiState.todoText.isNotBlank(),
-                onClick = {
-                    onEvent(CreateTodoUiEvent.AddTodoItem)
-                }
+                onClick = { onEvent(CreateTodoUiEvent.AddTodoItem) }
             )
         }
 
@@ -219,6 +215,17 @@ private fun CreateTodoScreenContents(
 }
 
 @Composable
+private fun InitDialog(
+    uiState: CreateTodoUiState,
+    onEvent: (UiEvent) -> Unit
+) {
+    CheckDialog(
+        uiState = uiState,
+        onEvent = onEvent
+    )
+}
+
+@Composable
 private fun TodoListItem(
     text: String,
     isEditable: Boolean = false,
@@ -256,7 +263,7 @@ private fun TodoListItem(
                 Icon(
                     modifier = Modifier
                         .size(24.dp)
-                        .clickableWithoutRipple { onDelete() },
+                        .throttledClickable { onDelete() },
                     painter = painterResource(R.drawable.ic_close),
                     contentDescription = "delete_todo",
                     tint = ColorTextSecondary
@@ -279,7 +286,7 @@ private fun AddTodoButton(
                     ?: ColorBorderDefault.copy(alpha = 0.2f),
                 shape = RoundedCornerShape(corner = CornerSize(10.dp)),
             )
-            .clickableWithoutRipple {
+            .throttledClickable {
                 if (isEnabled) {
                     onClick()
                 }

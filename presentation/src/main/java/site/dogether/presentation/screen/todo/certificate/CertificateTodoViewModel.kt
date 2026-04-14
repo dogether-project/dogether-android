@@ -19,6 +19,8 @@ class CertificateTodoViewModel(savedStateHandle: SavedStateHandle) : BaseViewMod
     }
 
     override fun onEvent(event: UiEvent) {
+        super.onEvent(event)
+
         when (event) {
             is CertificateTodoUiEvent.Lifecycle -> {
                 updateState {

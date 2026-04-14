@@ -8,10 +8,12 @@ import site.dogether.KEY_GROUP_ID
 import site.dogether.common.utils.orZero
 import site.dogether.domain.model.user.RankingMember
 import site.dogether.domain.use_case.group.GetRankingUseCase
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.error.model.Error
+import java.time.LocalDate
 
 class RankingViewModel(
     savedStateHandle: SavedStateHandle,
@@ -26,23 +28,37 @@ class RankingViewModel(
         super.onEvent(event)
 
         when (event) {
-            else -> Unit
+            is RankingUiEvent.Click -> {
+                when (event) {
+                    is RankingUiEvent.Click.OnClickMember -> {
+                        postEffect(UiEffect.NavigateTo("${Screen.MEMBER_CERT_INFO}/${event.groupId}/${event.memberId}/${event.memberName}"))
+                    }
+                }
+            }
+
+            is RankingUiEvent.Lifecycle -> {
+                when (event) {
+                    is RankingUiEvent.Lifecycle.OnFirstComposition -> {
+                        loadRanking()
+                    }
+                }
+            }
         }
     }
 
-    init {
+    override fun onDateChanged(date: LocalDate) {
         loadRanking()
     }
 
     private fun loadRanking() {
-        updateState {
-            it.copy(
-                isLoading = true,
-                groupId = groupId
-            )
-        }
-
         viewModelScope.launch {
+            updateState {
+                it.copy(
+                    isLoading = true,
+                    groupId = groupId
+                )
+            }
+
             getRanking(groupId).onSuccess { rankingInfo ->
                 val originalMembers = rankingInfo.list
 

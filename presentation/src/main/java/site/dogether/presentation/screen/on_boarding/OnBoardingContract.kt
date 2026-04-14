@@ -34,7 +34,5 @@ sealed interface OnBoardingUiEffect : UiEffect {
 
     object NavigateToHome : OnBoardingUiEffect
 
-    object NavigateToParticipationMethod : OnBoardingUiEffect
-
     data class NavigateToParticipateGroup(val joinCode: String) : OnBoardingUiEffect
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -70,7 +69,9 @@ import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CertInfoRowItem
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.Chip
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.SortingMethod
 import site.dogether.presentation.theme.Body1_B
@@ -97,9 +98,9 @@ import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.animateScrollToItemCenteredFixedWidth
-import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.toPx
 import kotlin.math.roundToInt
 
@@ -108,6 +109,8 @@ import kotlin.math.roundToInt
 fun CertificationListScreen(viewModel: CertificationListViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
     val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
+
+    viewModel.CollectEffect<CertificationListUiEffect> { uiEffect -> }
 
     CertificationListScreenContents(
         uiState = uiState,
@@ -125,8 +128,12 @@ fun CertificationListScreen(viewModel: CertificationListViewModel = koinViewMode
         )
     }
 
+    if (uiState.isLoading) {
+        LoadingDialog()
+    }
+
     BackHandler(uiState.isDetailMode) {
-        onEvent(CertificationListUiEvent.Click.OnClickBackButtonWhenDetailMode)
+        onEvent(CertificationListUiEvent.Click.OnClickBackWhenDetailMode)
     }
 }
 
@@ -154,7 +161,9 @@ private fun CertificationListScreenContents(
                     onEvent = onEvent
                 )
             } else {
-                EmptyCertificationListContents()
+                if (!uiState.isLoading) {
+                    EmptyCertificationListContents()
+                }
             }
         }
     }
@@ -258,28 +267,33 @@ private fun ColumnScope.CertificationListContents(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        if (certificationsGroupedByGroupCreatedAt.isNotEmpty()) {
-            certificationsGroupedByGroupCreatedAt.forEach { list ->
+        if (certificationsGroupedByTodoCreatedAt.isNotEmpty()) {
+            certificationsGroupedByTodoCreatedAt.forEach { todoList ->
                 item(
-                    key = list.groupName,
+                    key = todoList.createdAt,
                     span = { GridItemSpan(maxLineSpan) }
                 ) {
                     Text(
                         modifier = Modifier.padding(top = 12.dp),
-                        text = list.groupName,
+                        text = "${todoList.createdAt} (${todoList.dayOfWeek})",
                         style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
                         color = ColorTextSubtle
                     )
                 }
 
-                itemsIndexed(list.certificationInfo) { index, certificationInfo ->
+                itemsIndexed(
+                    items = todoList.certificationInfo,
+                    key = { _, certificationInfo -> certificationInfo.id }
+                ) { index, certificationInfo ->
                     CertificationItem(
                         certificationInfo = certificationInfo,
                         onClick = {
                             onEvent(
                                 CertificationListUiEvent.Click.OnClickCertificationInfo(
-                                    detailedCertifications = list.certificationInfo.toImmutableList(),
-                                    index = index
+                                    detailedCertifications = todoList.certificationInfo.toImmutableList(),
+                                    index = index,
+                                    date = "${todoList.createdAt} (${todoList.dayOfWeek})",
+                                    groupName = todoList.groupName
                                 )
                             )
                         }
@@ -288,31 +302,30 @@ private fun ColumnScope.CertificationListContents(
             }
         }
 
-        if (certificationsGroupedByTodoCreatedAt.isNotEmpty()) {
-            certificationsGroupedByTodoCreatedAt.forEach { group ->
+        if (certificationsGroupedByGroupCreatedAt.isNotEmpty()) {
+            certificationsGroupedByGroupCreatedAt.forEach { group ->
                 item(
-                    key = group.createdAt,
+                    key = group.groupName,
                     span = { GridItemSpan(maxLineSpan) }
                 ) {
                     Text(
                         modifier = Modifier.padding(top = 12.dp),
-                        text = "${group.createdAt}(${group.dayOfWeek})",
+                        text = group.groupName,
                         style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
                         color = ColorTextSubtle
                     )
                 }
 
-                itemsIndexed(
-                    items = group.certificationInfo,
-                    key = { _, certificationInfo -> certificationInfo.id }
-                ) { index, certificationInfo ->
+                itemsIndexed(group.certificationInfo) { index, certificationInfo ->
                     CertificationItem(
                         certificationInfo = certificationInfo,
                         onClick = {
                             onEvent(
                                 CertificationListUiEvent.Click.OnClickCertificationInfo(
                                     detailedCertifications = group.certificationInfo.toImmutableList(),
-                                    index = index
+                                    index = index,
+                                    date = group.createdAt,
+                                    groupName = group.groupName
                                 )
                             )
                         }
@@ -410,7 +423,7 @@ private fun SortingMethodChipItem(
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(50.dp))
-            .clickableWithoutRipple { onClick() }
+            .throttledClickable { onClick() }
             .border(
                 width = 1.dp,
                 color = ColorBorderSecondary,
@@ -451,7 +464,7 @@ private fun ChipItem(
         modifier = modifier
             .clip(RoundedCornerShape(50.dp))
             .background(if (isSelected) chip.color else Color.Transparent)
-            .clickableWithoutRipple { onClick?.invoke() }
+            .throttledClickable { onClick?.invoke() }
             .border(
                 width = 1.dp,
                 color = if (isSelected) Color.Transparent else ColorBorderSecondary,
@@ -546,7 +559,7 @@ private fun SortingMethodItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .clickableWithoutRipple { onClick(sortingMethod) },
+            .throttledClickable { onClick(sortingMethod) },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -575,7 +588,7 @@ private fun CertificationItem(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
             .aspectRatio(1f)
-            .clickable { onClick() }
+            .throttledClickable { onClick() }
     ) {
         AsyncImage(
             model = certificationInfo.certificationMediaUrl,
@@ -663,7 +676,7 @@ private fun DetailModeScreen(
                 }
         ) {
             TopBar(
-                start = { BackButton { onEvent(UiEvent.Click.OnClickBack) } },
+                start = { BackButton { onEvent(CertificationListUiEvent.Click.OnClickBackWhenDetailMode) } },
                 centerText = uiState.detailTitle
             )
 
@@ -722,7 +735,7 @@ private fun DetailModeScreen(
                                     model = ImageRequest.Builder(context)
                                         .data(selectedTodo.certificationMediaUrl)
                                         .build(),
-                                    contentScale = ContentScale.Inside,
+                                    contentScale = ContentScale.Fit,
                                     contentDescription = "image_certification"
                                 )
 
@@ -760,6 +773,41 @@ private fun DetailModeScreen(
                                     text = stringResource(R.string.body_my_cert_info_not_certified),
                                     style = Body1_R,
                                     color = ColorTextSubtle
+                                )
+                            }
+                        }
+
+                        ChipItem(
+                            modifier = Modifier.padding(top = 32.dp),
+                            chip = when (selectedTodo.status) {
+                                STATUS_REVIEW_PENDING -> Chip.ReviewPending
+                                STATUS_APPROVE -> Chip.Approve
+                                STATUS_REJECT -> Chip.Reject
+                                else -> Chip.ReviewPending
+                            },
+                            isSelected = true
+                        )
+
+                        Text(
+                            modifier = Modifier.padding(top = 8.dp),
+                            text = selectedTodo.content,
+                            style = Head1_B,
+                            color = ColorTextDefault
+                        )
+
+                        if (selectedTodo.reviewFeedback.isNotEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .padding(top = 16.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .fillMaxWidth()
+                                    .background(ColorBgSurface)
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(16.dp),
+                                    text = selectedTodo.reviewFeedback,
+                                    style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+                                    color = ColorTextDefault
                                 )
                             }
                         }

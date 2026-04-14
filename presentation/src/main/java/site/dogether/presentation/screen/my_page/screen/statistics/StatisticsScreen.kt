@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,11 +43,12 @@ import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.GroupInfoColumn
+import site.dogether.presentation.composables.NoGroupContents
 import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.composables.node.skeleton
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_S
-import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.Body2_S
 import site.dogether.presentation.theme.ColorBgDisabled
 import site.dogether.presentation.theme.ColorBgElevated
@@ -59,19 +59,16 @@ import site.dogether.presentation.theme.ColorIconDefault
 import site.dogether.presentation.theme.ColorIconElevated
 import site.dogether.presentation.theme.ColorIconError
 import site.dogether.presentation.theme.ColorIconPrimary
-import site.dogether.presentation.theme.ColorTextBlack
 import site.dogether.presentation.theme.ColorTextDefault
 import site.dogether.presentation.theme.ColorTextDisabled
 import site.dogether.presentation.theme.ColorTextPrimary
-import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.ColorTextSubtle
 import site.dogether.presentation.theme.Emphasis2_B
 import site.dogether.presentation.theme.Grey500
 import site.dogether.presentation.theme.Grey600
 import site.dogether.presentation.theme.Head1_B
-import site.dogether.presentation.theme.Head2_B
+import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
@@ -80,6 +77,12 @@ import kotlin.math.sqrt
 fun StatisticsScreen(viewModel: StatisticsViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
     val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
+
+    viewModel.CollectEffect<StatisticsUiEffect> { uiEffect ->
+        when (uiEffect) {
+            else -> Unit
+        }
+    }
 
     StatisticsScreenContents(
         uiState = viewModel.collectAsState().value,
@@ -115,10 +118,14 @@ private fun StatisticsScreenContents(
             centerText = stringResource(R.string.title_statistics)
         )
 
-        StatisticsContents(
-            uiState = uiState,
-            onEvent = onEvent
-        )
+        if (uiState.groups.isNotEmpty()) {
+            StatisticsContents(
+                uiState = uiState,
+                onEvent = onEvent
+            )
+        } else {
+            NoGroupContents(onClickCreateGroup = { onEvent(StatisticsUiEvent.Click.OnClickCreateGroup) })
+        }
     }
 }
 
@@ -150,7 +157,7 @@ private fun StatisticsContents(
                 Icon(
                     modifier = Modifier
                         .padding(start = 4.dp)
-                        .clickableWithoutRipple { onEvent(StatisticsUiEvent.Click.OnClickSelectGroup) },
+                        .throttledClickable { onEvent(StatisticsUiEvent.Click.OnClickSelectGroup) },
                     painter = painterResource(R.drawable.ic_arrow_down),
                     tint = ColorIconElevated,
                     contentDescription = "icon_arrow_down"
@@ -494,55 +501,6 @@ private fun StatisticsContents(
                     value = stats.rejectedCount
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun ColumnScope.NoGroupContents() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            modifier = Modifier.size(150.dp),
-            painter = painterResource(R.drawable.img_dosik_empty),
-            contentDescription = "image_dosik_empty"
-        )
-
-        Text(
-            modifier = Modifier.padding(top = 32.dp),
-            text = stringResource(R.string.title_no_group),
-            style = Head2_B,
-            color = ColorTextSubtle
-        )
-
-        Text(
-            text = stringResource(R.string.body_no_group),
-            style = Body2_R,
-            color = ColorTextSecondary
-        )
-
-        Box(
-            modifier = Modifier
-                .padding(top = 20.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(ColorBgPrimary)
-                .padding(
-                    vertical = 12.dp,
-                    horizontal = 40.dp
-                )
-                .clickableWithoutRipple {},
-        ) {
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = stringResource(R.string.cta_button_create_group_2),
-                style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
-                color = ColorTextBlack
-            )
         }
     }
 }

@@ -30,6 +30,7 @@ data class HomeUiState(
     val permissionDialogState: DialogState = DialogState(),
     val groups: ImmutableList<Group> = persistentListOf(),
     val tooltipUiState: TooltipUiState = TooltipUiState(),
+    val isTodaySelected: Boolean = true
 ) {
     val isGoPrevDayPossible: Boolean
         get() = if (selectedGroup.startAt.isNotEmpty()) {

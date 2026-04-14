@@ -3,6 +3,7 @@ package site.dogether.presentation.screen.create_group
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.group.CreateGroupUseCase
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
@@ -89,6 +90,8 @@ class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseVi
 
     private fun createGroupAction() {
         viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
+
             val createGroupResult = createGroup(
                 name = uiState.name,
                 maximumMemberCount = uiState.maximumMemberCount,
@@ -104,7 +107,9 @@ class CreateGroupViewModel(private val createGroup: CreateGroupUseCase) : BaseVi
                 return@launch
             }
 
-            postEffect(CreateGroupUiEffect.NavigateToGroupCreated(createGroupResult.joinCode))
+            postEffect(UiEffect.NavigateTo("${Screen.GROUP_CREATED}/${uiState.name}/${createGroupResult.joinCode}"))
+        }.invokeOnCompletion {
+            updateState { it.copy(isLoading = false) }
         }
     }
 }

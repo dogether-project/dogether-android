@@ -9,7 +9,7 @@ import site.dogether.domain.model.group.ParticipateGroupInfo
 data class ParticipateGroupRes(
     val groupName: String,
     val duration: Int,
-    val maximumNumberCount: Int,
+    val maximumMemberCount: Int,
     val startAt: String,
     val endAt: String,
 ) : DataModel
@@ -19,7 +19,7 @@ object ParticipateGroupResMapper : DataMapper<ParticipateGroupRes, ParticipateGr
         return ParticipateGroupInfo(
             groupName = groupName,
             duration = duration,
-            maximumNumberCount = maximumNumberCount,
+            maximumMemberCount = maximumMemberCount,
             startAt = startAt,
             endAt = endAt
         )

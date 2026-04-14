@@ -15,6 +15,7 @@ import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.error.model.Error
 import site.dogether.presentation.screen.my_page.screen.certification_list.model.Chip
+import site.dogether.presentation.screen.my_page.screen.certification_list.model.SortingMethod
 
 class CertificationListViewModel(
     private val getMyActivity: GetMyActivityUseCase
@@ -76,12 +77,13 @@ class CertificationListViewModel(
                             it.copy(
                                 isDetailMode = true,
                                 detailedCertifications = event.detailedCertifications,
-                                selectedItemIndex = event.index
+                                selectedItemIndex = event.index,
+                                detailTitle = if (it.selectedSortingMethod == SortingMethod.DescendTodoCompleted) event.date else event.groupName
                             )
                         }
                     }
 
-                    is CertificationListUiEvent.Click.OnClickBackButtonWhenDetailMode -> {
+                    is CertificationListUiEvent.Click.OnClickBackWhenDetailMode -> {
                         updateState { it.copy(isDetailMode = false) }
                     }
                 }

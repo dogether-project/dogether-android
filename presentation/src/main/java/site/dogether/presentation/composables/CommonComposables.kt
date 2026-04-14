@@ -6,11 +6,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -65,6 +68,7 @@ import site.dogether.domain.model.group.Group
 import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.R
 import site.dogether.presentation.composables.node.skeleton
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_R
 import site.dogether.presentation.theme.Body1_S
@@ -91,8 +95,7 @@ import site.dogether.presentation.theme.Grey900
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.theme.Head2_B
 import site.dogether.presentation.theme.Small_S
-import site.dogether.presentation.utils.clickableWithoutRipple
-import site.dogether.presentation.utils.conditionedClickableWithoutRipple
+import site.dogether.presentation.utils.conditionedThrottledClickable
 
 @Composable
 fun CTAButton(
@@ -103,12 +106,18 @@ fun CTAButton(
     color: Color = ColorBgPrimary,
     onClick: () -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
+
     Box(
         modifier = modifier.then(
             Modifier
                 .clip(RoundedCornerShape(radius))
                 .background(if (isEnabled) color else ColorBgDisabled)
-                .conditionedClickableWithoutRipple(isEnabled) { onClick() })
+                .conditionedThrottledClickable(isEnabled) {
+                    focusManager.clearFocus()
+                    onClick()
+                }
+        )
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
@@ -144,7 +153,7 @@ fun NegativeCTAButton(
             Modifier
                 .clip(RoundedCornerShape(radius))
                 .background(ColorBgDisabled)
-                .clickableWithoutRipple { onClick() })
+                .throttledClickable { onClick() })
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
@@ -230,8 +239,11 @@ fun DogetherTextField(
     }
 
     LaunchedEffect(value) {
-        if (inner.composition == null && value != inner.text) {
-            inner = inner.copy(text = value, selection = TextRange(value.length))
+        if (value.isEmpty() || (inner.composition == null && value != inner.text)) {
+            inner = TextFieldValue(
+                text = value,
+                selection = TextRange(value.length)
+            )
         }
     }
 
@@ -315,11 +327,128 @@ private fun DogetherTextFieldPreview() {
 }
 
 @Composable
+fun BottomEndCounterDogetherTextField(
+    modifier: Modifier,
+    value: String,
+    onValueChanged: (String) -> Unit,
+    onDone: (() -> Unit)? = null,
+    textStyle: TextStyle = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+    textColor: Color = ColorTextDefault,
+    hintText: String,
+    hintTextStyle: TextStyle = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default),
+    hintTextColor: Color = ColorTextSecondary,
+    singleLine: Boolean = true,
+    lengthLimit: Int = 0,
+) {
+    val focusManager = LocalFocusManager.current
+    var borderColorState by remember { mutableStateOf(Color.Transparent) }
+
+    var inner by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(text = value, selection = TextRange(value.length)))
+    }
+
+    LaunchedEffect(value) {
+        if (value.isEmpty() || (inner.composition == null && value != inner.text)) {
+            inner = TextFieldValue(
+                text = value,
+                selection = TextRange(value.length)
+            )
+        }
+    }
+
+    Box(
+        modifier
+            .clip(RoundedCornerShape(12.dp))
+            .onFocusChanged { focusState ->
+                borderColorState =
+                    if (focusState.hasFocus) ColorBorderPrimary else Color.Transparent
+            }
+            .background(ColorBgElevated)
+            .border(
+                width = (1.5).dp,
+                shape = RoundedCornerShape(12.dp),
+                color = borderColorState
+            )
+    ) {
+        BasicTextField(
+            modifier = Modifier
+                .padding(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 34.dp
+                )
+                .fillMaxWidth(),
+            value = inner,
+            cursorBrush = SolidColor(Color.White),
+            onValueChange = { newValue ->
+                when (lengthLimit) {
+                    0 -> {
+                        onValueChanged(newValue.text)
+                    }
+
+                    else -> {
+                        val limitedText = newValue.text.take(lengthLimit)
+                        val fixed = newValue.copy(text = limitedText)
+                        inner = fixed
+                        if (limitedText != value) onValueChanged(limitedText)
+                    }
+                }
+            },
+            singleLine = singleLine,
+            textStyle = textStyle.copy(color = textColor),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                    onDone?.invoke()
+                }
+            ),
+            decorationBox = {
+                Box {
+                    if (inner.text.isEmpty()) {
+                        Text(text = hintText, style = hintTextStyle, color = hintTextColor)
+                    } else {
+                        it()
+                    }
+                }
+            }
+        )
+
+        if (lengthLimit > 0) {
+            Text(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.BottomEnd),
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(color = ColorTextPrimary)) { append("${inner.text.length}") }
+                    withStyle(SpanStyle(color = ColorTextSecondary)) { append("/$lengthLimit") }
+                },
+                style = Small_S.copy(lineHeightStyle = LineHeightStyle.Default)
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun BottomEndCounterDogetherTextFieldPreview() {
+    BottomEndCounterDogetherTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        value = "",
+        onValueChanged = {},
+        hintText = "힌트"
+    )
+}
+
+@Composable
 fun BackButton(onClick: () -> Unit) {
     Icon(
         modifier = Modifier
             .minimumInteractiveComponentSize()
-            .clickableWithoutRipple { onClick() },
+            .throttledClickable { onClick() },
         painter = painterResource(R.drawable.ic_arrow_back),
         tint = ColorIconDefault,
         contentDescription = "icon_arrow_back"
@@ -512,12 +641,14 @@ fun SelectGroupBottomSheet(
         dragHandle = null,
         containerColor = ColorBgSurface,
         scrimColor = ColorBgDim,
-        onDismissRequest = { onDismissRequest() }
+        onDismissRequest = { onDismissRequest() },
+        contentWindowInsets = { WindowInsets(0.dp) }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(ColorBgSurface)
+                .navigationBarsPadding()
                 .padding(
                     top = 24.dp,
                     start = 24.dp,
@@ -551,7 +682,7 @@ fun SelectGroupBottomSheet(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
-                        .clickableWithoutRipple { onClickAddGroup() },
+                        .throttledClickable { onClickAddGroup() },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -582,7 +713,7 @@ private fun GroupItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .clickableWithoutRipple { onClick() },
+            .throttledClickable { onClick() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -630,7 +761,7 @@ fun CertInfoRowItem(
                 color = if (isSelected) ColorBorderDefault else Color.Transparent,
                 shape = RoundedCornerShape(12.dp)
             )
-            .clickableWithoutRipple { onClick(index) }
+            .throttledClickable { onClick(index) }
     ) {
         if (todo.certificationMediaUrl.isNotEmpty()) {
             AsyncImage(
@@ -650,6 +781,15 @@ fun CertInfoRowItem(
                     .fillMaxSize(),
                 painter = painterResource(R.drawable.img_dosik_empty),
                 contentDescription = "image_empty"
+            )
+        }
+
+        if (todo.isRead) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Grey900.copy(alpha = 0.8f))
             )
         }
     }
@@ -715,7 +855,7 @@ fun DogetherSnackbar(
                 color = Grey900,
                 shape = RoundedCornerShape(12.dp)
             )
-            .clickableWithoutRipple { onDismiss() }
+            .throttledClickable { onDismiss() }
     ) {
         Row(
             modifier = Modifier
@@ -758,4 +898,61 @@ private fun DogetherSnackbarPreview() {
         message = "텍스트",
         onDismiss = {}
     )
+}
+
+@Composable
+fun ColumnScope.NoGroupContents(onClickCreateGroup: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier.size(150.dp),
+            painter = painterResource(R.drawable.img_dosik_empty),
+            contentDescription = "image_dosik_empty"
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 32.dp),
+            text = stringResource(R.string.title_no_group),
+            style = Head2_B,
+            color = ColorTextSubtle
+        )
+
+        Text(
+            text = stringResource(R.string.body_no_group),
+            style = Body2_R,
+            color = ColorTextSecondary
+        )
+
+        Box(
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(ColorBgPrimary)
+                .padding(
+                    vertical = 12.dp,
+                    horizontal = 40.dp
+                )
+                .throttledClickable { onClickCreateGroup() },
+        ) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = stringResource(R.string.cta_button_create_group_2),
+                style = Body1_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.None)),
+                color = ColorTextBlack
+            )
+        }
+    }
+}
+
+@Preview(backgroundColor = 0x101010, showBackground = true)
+@Composable
+private fun NoGroupContentsPreview() {
+    Column(modifier = Modifier.fillMaxSize()) {
+        NoGroupContents { }
+    }
 }

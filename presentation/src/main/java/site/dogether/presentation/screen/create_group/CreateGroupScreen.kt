@@ -35,14 +35,15 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
-import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.ActionDialog
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
 import site.dogether.presentation.composables.GroupInfoBoard
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.screen.create_group.model.CreateGroupPage
 import site.dogether.presentation.theme.Body1_B
 import site.dogether.presentation.theme.Body1_S
@@ -62,7 +63,6 @@ import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
 import site.dogether.presentation.utils.hideKeyboardOnTap
 
 private val PAGE_LIST: List<CreateGroupPage> = CreateGroupPage.entries
@@ -70,22 +70,21 @@ private val PAGE_LIST: List<CreateGroupPage> = CreateGroupPage.entries
 @Composable
 fun CreateGroupScreen(viewModel: CreateGroupViewModel = koinViewModel()) {
     val navHostController = LocalNavHostController.current
+    val uiState = viewModel.collectAsState().value
 
     viewModel.CollectEffect<CreateGroupUiEffect> { uiEffect ->
         when (uiEffect) {
             is CreateGroupUiEffect.NavigateToBack -> navHostController.popBackStack()
-
-            is CreateGroupUiEffect.NavigateToGroupCreated -> navHostController.navigate("${Screen.GROUP_CREATED}/${uiEffect.joinCode}")
         }
     }
 
     CreateGroupScreenContents(
-        uiState = viewModel.collectAsState().value,
+        uiState = uiState,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
 
     InitDialog(
-        uiState = viewModel.collectAsState().value,
+        uiState = uiState,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
 }
@@ -271,7 +270,7 @@ private fun MaximumMemberCountCalculateButton(
             .clip(RoundedCornerShape(8.dp))
             .size(40.dp)
             .background(ColorBgSurface)
-            .clickableWithoutRipple { onClick() }
+            .throttledClickable { onClick() }
     ) {
         Icon(
             modifier = Modifier.align(Alignment.Center),
@@ -395,7 +394,7 @@ private fun RowScope.DurationButton(
                 top = 12.dp,
                 bottom = 12.dp
             )
-            .clickableWithoutRipple { onClick() }
+            .throttledClickable { onClick() }
     ) {
         Text(
             modifier = Modifier.align(Alignment.CenterStart),
@@ -433,7 +432,7 @@ private fun RowScope.LaunchFromButton(
                 bottom = 26.dp,
                 start = 20.dp,
             )
-            .clickableWithoutRipple { onClick() }
+            .throttledClickable { onClick() }
     ) {
         Icon(
             painter = painterResource(if (isLaunchFromToday) R.drawable.ic_launch_from_today else R.drawable.ic_launch_from_tomorrow),
@@ -503,6 +502,10 @@ private fun InitDialog(
             onClickPositive = { onEvent(CreateGroupUiEvent.Click.OnClickDuplicatedNameDialogPositive) },
             onDismissRequest = { onEvent(CreateGroupUiEvent.Callback.OnDuplicatedNameDialogDismissRequested) }
         )
+    }
+
+    if (uiState.isLoading) {
+        LoadingDialog()
     }
 }
 

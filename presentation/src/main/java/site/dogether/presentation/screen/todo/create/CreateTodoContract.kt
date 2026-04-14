@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter
 
 @Immutable
 data class CreateTodoUiState(
+    val isLoading: Boolean = false,
     val todoItems: ImmutableList<Todo> = persistentListOf(),
     val selectedDate: LocalDate = LocalDate.now(),
     val maxTodoCount: Int = 10,
@@ -39,6 +40,6 @@ sealed interface CreateTodoUiEvent : UiEvent {
     }
 }
 
-sealed interface CreateTodoSideEffect : UiEffect {
-    data object Back : CreateTodoSideEffect
+sealed interface CreateTodoUiEffect : UiEffect {
+    data object Back : CreateTodoUiEffect
 }

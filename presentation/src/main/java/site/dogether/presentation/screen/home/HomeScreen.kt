@@ -1,7 +1,7 @@
 package site.dogether.presentation.screen.home
 
-import android.app.Activity
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
@@ -10,7 +10,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -92,6 +91,7 @@ import site.dogether.presentation.composables.GroupInfoColumn
 import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.composables.node.skeleton
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.screen.home.model.Chip
 import site.dogether.presentation.screen.home.state.AnchoredBottomSheetState
 import site.dogether.presentation.screen.home.state.PersistentTooltipStateImpl
@@ -128,8 +128,7 @@ import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 import site.dogether.presentation.utils.alphaByProgress
 import site.dogether.presentation.utils.bottomSheetSnappable
-import site.dogether.presentation.utils.clickableWithoutRipple
-import site.dogether.presentation.utils.conditionedClickableWithoutRipple
+import site.dogether.presentation.utils.conditionedThrottledClickable
 import site.dogether.presentation.utils.isPermissionGranted
 import site.dogether.presentation.utils.toDp
 import java.time.LocalDate
@@ -143,11 +142,6 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
     val navHostController = LocalNavHostController.current
-
-    // 백버튼 누르면 앱 완전 종료
-    BackHandler {
-        (context as? Activity)?.finishAffinity()
-    }
 
     viewModel.CollectEffect<HomeUiEffect> { uiEffect ->
         when (uiEffect) {
@@ -210,7 +204,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             sheetState = selectGroupBottomSheetState,
             selectedGroup = uiState.selectedGroup,
             groups = uiState.groups,
-            isAddButtonShowing = true,
+            isAddButtonShowing = uiState.groups.size < 5,
             onDismissRequest = { onEvent(HomeUiEvent.Callback.OnSelectGroupBottomSheetDismissRequested) },
             onClickGroupItem = { group -> onEvent(HomeUiEvent.Click.OnClickGroup(group)) },
             onClickAddGroup = { onEvent(HomeUiEvent.Click.OnClickAddGroup) }
@@ -221,6 +215,11 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
         uiState = uiState,
         onEvent = onEvent
     )
+
+    // 백버튼 누르면 앱 완전 종료
+    BackHandler {
+        (context as? Activity)?.finishAffinity()
+    }
 }
 
 private fun checkNotificationPermission(
@@ -326,7 +325,7 @@ private fun HomeScreenContents(
                 },
                 end = {
                     Icon(
-                        modifier = Modifier.clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickMyPage) },
+                        modifier = Modifier.throttledClickable { onEvent(HomeUiEvent.Click.OnClickMyPage) },
                         painter = painterResource(R.drawable.ic_my),
                         tint = ColorIconDefault,
                         contentDescription = "icon_my"
@@ -349,7 +348,7 @@ private fun HomeScreenContents(
                             .padding(top = 6.dp)
                             .fillMaxWidth()
                             .skeleton(uiState.isLoading)
-                            .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickSelectGroup) },
+                            .throttledClickable { onEvent(HomeUiEvent.Click.OnClickSelectGroup) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -385,10 +384,11 @@ private fun HomeScreenContents(
                             modifier =
                                 Modifier
                                     .padding(start = 16.dp)
-                                    .clickable {
-                                        copyInviteCode(
+                                    .throttledClickable {
+                                        shareJoinCode(
                                             context = context,
-                                            inviteCode = uiState.selectedGroup.joinCode
+                                            groupName = uiState.selectedGroup.name,
+                                            joinCode = uiState.selectedGroup.joinCode
                                         )
                                     }
                         ) {
@@ -415,10 +415,11 @@ private fun HomeScreenContents(
                                         widthDp = 36.dp,
                                         heightDp = 22.dp
                                     ),
-                                verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-                                        text = uiState.selectedGroup.joinCode,
-                                        style = Body1_S.copy(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = uiState.selectedGroup.joinCode,
+                                    style = Body1_S.copy(
                                         lineHeightStyle = LineHeightStyle.Default.copy(
                                             trim = LineHeightStyle.Trim.Both
                                         )
@@ -513,7 +514,7 @@ private fun HomeScreenContents(
                     .height(48.dp)
                     .background(ColorBgSurface)
                     .padding(horizontal = 16.dp)
-                    .clickableWithoutRipple { onEvent(HomeUiEvent.Click.OnClickRanking) },
+                    .throttledClickable { onEvent(HomeUiEvent.Click.OnClickRanking) },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -566,6 +567,7 @@ private fun HomeScreenContents(
             timerProgress = uiState.timerProgress,
             isGoPrevDayPossible = uiState.isGoPrevDayPossible,
             isGoNextDayPossible = uiState.isGoNextDayPossible,
+            isTodaySelected = uiState.isTodaySelected,
             onEvent = onEvent
         )
     }
@@ -618,7 +620,7 @@ private fun DosikTooltip(
                 modifier = Modifier
                     .padding(start = 4.dp)
                     .size(12.dp)
-                    .clickableWithoutRipple { onClickDismiss() },
+                    .throttledClickable { onClickDismiss() },
                 painter = painterResource(R.drawable.ic_close),
                 tint = ColorIconInverse,
                 contentDescription = "icon_close"
@@ -671,6 +673,7 @@ private fun AnchoredBottomSheet(
     timerProgress: Float,
     isGoPrevDayPossible: Boolean,
     isGoNextDayPossible: Boolean,
+    isTodaySelected: Boolean,
     onEvent: (UiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -708,7 +711,7 @@ private fun AnchoredBottomSheet(
                     .clip(RoundedCornerShape(8.dp))
                     .size(24.dp)
                     .background(ColorBgSurface)
-                    .conditionedClickableWithoutRipple(isGoPrevDayPossible) { onEvent(HomeUiEvent.Click.OnClickPrevDay) }
+                    .conditionedThrottledClickable(isGoPrevDayPossible) { onEvent(HomeUiEvent.Click.OnClickPrevDay) }
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.Center),
@@ -737,7 +740,7 @@ private fun AnchoredBottomSheet(
                     .clip(RoundedCornerShape(8.dp))
                     .size(24.dp)
                     .background(ColorBgSurface)
-                    .conditionedClickableWithoutRipple(isGoNextDayPossible) { onEvent(HomeUiEvent.Click.OnClickNextDay) }
+                    .conditionedThrottledClickable(isGoNextDayPossible) { onEvent(HomeUiEvent.Click.OnClickNextDay) }
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.Center),
@@ -766,6 +769,7 @@ private fun AnchoredBottomSheet(
                             todoList = todoList,
                             filteredTodoList = filteredTodoList,
                             selectedChip = selectedChip,
+                            isTodaySelected = isTodaySelected,
                             onEvent = onEvent
                         )
                     }
@@ -857,6 +861,7 @@ private fun TodoContents(
     todoList: List<Todo>,
     filteredTodoList: List<Todo>,
     selectedChip: Chip,
+    isTodaySelected: Boolean,
     onEvent: (UiEvent) -> Unit,
 ) {
     Column(
@@ -868,6 +873,7 @@ private fun TodoContents(
                 todoList = todoList,
                 filteredTodoList = filteredTodoList,
                 selectedChip = selectedChip,
+                isTodaySelected = isTodaySelected,
                 onEvent = onEvent
             )
         } else {
@@ -881,6 +887,7 @@ private fun ColumnScope.TodoListContents(
     todoList: List<Todo>,
     filteredTodoList: List<Todo>,
     selectedChip: Chip,
+    isTodaySelected: Boolean,
     onEvent: (UiEvent) -> Unit,
 ) {
     Row(
@@ -927,13 +934,14 @@ private fun ColumnScope.TodoListContents(
         modifier = Modifier
             .weight(1f)
             .verticalScroll(rememberScrollState())
-            .clickable { onEvent(HomeUiEvent.Click.OnClickCreateTodo) },
+            .throttledClickable { onEvent(HomeUiEvent.Click.OnClickCreateTodo) },
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         filteredTodoList.forEachIndexed { index, todo ->
             TodoItem(
                 todo = todo,
                 index = index,
+                isCertificateButtonShowing = isTodaySelected,
                 onEvent = onEvent
             )
         }
@@ -1015,7 +1023,7 @@ private fun ChipItem(
         modifier = Modifier
             .clip(RoundedCornerShape(50.dp))
             .background(if (isSelected) color else Color.Transparent)
-            .clickableWithoutRipple { onClick() }
+            .throttledClickable { onClick() }
             .border(
                 width = 1.dp,
                 color = if (isSelected) Color.Transparent else ColorBorderSecondary,
@@ -1050,6 +1058,7 @@ private fun ChipItem(
 private fun TodoItem(
     todo: Todo,
     index: Int,
+    isCertificateButtonShowing: Boolean,
     onEvent: (UiEvent) -> Unit,
 ) {
     Row(
@@ -1059,7 +1068,7 @@ private fun TodoItem(
             .height(64.dp)
             .background(ColorBgSurface)
             .padding(horizontal = 16.dp)
-            .clickable { onEvent(HomeUiEvent.Click.OnClickTodo(index)) },
+            .throttledClickable { onEvent(HomeUiEvent.Click.OnClickTodo(index)) },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -1104,7 +1113,7 @@ private fun TodoItem(
             )
         }
 
-        if (todo.status == STATUS_CERTIFY_PENDING) {
+        if (todo.status == STATUS_CERTIFY_PENDING && isCertificateButtonShowing) {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
@@ -1113,7 +1122,7 @@ private fun TodoItem(
                         horizontal = 12.dp,
                         vertical = (3.5).dp
                     )
-                    .clickable {
+                    .throttledClickable {
                         onEvent(HomeUiEvent.Click.OnClickCertificateTodo(todo.id, todo.content))
                     }
             ) {
@@ -1197,9 +1206,13 @@ private fun FinishedContents() {
     }
 }
 
-private fun copyInviteCode(context: Context, inviteCode: String) {
+private fun shareJoinCode(
+    context: Context,
+    groupName: String,
+    joinCode: String
+) {
     ChottuLink.createDynamicLink()
-        .setLink(DeeplinkUtil.generateInviteDeeplink(inviteCode).toUri())
+        .setLink(DeeplinkUtil.generateInviteDeeplink(joinCode).toUri())
         .setDomain(DeeplinkUtil.DEEPLINK_DOMAIN)
         .build()
         .addOnSuccessListener {
@@ -1207,13 +1220,14 @@ private fun copyInviteCode(context: Context, inviteCode: String) {
                 val sendIntent: Intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(
-                        Intent.EXTRA_SUBJECT,
+                        Intent.EXTRA_TITLE,
                         context.getString(R.string.intent_title_share_join_code)
                     )
                     putExtra(
                         Intent.EXTRA_TEXT,
                         DeeplinkUtil.generateInviteText(
-                            code = inviteCode,
+                            groupName = groupName,
+                            code = joinCode,
                             url = result.uri.toString()
                         )
                     )

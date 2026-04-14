@@ -29,6 +29,7 @@ import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.TopBar
+import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body2_R
 import site.dogether.presentation.theme.ColorBgElevated
 import site.dogether.presentation.theme.ColorIconDefault
@@ -42,8 +43,6 @@ import site.dogether.presentation.theme.Yellow
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
-import site.dogether.presentation.utils.clickableWithoutRipple
-import site.dogether.presentation.utils.intervaledClickableWithoutRipple
 
 @Composable
 fun ParticipationMethodScreen(viewModel: ParticipationMethodViewModel = koinViewModel()) {
@@ -97,7 +96,7 @@ private fun ParticipationMethodScreenContents(
                 },
                 end = {
                     Icon(
-                        modifier = Modifier.clickableWithoutRipple { onEvent(ParticipationMethodUiEvent.Click.OnClickMyPage) },
+                        modifier = Modifier.throttledClickable { onEvent(ParticipationMethodUiEvent.Click.OnClickMyPage) },
                         painter = painterResource(R.drawable.ic_my),
                         tint = ColorIconDefault,
                         contentDescription = "icon_arrow_forward"
@@ -156,7 +155,7 @@ private fun ParticipationMethod(
             .height(100.dp)
             .background(ColorBgElevated)
             .padding(horizontal = 16.dp)
-            .intervaledClickableWithoutRipple { onClick() },
+            .throttledClickable { onClick() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
