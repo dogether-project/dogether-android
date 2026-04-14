@@ -45,8 +45,6 @@ class MyPageViewModel(
 
     private fun getUserInfo() {
         viewModelScope.launch {
-            updateState { it.copy(isLoading = true) }
-
             getUserInfoUseCase().onSuccess { result ->
                 updateState { it.copy(userInfo = result) }
             }.onFailure {
@@ -57,8 +55,6 @@ class MyPageViewModel(
                     )
                 )
             }
-        }.invokeOnCompletion {
-            updateState { it.copy(isLoading = false) }
         }
     }
 }
