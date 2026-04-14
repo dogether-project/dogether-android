@@ -61,6 +61,8 @@ class OnBoardingViewModel(
 
     private fun handleKakaoLoginSuccess(name: String, idToken: String) {
         viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
+
             val loginWithKakaoResult = loginWithKakao(
                 name = name,
                 idToken = idToken
@@ -116,6 +118,8 @@ class OnBoardingViewModel(
                     postEffect(OnBoardingUiEffect.NavigateToHome)
                 }
             }
+        }.invokeOnCompletion {
+            updateState { it.copy(isLoading = false) }
         }
     }
 

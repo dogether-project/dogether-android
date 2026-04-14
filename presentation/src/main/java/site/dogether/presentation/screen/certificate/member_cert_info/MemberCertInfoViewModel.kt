@@ -51,12 +51,11 @@ class MemberCertInfoViewModel(
                 } else {
                     0
                 }
-                
+
                 updateState {
                     it.copy(
                         todos = memberTodoHistory.todos.toImmutableList(),
                         selectedItemIndex = safeIndex,
-                        isLoading = false
                     )
                 }
 
@@ -64,7 +63,6 @@ class MemberCertInfoViewModel(
                     readAndMark(safeIndex)
                 }
             }.onFailure {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,
@@ -72,6 +70,8 @@ class MemberCertInfoViewModel(
                     )
                 )
             }
+        }.invokeOnCompletion {
+            updateState { it.copy(isLoading = false) }
         }
     }
 
@@ -82,7 +82,7 @@ class MemberCertInfoViewModel(
         if (!todoToRead.isRead) {
             val updatedTodos = uiState.todos.toMutableList()
             updatedTodos[index] = todoToRead.copy(isRead = true)
-            
+
             updateState { it.copy(todos = updatedTodos.toImmutableList()) }
 
             viewModelScope.launch {

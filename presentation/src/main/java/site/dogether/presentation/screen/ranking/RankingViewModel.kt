@@ -51,14 +51,14 @@ class RankingViewModel(
     }
 
     private fun loadRanking() {
-        updateState {
-            it.copy(
-                isLoading = true,
-                groupId = groupId
-            )
-        }
-
         viewModelScope.launch {
+            updateState {
+                it.copy(
+                    isLoading = true,
+                    groupId = groupId
+                )
+            }
+
             getRanking(groupId).onSuccess { rankingInfo ->
                 val originalMembers = rankingInfo.list
 

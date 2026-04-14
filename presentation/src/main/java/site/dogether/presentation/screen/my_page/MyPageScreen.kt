@@ -28,6 +28,7 @@ import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.screen.my_page.model.Menu
@@ -48,6 +49,7 @@ private val MENU_LIST: List<Menu> = Menu.entries
 
 @Composable
 fun MyPageScreen(viewModel: MyPageViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
     val navHostController = LocalNavHostController.current
 
     LifecycleEvent(Lifecycle.Event.ON_START) {
@@ -67,9 +69,11 @@ fun MyPageScreen(viewModel: MyPageViewModel = koinViewModel()) {
     }
 
     MyPageScreenContents(
-        uiState = viewModel.collectAsState().value,
+        uiState = uiState,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
+
+    InitDialog(uiState)
 }
 
 @Composable
@@ -167,6 +171,13 @@ private fun MyPageScreenContents(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun InitDialog(uiState: MyPageUiState) {
+    if (uiState.isLoading) {
+        LoadingDialog()
     }
 }
 

@@ -188,11 +188,10 @@ class HomeViewModel(
     }
 
     private fun loadInitialData() {
-        updateState { it.copy(isLoading = true) }
-
         viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
+
             val getJoiningGroupsResult = getJoiningGroups().getOrElse {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,

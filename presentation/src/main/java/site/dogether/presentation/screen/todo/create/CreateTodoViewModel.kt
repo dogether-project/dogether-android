@@ -17,8 +17,8 @@ import site.dogether.domain.use_case.todo.GetMyTodoSpecificDateUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
-import site.dogether.presentation.screen.error.model.Error
 import site.dogether.presentation.model.dialog_state.DialogState
+import site.dogether.presentation.screen.error.model.Error
 
 class CreateTodoViewModel(
     private val getMyTodoSpecificDateUseCase: GetMyTodoSpecificDateUseCase,
@@ -90,6 +90,8 @@ class CreateTodoViewModel(
 
     private fun getMyTodoList() {
         viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
+
             getMyTodoSpecificDateUseCase(
                 groupId = groupId,
                 date = uiState.selectedDate.toFormattedString(DATE_FORMAT_FULL_YEAR)
@@ -107,6 +109,8 @@ class CreateTodoViewModel(
                         state.copy(todoItems = todoList.todos.toImmutableList())
                     }
                 }
+        }.invokeOnCompletion {
+            updateState { it.copy(isLoading = false) }
         }
     }
 

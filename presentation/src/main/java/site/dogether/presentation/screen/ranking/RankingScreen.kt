@@ -43,6 +43,7 @@ import site.dogether.domain.model.user.RankingMember.Companion.HISTORY_READ_STAT
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_B
@@ -61,6 +62,8 @@ import site.dogether.presentation.utils.conditionedThrottledClickable
 
 @Composable
 fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
+
     viewModel.CollectEffect<RankingUiEffect> { uiEffect ->
         when (uiEffect) {
             else -> Unit
@@ -68,9 +71,11 @@ fun RankingScreen(viewModel: RankingViewModel = koinViewModel()) {
     }
 
     RankingScreenContents(
-        uiState = viewModel.collectAsState().value,
+        uiState = uiState,
         onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
     )
+
+    InitDialog(uiState)
 
     LaunchedEffect(Unit) {
         viewModel.onEvent(RankingUiEvent.Lifecycle.OnFirstComposition)
@@ -263,6 +268,13 @@ private fun RankingScreenContents(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun InitDialog(uiState: RankingUiState) {
+    if (uiState.isLoading) {
+        LoadingDialog()
     }
 }
 

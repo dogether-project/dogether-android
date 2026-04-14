@@ -64,7 +64,6 @@ class CheckTodoViewModel(
             getPendingReviewCertifications().onSuccess { result ->
                 updateState {
                     it.copy(
-                        isLoading = false,
                         certifications = result.certifications.toImmutableList(),
                         currentIndex = 0,
                         selectedReviewType = null,
@@ -72,7 +71,6 @@ class CheckTodoViewModel(
                     )
                 }
             }.onFailure {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,
@@ -80,6 +78,8 @@ class CheckTodoViewModel(
                     )
                 )
             }
+        }.invokeOnCompletion {
+            updateState { it.copy(isLoading = false) }
         }
     }
 
@@ -107,7 +107,6 @@ class CheckTodoViewModel(
             ).onSuccess {
                 handleReviewSuccess()
             }.onFailure {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,
@@ -115,6 +114,8 @@ class CheckTodoViewModel(
                     )
                 )
             }
+        }.invokeOnCompletion {
+            updateState { it.copy(isLoading = false) }
         }
     }
 

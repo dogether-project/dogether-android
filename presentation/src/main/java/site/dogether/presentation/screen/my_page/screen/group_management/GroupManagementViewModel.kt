@@ -25,7 +25,6 @@ class GroupManagementViewModel(
             updateState { it.copy(isLoading = true) }
 
             val getJoiningGroupsResult = getJoiningGroups().getOrElse {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,
@@ -92,7 +91,6 @@ class GroupManagementViewModel(
             updateState { it.copy(isLoading = true) }
 
             withdrawGroup(uiState.withdrawGroupDialogState.groupId).getOrElse {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,
@@ -103,7 +101,6 @@ class GroupManagementViewModel(
             }
 
             val getJoiningGroupsResult = getJoiningGroups().getOrElse {
-                updateState { it.copy(isLoading = false) }
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,

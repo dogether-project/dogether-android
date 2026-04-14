@@ -80,7 +80,7 @@ fun CreateTodoScreen(
         onEvent = viewModel::onEvent
     )
 
-    CheckDialog(
+    InitDialog(
         uiState = uiState,
         onEvent = viewModel::onEvent
     )
@@ -212,6 +212,17 @@ private fun CreateTodoScreenContents(
             }
         }
     }
+}
+
+@Composable
+private fun InitDialog(
+    uiState: CreateTodoUiState,
+    onEvent: (UiEvent) -> Unit
+) {
+    CheckDialog(
+        uiState = uiState,
+        onEvent = onEvent
+    )
 }
 
 @Composable

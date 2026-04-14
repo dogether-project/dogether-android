@@ -44,6 +44,7 @@ import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.DogetherTextField
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
 import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.theme.Body1_B
@@ -89,6 +90,8 @@ fun CheckTodoScreen(viewModel: CheckTodoViewModel = koinViewModel()) {
         onEvent = viewModel::onEvent,
         context = context
     )
+
+    InitDialog(uiState)
 }
 
 @Composable
@@ -324,6 +327,12 @@ private fun CertificationReviewContent(
     }
 }
 
+@Composable
+private fun InitDialog(uiState: CheckTodoUiState) {
+    if (uiState.isLoading) {
+        LoadingDialog()
+    }
+}
 
 @Composable
 private fun CertificationImageArea(

@@ -39,6 +39,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.UiEvent
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.node.throttledClickable
 import site.dogether.presentation.screen.on_boarding.model.OnBoardingPage
 import site.dogether.presentation.theme.Body1_R
@@ -59,6 +60,7 @@ private val PAGE_LIST: List<OnBoardingPage> = OnBoardingPage.entries
 
 @Composable
 fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
+    val uiState = viewModel.collectAsState().value
     val onEvent: (UiEvent) -> Unit = { uiEvent -> viewModel.onEvent(uiEvent) }
     val context = LocalContext.current
     val navHostController = LocalNavHostController.current
@@ -93,9 +95,11 @@ fun OnBoardingScreen(viewModel: OnBoardingViewModel = koinViewModel()) {
     }
 
     OnBoardingScreenContents(
-        uiState = viewModel.collectAsState().value,
+        uiState = uiState,
         onEvent = onEvent
     )
+
+    InitDialog(uiState)
 }
 
 private fun kakaoLoginCallback(onEvent: (UiEvent) -> Unit): (OAuthToken?, Throwable?) -> Unit = { token, error ->
@@ -213,6 +217,13 @@ private fun OnBoardingScreenContents(
                 color = ColorKakaoLabel
             )
         }
+    }
+}
+
+@Composable
+private fun InitDialog(uiState: OnBoardingUiState) {
+    if (uiState.isLoading) {
+        LoadingDialog()
     }
 }
 

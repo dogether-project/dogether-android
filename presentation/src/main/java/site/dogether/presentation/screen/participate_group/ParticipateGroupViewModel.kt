@@ -57,9 +57,9 @@ class ParticipateGroupViewModel(
     }
 
     private fun participateGroupAction() {
-        updateState { it.copy(isLoading = true) }
-
         viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
+
             participateGroup(uiState.joinCode).getOrElse {
                 val code = (it as? NetworkFailureException)?.code.orEmpty()
                 val titleStringId = when(code) {

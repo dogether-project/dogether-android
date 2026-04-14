@@ -55,7 +55,6 @@ class MyCertInfoViewModel(
                     it.copy(
                         todos = todos.toImmutableList(),
                         selectedItemIndex = focusedTodoIndex,
-                        isLoading = false
                     )
                 }
             }.onFailure {
@@ -66,6 +65,8 @@ class MyCertInfoViewModel(
                     )
                 )
             }
+        }.invokeOnCompletion {
+            updateState { it.copy(isLoading = false) }
         }
     }
 
