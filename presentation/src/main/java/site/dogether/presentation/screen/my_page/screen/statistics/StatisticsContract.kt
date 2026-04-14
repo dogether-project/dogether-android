@@ -10,7 +10,8 @@ import site.dogether.presentation.base.UiEvent
 
 @Immutable
 data class StatisticsUiState(
-    val isLoading: Boolean = false,
+    val isGroupsLoading: Boolean = false,
+    val isStatisticsLoading: Boolean = false,
     val groups: ImmutableList<Group> = persistentListOf(),
     val selectedGroup: Group = Group(),
     val isSelectGroupBottomSheetShowing: Boolean = false,

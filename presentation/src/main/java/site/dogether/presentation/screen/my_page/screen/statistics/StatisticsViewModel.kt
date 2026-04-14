@@ -58,7 +58,7 @@ class StatisticsViewModel(
 
     private fun loadInitialData() {
         viewModelScope.launch {
-            updateState { it.copy(isLoading = true) }
+            updateState { it.copy(isGroupsLoading = true) }
 
             getJoiningGroupsUseCase().onSuccess { joiningGroups ->
                 if (joiningGroups.lastSelectedGroupIndex == -1) return@launch
@@ -83,13 +83,13 @@ class StatisticsViewModel(
                 )
             }
         }.invokeOnCompletion {
-            updateState { it.copy(isLoading = false) }
+            updateState { it.copy(isGroupsLoading = false) }
         }
     }
 
     private fun getGroupStatistics(groupId: Int) {
         viewModelScope.launch {
-            updateState { it.copy(isLoading = true) }
+            updateState { it.copy(isStatisticsLoading = true) }
 
             getGroupStatisticsUseCase(groupId).onSuccess { groupStatistics ->
                 updateState { it.copy(groupStatistics = groupStatistics) }
@@ -102,7 +102,7 @@ class StatisticsViewModel(
                 )
             }
         }.invokeOnCompletion {
-            updateState { it.copy(isLoading = false) }
+            updateState { it.copy(isStatisticsLoading = false) }
         }
     }
 }

@@ -43,6 +43,7 @@ import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
 import site.dogether.presentation.composables.GroupInfoColumn
+import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.NoGroupContents
 import site.dogether.presentation.composables.SelectGroupBottomSheet
 import site.dogether.presentation.composables.TopBar
@@ -86,7 +87,7 @@ fun StatisticsScreen(viewModel: StatisticsViewModel = koinViewModel()) {
 
     StatisticsScreenContents(
         uiState = viewModel.collectAsState().value,
-        onEvent = { uiEvent -> viewModel.onEvent(uiEvent) }
+        onEvent = viewModel::onEvent
     )
 
     val selectGroupBottomSheetState = rememberModalBottomSheetState()
@@ -118,13 +119,17 @@ private fun StatisticsScreenContents(
             centerText = stringResource(R.string.title_statistics)
         )
 
-        if (uiState.groups.isNotEmpty()) {
-            StatisticsContents(
-                uiState = uiState,
-                onEvent = onEvent
-            )
+        if (uiState.isGroupsLoading) {
+            LoadingDialog()
         } else {
-            NoGroupContents(onClickCreateGroup = { onEvent(StatisticsUiEvent.Click.OnClickCreateGroup) })
+            if (uiState.groups.isNotEmpty()) {
+                StatisticsContents(
+                    uiState = uiState,
+                    onEvent = onEvent
+                )
+            } else {
+                NoGroupContents(onClickCreateGroup = { onEvent(StatisticsUiEvent.Click.OnClickCreateGroup) })
+            }
         }
     }
 }
@@ -142,7 +147,7 @@ private fun StatisticsContents(
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .skeleton(
-                        condition = uiState.isLoading,
+                        condition = uiState.isStatisticsLoading,
                         widthDp = 200.dp,
                         heightDp = 36.dp
                     ),
@@ -169,19 +174,19 @@ private fun StatisticsContents(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 GroupInfoColumn(
-                    isLoading = uiState.isLoading,
+                    isLoading = uiState.isStatisticsLoading,
                     title = stringResource(R.string.info_group_member_count),
                     value = "${group.currentMemberCount}/${group.maximumMemberCount}",
                 )
 
                 GroupInfoColumn(
-                    isLoading = uiState.isLoading,
+                    isLoading = uiState.isStatisticsLoading,
                     title = stringResource(R.string.info_join_code),
                     value = group.joinCode
                 )
 
                 GroupInfoColumn(
-                    isLoading = uiState.isLoading,
+                    isLoading = uiState.isStatisticsLoading,
                     title = stringResource(R.string.info_end_date),
                     value = group.endAt
                 )
@@ -288,7 +293,7 @@ private fun StatisticsContents(
                                     modifier = Modifier
                                         .padding(top = 10.dp)
                                         .skeleton(
-                                            condition = uiState.isLoading,
+                                            condition = uiState.isStatisticsLoading,
                                             widthDp = 50.dp
                                         ),
                                     text = "${certificationPeriods[index].day}${stringResource(R.string.unit_day_passed)}",
@@ -422,7 +427,7 @@ private fun StatisticsContents(
             ) {
                 Text(
                     modifier = Modifier.skeleton(
-                        condition = uiState.isLoading,
+                        condition = uiState.isStatisticsLoading,
                         color = ColorBgDisabled,
                     ),
                     text = ranking.totalMemberCount.toString() + stringResource(R.string.unit_member) + " " + stringResource(R.string.unit_postfix_total),
@@ -434,7 +439,7 @@ private fun StatisticsContents(
                     modifier = Modifier
                         .padding(top = 6.dp)
                         .skeleton(
-                            condition = uiState.isLoading,
+                            condition = uiState.isStatisticsLoading,
                             color = ColorBgDisabled,
                         ),
                     text = ranking.myRank.toString() + stringResource(R.string.unit_rank),
@@ -478,7 +483,7 @@ private fun StatisticsContents(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 SummaryItem(
-                    isLoading = uiState.isLoading,
+                    isLoading = uiState.isStatisticsLoading,
                     icon = painterResource(R.drawable.ic_achieved),
                     tint = ColorIconElevated,
                     title = stringResource(R.string.common_achieved),
@@ -486,7 +491,7 @@ private fun StatisticsContents(
                 )
 
                 SummaryItem(
-                    isLoading = uiState.isLoading,
+                    isLoading = uiState.isStatisticsLoading,
                     icon = painterResource(R.drawable.ic_approve_summary),
                     tint = ColorIconPrimary,
                     title = stringResource(R.string.common_approve),
@@ -494,7 +499,7 @@ private fun StatisticsContents(
                 )
 
                 SummaryItem(
-                    isLoading = uiState.isLoading,
+                    isLoading = uiState.isStatisticsLoading,
                     icon = painterResource(R.drawable.ic_reject_summary),
                     tint = ColorIconError,
                     title = stringResource(R.string.common_reject),
