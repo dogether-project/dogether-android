@@ -132,6 +132,14 @@ suspend inline fun <reified Req> HttpClient.safePostWithoutRes(
     }
 }
 
+suspend fun HttpClient.safePostEmptyBodyWithoutRes(
+    apiRoute: String,
+): Result<Unit> {
+    return safeApiCallWithoutRes {
+        post(apiRoute)
+    }
+}
+
 suspend fun HttpClient.safeGetWithoutRes(
     apiRoute: String,
     params: Map<String, String> = emptyMap(),

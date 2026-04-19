@@ -17,8 +17,8 @@ import site.dogether.data.remote.model.res.todo.PendingReviewCertificationsResMa
 import site.dogether.data.remote.model.res.todo.TodosResMapper
 import site.dogether.data.remote.model.res.todo.certificate.PresignedUrlResMapper
 import site.dogether.data.utils.safeGet
-import site.dogether.data.utils.safeGetWithoutRes
 import site.dogether.data.utils.safePost
+import site.dogether.data.utils.safePostEmptyBodyWithoutRes
 import site.dogether.data.utils.safePostWithoutRes
 import site.dogether.data.utils.safePutToS3
 import site.dogether.domain.model.certificate.PresignedUrlData
@@ -125,7 +125,7 @@ class TodoRepositoryImpl(
     }
 
     override suspend fun readTodo(todoId: Long): Result<Unit> {
-        return httpClient.safeGetWithoutRes(ApiRoutes.readTodo(todoId))
+        return httpClient.safePostEmptyBodyWithoutRes(ApiRoutes.readTodo(todoId))
     }
 
     override suspend fun getMemberTodoHistory(
