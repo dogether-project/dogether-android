@@ -80,4 +80,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
     implementation(libs.coroutines.play.services)
+
+    // Lottie
+    implementation(libs.lottie.compose)
 }

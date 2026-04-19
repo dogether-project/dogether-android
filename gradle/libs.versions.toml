@@ -51,11 +51,14 @@ datastore = "1.1.7"
 # Chottulink
 chottuLink = "1.0.9"
 
+# ImmutableList
+immutableList = "0.4.0"
+
 # GMS
 gms = "4.4.4"
 
-# ImmutableList
-immutableList = "0.4.0"
+# Lottie
+lottie = "6.7.1"
 
 [libraries]
 # AndroidX / Compose
@@ -136,6 +139,9 @@ datastore = { group = "androidx.datastore", name = "datastore-preferences", vers
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+
+# Lottie
+lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

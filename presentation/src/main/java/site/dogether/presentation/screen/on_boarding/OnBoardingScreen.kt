@@ -1,12 +1,12 @@
 package site.dogether.presentation.screen.on_boarding
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +33,10 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import org.koin.androidx.compose.koinViewModel
@@ -154,6 +159,11 @@ private fun OnBoardingScreenContents(
     uiState: OnBoardingUiState,
     onEvent: (UiEvent) -> Unit,
 ) {
+    val composition0 by rememberLottieComposition(LottieCompositionSpec.RawRes(PAGE_LIST[0].lottieResId))
+    val composition1 by rememberLottieComposition(LottieCompositionSpec.RawRes(PAGE_LIST[1].lottieResId))
+    val composition2 by rememberLottieComposition(LottieCompositionSpec.RawRes(PAGE_LIST[2].lottieResId))
+    val compositions = listOf(composition0, composition1, composition2)
+
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -179,7 +189,12 @@ private fun OnBoardingScreenContents(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         FixedHeightPager(
                             pageCount = PAGE_LIST.size,
-                            pageContent = { pageIndex -> OnBoardingPageContent(page = PAGE_LIST[pageIndex]) },
+                            pageContent = { pageIndex ->
+                                OnBoardingPageContent(
+                                    page = PAGE_LIST[pageIndex],
+                                    composition = compositions[pageIndex]
+                                )
+                            },
                             pagerState = pagerState
                         )
 
@@ -228,7 +243,10 @@ private fun InitDialog(uiState: OnBoardingUiState) {
 }
 
 @Composable
-private fun OnBoardingPageContent(page: OnBoardingPage) {
+private fun OnBoardingPageContent(
+    page: OnBoardingPage,
+    composition: com.airbnb.lottie.LottieComposition?
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -239,6 +257,7 @@ private fun OnBoardingPageContent(page: OnBoardingPage) {
             textAlign = TextAlign.Center,
             color = ColorTextDefault
         )
+
         Text(
             modifier = Modifier.padding(top = 8.dp),
             text = stringResource(page.bodyStringId),
@@ -246,11 +265,14 @@ private fun OnBoardingPageContent(page: OnBoardingPage) {
             textAlign = TextAlign.Center,
             color = ColorTextSubtle
         )
-        Image(
-            modifier = Modifier.fillMaxWidth(),
-            painter = painterResource(page.imageId),
-            contentScale = ContentScale.FillWidth,
-            contentDescription = "image_on_boarding"
+
+        LottieAnimation(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1.0f),
+            composition = composition,
+            iterations = LottieConstants.IterateForever,
+            contentScale = ContentScale.Fit
         )
     }
 }
