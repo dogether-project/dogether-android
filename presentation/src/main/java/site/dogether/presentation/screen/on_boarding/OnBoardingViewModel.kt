@@ -1,13 +1,16 @@
 package site.dogether.presentation.screen.on_boarding
 
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.common.model.AuthError
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.GetGroupJoinCodeUseCase
 import site.dogether.domain.use_case.user.LoginWithKakaoUseCase
 import site.dogether.domain.use_case.user.StoreGroupJoinCodeUseCase
 import site.dogether.domain.use_case.user.StoreUserInfoUseCase
+import site.dogether.domain.use_case.user.RegisterFcmTokenUseCase
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
@@ -20,7 +23,8 @@ class OnBoardingViewModel(
     private val storeUserInfo: StoreUserInfoUseCase,
     private val checkParticipating: CheckParticipatingUseCase,
     private val getGroupJoinCodeUseCase: GetGroupJoinCodeUseCase,
-    private val storeGroupJoinCodeUseCase: StoreGroupJoinCodeUseCase
+    private val storeGroupJoinCodeUseCase: StoreGroupJoinCodeUseCase,
+    private val registerFcmTokenUseCase: RegisterFcmTokenUseCase
 ) : BaseViewModel<OnBoardingUiState>(OnBoardingUiState()) {
 
     override fun onEvent(event: UiEvent) {
@@ -87,6 +91,13 @@ class OnBoardingViewModel(
                     )
                 )
                 return@launch
+            }
+
+            try {
+                val token = FirebaseMessaging.getInstance().token.await()
+                registerFcmTokenUseCase(token)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
 
             val checkParticipatingResult = checkParticipating().getOrElse {

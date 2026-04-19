@@ -75,4 +75,9 @@ dependencies {
 
     // Immutable List
     implementation(libs.immutable.list)
+
+    // Firebase messaging
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
+    implementation(libs.coroutines.play.services)
 }

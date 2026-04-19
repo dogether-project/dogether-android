@@ -12,6 +12,9 @@ import site.dogether.domain.use_case.todo.GetPendingReviewCertificationsUseCase
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.GetUserInfoUseCase
 import site.dogether.domain.use_case.user.StoreGroupJoinCodeUseCase
+import site.dogether.domain.use_case.user.RegisterFcmTokenUseCase
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
@@ -24,6 +27,7 @@ class SplashViewModel(
     private val checkParticipating: CheckParticipatingUseCase,
     private val storeGroupJoinCodeUseCase: StoreGroupJoinCodeUseCase,
     private val getPendingReviewCertifications: GetPendingReviewCertificationsUseCase,
+    private val registerFcmTokenUseCase: RegisterFcmTokenUseCase,
 ) : BaseViewModel<SplashUiState>(SplashUiState()) {
 
     override val container: Container<SplashUiState, UiEffect> = container(SplashUiState())
@@ -99,6 +103,14 @@ class SplashViewModel(
                     )
                 )
                 return@launch
+            } else {
+                // 토큰이 있으면 FCM 토큰을 서버에 등록 (앱 업데이트 등 누락된 토큰 발송 처리)
+                try {
+                    val token = FirebaseMessaging.getInstance().token.await()
+                    registerFcmTokenUseCase(token)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
 
             // 리뷰 대기가 있는 경우

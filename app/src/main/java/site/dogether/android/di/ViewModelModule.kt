@@ -35,7 +35,8 @@ val viewModelModule = module {
             getUserInfo = get(),
             checkParticipating = get(),
             storeGroupJoinCodeUseCase = get(),
-            getPendingReviewCertifications = get()
+            getPendingReviewCertifications = get(),
+            registerFcmTokenUseCase = get()
         )
     }
     viewModel { ForceUpdateViewModel() }
@@ -45,7 +46,8 @@ val viewModelModule = module {
             storeUserInfo = get(),
             checkParticipating = get(),
             getGroupJoinCodeUseCase = get(),
-            storeGroupJoinCodeUseCase = get()
+            storeGroupJoinCodeUseCase = get(),
+            registerFcmTokenUseCase = get()
         )
     }
     viewModel { ParticipationMethodViewModel(savedStateHandle = get()) }

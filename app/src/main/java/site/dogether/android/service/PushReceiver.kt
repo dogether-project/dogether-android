@@ -6,20 +6,10 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import site.dogether.android.MainActivity
 import site.dogether.android.R
-import site.dogether.domain.use_case.user.RegisterFcmTokenUseCase
 
 class PushReceiver : FirebaseMessagingService() {
-
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private val registerFcmTokenUseCase: RegisterFcmTokenUseCase by inject()
-
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
@@ -40,17 +30,6 @@ class PushReceiver : FirebaseMessagingService() {
                     data = remoteMessage.data
                 )
             }
-        }
-    }
-
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-        sendFcmToken(token)
-    }
-
-    private fun sendFcmToken(token: String) {
-        serviceScope.launch {
-            registerFcmTokenUseCase(token)
         }
     }
 
