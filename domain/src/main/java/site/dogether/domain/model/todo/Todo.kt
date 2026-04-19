@@ -10,6 +10,8 @@ data class Todo(
     val certificationMediaUrl: String = "",
     val reviewFeedback: String = "",
     val isRead: Boolean = false,
+    val canRemindCertification: Boolean = false,
+    val canRemindReview: Boolean = false,
 ) : DomainModel {
     companion object {
         const val STATUS_CERTIFY_PENDING = "CERTIFY_PENDING"

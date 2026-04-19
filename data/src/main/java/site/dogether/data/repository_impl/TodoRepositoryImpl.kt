@@ -47,7 +47,7 @@ class TodoRepositoryImpl(
     override suspend fun createMyTodo(groupId: Int, todos: List<String>): Result<Unit> {
         return httpClient.safePostWithoutRes(
             apiRoute = ApiRoutes.createMyTodos(groupId = groupId),
-            body = CreateTodoReq(todos = todos),
+            body = CreateTodoReq(todos = todos.reversed()),
         )
     }
 

@@ -10,6 +10,7 @@ import site.dogether.presentation.base.UiEvent
 @Immutable
 data class MemberCertInfoUiState(
     val isLoading: Boolean = false,
+    val isMine: Boolean = false,
     val todos: ImmutableList<Todo> = persistentListOf(),
     val selectedItemIndex: Int = 0,
     val name: String = "",

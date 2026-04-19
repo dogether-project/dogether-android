@@ -332,6 +332,7 @@ private fun MyCertInfoScreenContents(
                                         .align(BottomCenter)
                                         .fillMaxWidth()
                                         .height(50.dp),
+                                    isEnabled = selectedTodo.canRemindReview,
                                     text = "검사 재촉하기",
                                     onClick = { onEvent(MyCertInfoUiEvent.Click.OnClickRemind("TODO_CERTIFICATION_REVIEW")) }
                                 )

@@ -15,6 +15,7 @@ import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.error.model.Error
+import java.time.LocalDate
 
 class MemberCertInfoViewModel(
     private val getMemberTodoHistory: GetMemberTodoHistoryUseCase,
@@ -36,6 +37,10 @@ class MemberCertInfoViewModel(
     }
 
     init {
+        loadData()
+    }
+
+    override fun onDateChanged(date: LocalDate) {
         loadData()
     }
 
@@ -69,6 +74,7 @@ class MemberCertInfoViewModel(
                     it.copy(
                         todos = processedTodos.toImmutableList(),
                         selectedItemIndex = safeIndex,
+                        isMine = memberTodoHistory.isMine
                     )
                 }
             }.onFailure {
@@ -151,9 +157,24 @@ class MemberCertInfoViewModel(
             )
                 .onSuccess {
                     showToast(
-                        if (reminderType == "CERTIFICATION") "인증 재촉하기를 완료했어요!"
+                        if (reminderType == "TODO_CERTIFICATION") "인증 재촉하기를 완료했어요!"
                         else "검사 재촉하기를 완료했어요!"
                     )
+                    
+                    updateState { state ->
+                        val updatedTodos = state.todos.map { todo ->
+                            if (todo.id == todoId) {
+                                if (reminderType == "TODO_CERTIFICATION") {
+                                    todo.copy(canRemindCertification = false)
+                                } else {
+                                    todo.copy(canRemindReview = false)
+                                }
+                            } else {
+                                todo
+                            }
+                        }
+                        state.copy(todos = updatedTodos.toImmutableList())
+                    }
                 }
                 .onFailure {
                     showToast("요청에 실패했어요.")

@@ -290,25 +290,30 @@ private fun MemberCertInfoScreenContents(
                 }
             }
 
-            val currentTodo = uiState.todos[uiState.selectedItemIndex]
-            if (currentTodo.status == Todo.STATUS_CERTIFY_PENDING) {
-                CTAButton(
-                    modifier = Modifier
-                        .padding(top = 16.dp, bottom = 16.dp)
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    text = "인증 재촉하기",
-                    onClick = { onEvent(MemberCertInfoUiEvent.Click.OnClickRemind("TODO_CERTIFICATION")) }
-                )
-            } else if (currentTodo.status == Todo.STATUS_REVIEW_PENDING) {
-                CTAButton(
-                    modifier = Modifier
-                        .padding(top = 16.dp, bottom = 16.dp)
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    text = "검사 재촉하기",
-                    onClick = { onEvent(MemberCertInfoUiEvent.Click.OnClickRemind("TODO_CERTIFICATION_REVIEW")) }
-                )
+            if (uiState.todos.isNotEmpty() && uiState.selectedItemIndex in uiState.todos.indices) {
+                val currentTodo = uiState.todos[uiState.selectedItemIndex]
+                
+                if (currentTodo.status == Todo.STATUS_CERTIFY_PENDING && !uiState.isMine) {
+                    CTAButton(
+                        modifier = Modifier
+                            .padding(top = 16.dp, bottom = 16.dp)
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        text = "인증 재촉하기",
+                        isEnabled = currentTodo.canRemindCertification,
+                        onClick = { onEvent(MemberCertInfoUiEvent.Click.OnClickRemind("TODO_CERTIFICATION")) }
+                    )
+                } else if (currentTodo.status == Todo.STATUS_REVIEW_PENDING) {
+                    CTAButton(
+                        modifier = Modifier
+                            .padding(top = 16.dp, bottom = 16.dp)
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        text = "검사 재촉하기",
+                        isEnabled = currentTodo.canRemindReview,
+                        onClick = { onEvent(MemberCertInfoUiEvent.Click.OnClickRemind("TODO_CERTIFICATION_REVIEW")) }
+                    )
+                }
             }
         } else {
             Column(

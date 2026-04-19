@@ -10,6 +10,7 @@ import site.dogether.domain.model.todo.MemberTodoHistory
 @Serializable
 data class MemberTodoHistoryRes(
     val currentTodoHistoryToReadIndex: Int? = 0,
+    val isMine: Boolean? = false,
     val todos: List<TodoRes> = emptyList(),
 ) : DataModel
 
@@ -17,6 +18,7 @@ object MemberTodoHistoryResMapper : DataMapper<MemberTodoHistoryRes, MemberTodoH
     override fun MemberTodoHistoryRes.toDomainModel(): MemberTodoHistory {
         return MemberTodoHistory(
             currentTodoHistoryToReadIndex = currentTodoHistoryToReadIndex.orZero(),
+            isMine = isMine ?: false,
             todos = todos.map { it.toDomainModel() }
         )
     }
