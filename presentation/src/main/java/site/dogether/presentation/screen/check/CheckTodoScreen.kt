@@ -64,25 +64,17 @@ import site.dogether.presentation.theme.ColorTextSecondary
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.LifecycleEvent
-import site.dogether.presentation.utils.LocalNavHostController
 import site.dogether.presentation.utils.ScreenPreview
 
 @Composable
 fun CheckTodoScreen(viewModel: CheckTodoViewModel = koinViewModel()) {
     val uiState = viewModel.collectAsState().value
     val context = LocalContext.current
-    val navController = LocalNavHostController.current
+
+    viewModel.CollectEffect<CheckTodoUiEffect> { }
 
     LifecycleEvent(Lifecycle.Event.ON_START) {
         viewModel.onEvent(CheckTodoUiEvent.Lifecycle.OnStart)
-    }
-
-    viewModel.CollectEffect<CheckTodoUiEffect> { sideEffect ->
-        when (sideEffect) {
-            is CheckTodoUiEffect.ReviewSubmitted -> {
-                navController.popBackStack()
-            }
-        }
     }
 
     CheckTodoScreenContents(
@@ -290,8 +282,8 @@ private fun CertificationReviewContent(
             )
         }
 
-        // 노인정 선택 시 피드백 표시
-        if (uiState.selectedReviewType == ReviewType.REJECT && uiState.reviewFeedback.isNotEmpty()) {
+        // 검사 선택 후 피드백이 있으면 표시
+        if (uiState.selectedReviewType != null && uiState.reviewFeedback.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Box(
