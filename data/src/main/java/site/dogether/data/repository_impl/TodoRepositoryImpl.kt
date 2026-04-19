@@ -5,6 +5,7 @@ import android.net.Uri
 import io.ktor.client.HttpClient
 import site.dogether.data.remote.ApiRoutes
 import site.dogether.data.remote.model.req.todo.CreateTodoReq
+import site.dogether.data.remote.model.req.todo.RemindTodoReq
 import site.dogether.data.remote.model.req.todo.certificate.CertificateTodoReq
 import site.dogether.data.remote.model.req.todo.certificate.PresignedUrlReq
 import site.dogether.data.remote.model.req.todo.review.ReviewTodoReq
@@ -157,6 +158,16 @@ class TodoRepositoryImpl(
             apiRoute = ApiRoutes.PENDING_REVIEW_CERTIFICATIONS,
             params = emptyMap(),
             mapper = PendingReviewCertificationsResMapper
+        )
+    }
+
+    override suspend fun remindTodo(
+        todoId: Long,
+        reminderType: String
+    ): Result<Unit> {
+        return httpClient.safePostWithoutRes(
+            apiRoute = ApiRoutes.remindTodo(todoId),
+            body = RemindTodoReq(reminderType)
         )
     }
 }

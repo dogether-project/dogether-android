@@ -29,6 +29,7 @@ import site.dogether.domain.use_case.user.RegisterFcmTokenUseCase
 import site.dogether.domain.use_case.user.StoreGroupJoinCodeUseCase
 import site.dogether.domain.use_case.user.StoreUserInfoUseCase
 import site.dogether.domain.use_case.user.WithdrawUseCase
+import site.dogether.domain.use_case.todo.RemindTodoUseCase
 
 val useCaseModule = module {
     factory { LoginWithKakaoUseCase(repository = get()) }
@@ -59,4 +60,5 @@ val useCaseModule = module {
     factory { GetMemberTodoHistoryUseCase(repository = get()) }
     factory { RegisterFcmTokenUseCase(repository = get()) }
     factory { GetPendingReviewCertificationsUseCase(repository = get()) }
+    factory { RemindTodoUseCase(repository = get()) }
 }

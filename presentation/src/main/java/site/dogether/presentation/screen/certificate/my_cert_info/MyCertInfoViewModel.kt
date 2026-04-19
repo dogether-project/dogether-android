@@ -12,6 +12,7 @@ import site.dogether.common.utils.DateTimeUtils.toLocalDate
 import site.dogether.common.utils.DateTimeUtils.today
 import site.dogether.common.utils.orZero
 import site.dogether.domain.use_case.todo.GetMyTodosByDateUseCase
+import site.dogether.domain.use_case.todo.RemindTodoUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
@@ -19,6 +20,7 @@ import site.dogether.presentation.screen.error.model.Error
 
 class MyCertInfoViewModel(
     private val getMyTodoListByDate: GetMyTodosByDateUseCase,
+    private val remindTodoUseCase: RemindTodoUseCase,
     private val savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<MyCertInfoUiState>(MyCertInfoUiState()) {
 
@@ -90,6 +92,10 @@ class MyCertInfoViewModel(
                             )
                         )
                     }
+
+                    is MyCertInfoUiEvent.Click.OnClickRemind -> {
+                        remindTodo(event.reminderType)
+                    }
                 }
             }
 
@@ -108,6 +114,28 @@ class MyCertInfoViewModel(
                     }
                 }
             }
+        }
+    }
+
+    private fun remindTodo(reminderType: String) {
+        val selectedIndex = uiState.selectedItemIndex
+        if (selectedIndex !in uiState.todos.indices) return
+        val todoId = uiState.todos[selectedIndex].id
+
+        viewModelScope.launch {
+            remindTodoUseCase(
+                todoId = todoId,
+                reminderType = reminderType
+            )
+                .onSuccess {
+                    showToast(
+                        if (reminderType == "TODO_CERTIFICATION") "인증 재촉하기를 완료했어요!"
+                        else "검사 재촉하기를 완료했어요!"
+                    )
+                }
+                .onFailure {
+                    showToast("요청에 실패했어요.")
+                }
         }
     }
 }
