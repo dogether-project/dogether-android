@@ -5,6 +5,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.todo.GetPendingReviewCertificationsUseCase
 import site.dogether.domain.use_case.todo.ReviewTodoUseCase
+import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
@@ -25,13 +26,11 @@ class CheckTodoViewModel(
             }
 
             is CheckTodoUiEvent.SelectReviewType -> {
-                updateState { it.copy(selectedReviewType = event.type) }
-
-                // 노인정 선택 시 피드백 다이얼로그 표시
-                if (event.type == ReviewType.REJECT) {
-                    updateState { it.copy(isFeedbackDialogShowing = true) }
-                } else {
-                    updateState { it.copy(isFeedbackDialogShowing = false, reviewFeedback = "") }
+                updateState {
+                    it.copy(
+                        selectedReviewType = event.type,
+                        isFeedbackDialogShowing = true
+                    )
                 }
             }
 
@@ -99,11 +98,9 @@ class CheckTodoViewModel(
             updateState { it.copy(isLoading = true) }
 
             reviewTodo(
-                todoId = currentState.todoId.toInt(), isApprove = currentState.selectedReviewType == ReviewType.APPROVE, feedback = if (currentState.selectedReviewType == ReviewType.REJECT) {
-                    currentState.reviewFeedback
-                } else {
-                    ""
-                }
+                todoId = currentState.todoId.toInt(),
+                isApprove = currentState.selectedReviewType == ReviewType.APPROVE,
+                feedback = currentState.reviewFeedback
             ).onSuccess {
                 handleReviewSuccess()
             }.onFailure {
@@ -133,7 +130,12 @@ class CheckTodoViewModel(
         } else {
             // 모든 검사 완료
             updateState { it.copy(isLoading = false) }
-            postEffect(CheckTodoUiEffect.ReviewSubmitted)
+            postEffect(
+                UiEffect.NavigateTo(
+                    screen = Screen.HOME,
+                    clearBackStack = true
+                )
+            )
         }
     }
 }

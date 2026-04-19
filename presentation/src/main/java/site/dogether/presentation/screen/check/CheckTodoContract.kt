@@ -43,9 +43,7 @@ data class CheckTodoUiState(
         get() = certifications.isEmpty()
 
     val confirmEnabled: Boolean
-        get() = selectedReviewType != null &&
-          (selectedReviewType == ReviewType.APPROVE ||
-            (selectedReviewType == ReviewType.REJECT && reviewFeedback.isNotEmpty()))
+        get() = selectedReviewType != null && reviewFeedback.isNotEmpty()
 }
 
 enum class ReviewType {
@@ -66,6 +64,5 @@ sealed interface CheckTodoUiEvent : UiEvent {
 }
 
 sealed interface CheckTodoUiEffect : UiEffect {
-    data object ReviewSubmitted : CheckTodoUiEffect
-}
 
+}
