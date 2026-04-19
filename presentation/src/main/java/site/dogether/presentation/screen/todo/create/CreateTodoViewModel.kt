@@ -188,7 +188,7 @@ class CreateTodoViewModel(
             }.let {
                 closeCheckPopup()
                 getMyTodoList()
-                postEffect(UiEffect.ShowToast("투두 저장에 성공했습니다"))
+                postEffect(UiEffect.NavigateToPreviousScreen)
             }
         }
     }
