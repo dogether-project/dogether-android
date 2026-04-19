@@ -54,15 +54,22 @@ class MemberCertInfoViewModel(
                     0
                 }
 
-                updateState {
-                    it.copy(
-                        todos = memberTodoHistory.todos.toImmutableList(),
-                        selectedItemIndex = safeIndex,
-                    )
+                val processedTodos = memberTodoHistory.todos.toMutableList()
+                if (processedTodos.isNotEmpty()) {
+                    val todoToRead = processedTodos[safeIndex]
+                    if (!todoToRead.isRead) {
+                        processedTodos[safeIndex] = todoToRead.copy(isRead = true)
+                        viewModelScope.launch {
+                            readTodoUseCase(todoToRead.id)
+                        }
+                    }
                 }
 
-                if (memberTodoHistory.todos.isNotEmpty()) {
-                    readAndMark(safeIndex)
+                updateState {
+                    it.copy(
+                        todos = processedTodos.toImmutableList(),
+                        selectedItemIndex = safeIndex,
+                    )
                 }
             }.onFailure {
                 postEffect(
