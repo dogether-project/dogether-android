@@ -91,6 +91,7 @@ val viewModelModule = module {
     viewModel {
         MyCertInfoViewModel(
             getMyTodoListByDate = get(),
+            remindTodoUseCase = get(),
             savedStateHandle = get(),
         )
     }
@@ -98,6 +99,7 @@ val viewModelModule = module {
         MemberCertInfoViewModel(
             getMemberTodoHistory = get(),
             readTodoUseCase = get(),
+            remindTodoUseCase = get(),
             savedStateHandle = get()
         )
     }

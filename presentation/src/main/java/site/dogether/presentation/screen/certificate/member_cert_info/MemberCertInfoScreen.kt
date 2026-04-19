@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
@@ -42,6 +43,7 @@ import site.dogether.domain.model.todo.Todo
 import site.dogether.presentation.R
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.composables.BackButton
+import site.dogether.presentation.composables.CTAButton
 import site.dogether.presentation.composables.CertInfoRowItem
 import site.dogether.presentation.composables.LoadingDialog
 import site.dogether.presentation.composables.TopBar
@@ -287,6 +289,27 @@ private fun MemberCertInfoScreenContents(
                     }
                 }
             }
+
+            val currentTodo = uiState.todos[uiState.selectedItemIndex]
+            if (currentTodo.status == Todo.STATUS_CERTIFY_PENDING) {
+                CTAButton(
+                    modifier = Modifier
+                        .padding(top = 16.dp, bottom = 16.dp)
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    text = "인증 재촉하기",
+                    onClick = { onEvent(MemberCertInfoUiEvent.Click.OnClickRemind("TODO_CERTIFICATION")) }
+                )
+            } else if (currentTodo.status == Todo.STATUS_REVIEW_PENDING) {
+                CTAButton(
+                    modifier = Modifier
+                        .padding(top = 16.dp, bottom = 16.dp)
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    text = "검사 재촉하기",
+                    onClick = { onEvent(MemberCertInfoUiEvent.Click.OnClickRemind("TODO_CERTIFICATION_REVIEW")) }
+                )
+            }
         } else {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -334,4 +357,3 @@ private fun MemberCertInfoScreenContentsPreview() {
         onEvent = {}
     )
 }
-

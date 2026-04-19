@@ -98,4 +98,14 @@ interface TodoRepository {
      * @return 검사 대기 중인 인증 목록
      */
     suspend fun getPendingReviewCertifications(): Result<PendingReviewCertifications>
+
+    /**
+     * 투두 리마인드 (재촉하기)
+     * @param todoId 대상 투두 ID
+     * @param reminderType 리마인드 타입 ("CERTIFICATION" or "REVIEW")
+     */
+    suspend fun remindTodo(
+        todoId: Long,
+        reminderType: String
+    ): Result<Unit>
 }

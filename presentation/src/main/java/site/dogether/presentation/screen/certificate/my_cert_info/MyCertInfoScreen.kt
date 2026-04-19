@@ -320,6 +320,22 @@ private fun MyCertInfoScreenContents(
                                     onClick = { onEvent(MyCertInfoUiEvent.Click.OnClickCertificate) }
                                 )
                             }
+                        } else if (selectedTodo.status == Todo.STATUS_REVIEW_PENDING) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                            ) {
+                                CTAButton(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .align(BottomCenter)
+                                        .fillMaxWidth()
+                                        .height(50.dp),
+                                    text = "검사 재촉하기",
+                                    onClick = { onEvent(MyCertInfoUiEvent.Click.OnClickRemind("TODO_CERTIFICATION_REVIEW")) }
+                                )
+                            }
                         }
                     }
                 }

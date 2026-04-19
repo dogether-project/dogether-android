@@ -18,6 +18,8 @@ data class MemberCertInfoUiState(
 sealed interface MemberCertInfoUiEvent : UiEvent {
     sealed interface Click : MemberCertInfoUiEvent {
         data class OnClickItem(val index: Int) : Click
+
+        data class OnClickRemind(val reminderType: String) : Click
     }
 
     sealed interface Callback : MemberCertInfoUiEvent {

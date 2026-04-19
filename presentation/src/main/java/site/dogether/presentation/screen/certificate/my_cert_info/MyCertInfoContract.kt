@@ -21,6 +21,8 @@ sealed interface MyCertInfoUiEvent : UiEvent {
         data class OnClickItem(val index: Int) : Click
 
         data object OnClickCertificate : Click
+
+        data class OnClickRemind(val reminderType: String) : Click
     }
 
     sealed interface Callback : MyCertInfoUiEvent {
