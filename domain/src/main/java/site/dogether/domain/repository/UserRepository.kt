@@ -2,6 +2,7 @@ package site.dogether.domain.repository
 
 import site.dogether.domain.model.user.GroupStatistics
 import site.dogether.domain.model.user.ParticipatingInfo
+import site.dogether.domain.model.user.Profile
 import site.dogether.domain.model.user.UserInfo
 
 interface UserRepository {
@@ -29,4 +30,6 @@ interface UserRepository {
     suspend fun getGroupStatistics(groupId: Int): Result<GroupStatistics>
 
     suspend fun registerFcmToken(token: String): Result<Unit>
+
+    suspend fun getProfile(): Result<Profile>
 }

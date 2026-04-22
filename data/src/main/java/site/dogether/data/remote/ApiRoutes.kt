@@ -24,4 +24,5 @@ object ApiRoutes {
     const val NOTIFICATION_TOKENS = "v1/notification/tokens"
     const val PENDING_REVIEW_CERTIFICATIONS = "v1/todo-certifications/pending-review"
     fun remindTodo(todoId: Long): String = "v1/todos/$todoId/reminders"
+    const val GET_PROFILE = "v1/my/profile"
 }

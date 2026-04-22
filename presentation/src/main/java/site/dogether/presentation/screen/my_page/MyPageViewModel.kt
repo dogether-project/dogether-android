@@ -2,14 +2,14 @@ package site.dogether.presentation.screen.my_page
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import site.dogether.domain.use_case.user.GetUserInfoUseCase
+import site.dogether.domain.use_case.user.GetProfileUseCase
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
 import site.dogether.presentation.base.UiEvent
 import site.dogether.presentation.screen.error.model.Error
 
 class MyPageViewModel(
-    private val getUserInfoUseCase: GetUserInfoUseCase,
+    private val getProfileUseCase: GetProfileUseCase,
 ) : BaseViewModel<MyPageUiState>(MyPageUiState()) {
 
 
@@ -18,7 +18,7 @@ class MyPageViewModel(
 
         when (event) {
             MyPageUiEvent.OnStart -> {
-                getUserInfo()
+                getProfile()
             }
 
             is MyPageUiEvent.Click -> {
@@ -43,15 +43,15 @@ class MyPageViewModel(
         }
     }
 
-    private fun getUserInfo() {
+    private fun getProfile() {
         viewModelScope.launch {
-            getUserInfoUseCase().onSuccess { result ->
-                updateState { it.copy(userInfo = result) }
+            getProfileUseCase().onSuccess { result ->
+                updateState { it.copy(profile = result) }
             }.onFailure {
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
                         error = Error.LoadData,
-                        onPositive = { getUserInfo() }
+                        onPositive = { getProfile() }
                     )
                 )
             }

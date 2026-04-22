@@ -1,7 +1,6 @@
 package site.dogether.data.repository_impl
 
 import io.ktor.client.HttpClient
-import kotlin.io.encoding.Base64
 import kotlinx.serialization.json.Json
 import org.jetbrains.annotations.VisibleForTesting
 import site.dogether.data.local.DataStoreManager
@@ -13,6 +12,7 @@ import site.dogether.data.remote.model.req.user.KakaoLoginReq
 import site.dogether.data.remote.model.req.user.WithdrawReq
 import site.dogether.data.remote.model.res.user.CheckParticipatingResMapper
 import site.dogether.data.remote.model.res.user.GetGroupStatisticsResMapper
+import site.dogether.data.remote.model.res.user.ProfileResMapper
 import site.dogether.data.remote.model.res.user.UserInfoRes
 import site.dogether.data.remote.model.res.user.UserInfoResMapper
 import site.dogether.data.utils.LOGIN_TYPE
@@ -22,8 +22,10 @@ import site.dogether.data.utils.safePost
 import site.dogether.data.utils.safePostWithoutRes
 import site.dogether.domain.model.user.GroupStatistics
 import site.dogether.domain.model.user.ParticipatingInfo
+import site.dogether.domain.model.user.Profile
 import site.dogether.domain.model.user.UserInfo
 import site.dogether.domain.repository.UserRepository
+import kotlin.io.encoding.Base64
 
 class UserRepositoryImpl(
     private val dataStoreManager: DataStoreManager,
@@ -143,6 +145,13 @@ class UserRepositoryImpl(
         return httpClient.safePostWithoutRes<RegisterTokenReq>(
             apiRoute = ApiRoutes.NOTIFICATION_TOKENS,
             body = RegisterTokenReq(token = token)
+        )
+    }
+
+    override suspend fun getProfile(): Result<Profile> {
+        return httpClient.safeGet(
+            apiRoute = ApiRoutes.GET_PROFILE,
+            mapper = ProfileResMapper
         )
     }
 }

@@ -17,11 +17,13 @@ import site.dogether.domain.use_case.todo.GetMyTodosByDateUseCase
 import site.dogether.domain.use_case.todo.GetPendingReviewCertificationsUseCase
 import site.dogether.domain.use_case.todo.GetPresignedUrlsUseCase
 import site.dogether.domain.use_case.todo.ReadTodoUseCase
+import site.dogether.domain.use_case.todo.RemindTodoUseCase
 import site.dogether.domain.use_case.todo.ReviewTodoUseCase
 import site.dogether.domain.use_case.todo.UploadImageToS3UseCase
 import site.dogether.domain.use_case.user.CheckParticipatingUseCase
 import site.dogether.domain.use_case.user.GetGroupJoinCodeUseCase
 import site.dogether.domain.use_case.user.GetGroupStatisticsUseCase
+import site.dogether.domain.use_case.user.GetProfileUseCase
 import site.dogether.domain.use_case.user.GetUserInfoUseCase
 import site.dogether.domain.use_case.user.LoginWithKakaoUseCase
 import site.dogether.domain.use_case.user.LogoutUseCase
@@ -29,7 +31,6 @@ import site.dogether.domain.use_case.user.RegisterFcmTokenUseCase
 import site.dogether.domain.use_case.user.StoreGroupJoinCodeUseCase
 import site.dogether.domain.use_case.user.StoreUserInfoUseCase
 import site.dogether.domain.use_case.user.WithdrawUseCase
-import site.dogether.domain.use_case.todo.RemindTodoUseCase
 
 val useCaseModule = module {
     factory { LoginWithKakaoUseCase(repository = get()) }
@@ -61,4 +62,5 @@ val useCaseModule = module {
     factory { RegisterFcmTokenUseCase(repository = get()) }
     factory { GetPendingReviewCertificationsUseCase(repository = get()) }
     factory { RemindTodoUseCase(repository = get()) }
+    factory { GetProfileUseCase(repository = get()) }
 }

@@ -16,11 +16,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import site.dogether.presentation.R
@@ -78,6 +82,8 @@ private fun MyPageScreenContents(
     uiState: MyPageUiState,
     onEvent: (UiEvent) -> Unit,
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -88,85 +94,86 @@ private fun MyPageScreenContents(
             centerText = stringResource(R.string.title_my_page)
         )
 
-        uiState.userInfo?.let { userInfo ->
-            Row(
-                modifier = Modifier
-                    .height(64.dp)
-                    .padding(top = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_profile),
-                    tint = Color.Unspecified,
-                    contentDescription = "icon_profile"
-                )
+        Row(
+            modifier = Modifier
+                .height(64.dp)
+                .padding(top = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                modifier = Modifier,
+                model = ImageRequest.Builder(context)
+                    .data(uiState.profile.profileImageUrl)
+                    .build(),
+                contentScale = ContentScale.Inside,
+                contentDescription = "image_profile"
+            )
 
-                Text(
-                    modifier = Modifier.padding(start = 20.dp),
-                    text = userInfo.name,
-                    style = Head2_B.copy(lineHeightStyle = LineHeightStyle.Default),
-                    color = ColorTextDefault
-                )
-            }
+            Text(
+                modifier = Modifier.padding(start = 20.dp),
+                text = uiState.profile.name,
+                style = Head2_B.copy(lineHeightStyle = LineHeightStyle.Default),
+                color = ColorTextDefault
+            )
+        }
 
-            Column(
+        Column(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth()
+                .border(
+                    width = (1.5).dp,
+                    color = ColorBorderDisabled,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(vertical = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(R.drawable.img_dosik_my_page),
+                contentDescription = "image_dosik_my_page"
+            )
+
+            Text(
+                text = stringResource(R.string.body_my_page),
+                style = Body1_S,
+                color = ColorTextDefault
+            )
+
+            CTAButton(
                 modifier = Modifier
-                    .padding(top = 16.dp)
-                    .fillMaxWidth()
-                    .border(
-                        width = (1.5).dp,
-                        color = ColorBorderDisabled,
-                        shape = RoundedCornerShape(12.dp)
+                    .padding(
+                        top = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp
                     )
-                    .padding(vertical = 20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.img_dosik_my_page),
-                    contentDescription = "image_dosik_my_page"
-                )
+                    .fillMaxWidth()
+                    .height(50.dp),
+                radius = 8.dp,
+                text = stringResource(R.string.cta_button_navigate_to_statistics),
+                onClick = { onEvent(MyPageUiEvent.Click.OnClickStatistics) }
+            )
+        }
 
-                Text(
-                    text = stringResource(R.string.body_my_page),
-                    style = Body1_S,
-                    color = ColorTextDefault
-                )
+        Spacer(modifier = Modifier.height(16.dp))
 
-                CTAButton(
-                    modifier = Modifier
-                        .padding(
-                            top = 16.dp,
-                            start = 16.dp,
-                            end = 16.dp
-                        )
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    radius = 8.dp,
-                    text = stringResource(R.string.cta_button_navigate_to_statistics),
-                    onClick = { onEvent(MyPageUiEvent.Click.OnClickStatistics) }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            MENU_LIST.forEach { menu ->
-                MenuItem(
-                    menu = menu,
-                    tint = when (menu) {
-                        Menu.CertificationList -> ColorIconPrimary
-                        else -> ColorIconElevated
-                    },
-                    onClick = {
-                        onEvent(
-                            when (menu) {
-                                Menu.CertificationList -> MyPageUiEvent.Click.OnClickCertificationList
-                                Menu.GroupManagement -> MyPageUiEvent.Click.OnClickGroupManagement
-                                Menu.Settings -> MyPageUiEvent.Click.OnClickSettings
-                            }
-                        )
-                    }
-                )
-            }
+        MENU_LIST.forEach { menu ->
+            MenuItem(
+                menu = menu,
+                tint = when (menu) {
+                    Menu.CertificationList -> ColorIconPrimary
+                    else -> ColorIconElevated
+                },
+                onClick = {
+                    onEvent(
+                        when (menu) {
+                            Menu.CertificationList -> MyPageUiEvent.Click.OnClickCertificationList
+                            Menu.GroupManagement -> MyPageUiEvent.Click.OnClickGroupManagement
+                            Menu.Settings -> MyPageUiEvent.Click.OnClickSettings
+                        }
+                    )
+                }
+            )
         }
     }
 }

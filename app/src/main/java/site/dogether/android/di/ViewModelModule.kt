@@ -66,7 +66,7 @@ val viewModelModule = module {
             getMyTodoSpecificDate = get()
         )
     }
-    viewModel { MyPageViewModel(getUserInfoUseCase = get()) }
+    viewModel { MyPageViewModel(getProfileUseCase = get()) }
     viewModel {
         StatisticsViewModel(
             getJoiningGroupsUseCase = get(),
