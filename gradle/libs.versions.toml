@@ -1,5 +1,5 @@
 [versions]
-version-code = "1"
+version-code = "5"
 version-name = "1.1.0"
 
 accompanistPermissions = "0.37.3"

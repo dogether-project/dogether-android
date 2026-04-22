@@ -6,7 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,7 +73,6 @@ import site.dogether.presentation.theme.Grey600
 import site.dogether.presentation.theme.Head1_B
 import site.dogether.presentation.utils.CollectEffect
 import site.dogether.presentation.utils.ScreenPreview
-import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -139,7 +141,7 @@ private fun StatisticsContents(
     uiState: StatisticsUiState,
     onEvent: (UiEvent) -> Unit,
 ) {
-    val (group, certificationPeriods, ranking, stats) = uiState.groupStatistics
+    val (group, _, ranking, stats) = uiState.groupStatistics
 
     Box(modifier = Modifier.fillMaxWidth()) {
         Column {
@@ -251,44 +253,109 @@ private fun StatisticsContents(
 
                 Row(
                     modifier = Modifier
-                        .padding(top = 6.dp)
-                        .weight(1f),
+                        .padding(end = 36.dp)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     val graphHeight = 180
-                    val heightPerPercent = graphHeight / 100f
+                    val maxSlots = 4
+                    val heightPerTodo = graphHeight / MaxDailyTodoCount.toFloat()
 
-                    certificationPeriods.forEachIndexed { index, certificationStatistics ->
-                        Box {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Box(
-                                    modifier = Modifier
-                                        .clip(
-                                            RoundedCornerShape(
-                                                topStart = 10.dp,
-                                                topEnd = 10.dp
-                                            )
-                                        )
-                                        .width(50.dp)
-                                        .height(graphHeight.dp)
-                                        .background(Grey600)
-                                        .hatch(Grey500)
-                                ) {
+                    repeat(maxSlots) { index ->
+                        val certificationStatistics = uiState.displayCertificationPeriods.getOrNull(index)
+
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Box(
+                                modifier = Modifier
+                                    .height(graphHeight.dp)
+                                    .width(50.dp),
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
+                                if (certificationStatistics != null) {
+                                    val currentBarHeight = if (uiState.isStatisticsLoading) graphHeight.dp
+                                    else (certificationStatistics.createdCount * heightPerTodo).dp
+
                                     Box(
                                         modifier = Modifier
-                                            .align(Alignment.BottomCenter)
-                                            .clip(
-                                                RoundedCornerShape(
-                                                    topStart = 10.dp,
-                                                    topEnd = 10.dp
-                                                )
-                                            )
                                             .width(50.dp)
-                                            .height((certificationStatistics.certificationRate / heightPerPercent).roundToInt().dp)
-                                            .background(ColorBgPrimary)
-                                    )
-                                }
+                                            .height(currentBarHeight)
+                                            .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                                            .background(Grey600)
+                                            .hatch(Grey500)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .align(Alignment.BottomCenter)
+                                                .fillMaxWidth()
+                                                .height((certificationStatistics.certificatedCount * heightPerTodo).dp)
+                                                .background(ColorBgPrimary)
+                                        )
+                                    }
 
+                                    if (index == uiState.displayCertificationPeriods.lastIndex) {
+                                        Box(
+                                            modifier = Modifier
+                                                .align(Alignment.BottomCenter)
+                                                .offset(y = -currentBarHeight)
+                                                .wrapContentWidth(unbounded = true, align = Alignment.CenterHorizontally)
+                                        ) {
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                modifier = Modifier
+                                                    .width(IntrinsicSize.Max)
+                                                    .offset(y = 6.5.dp)
+                                            ) {
+                                                Text(
+                                                    modifier = Modifier
+                                                        .background(
+                                                            color = ColorBgPrimary,
+                                                            shape = RoundedCornerShape(16.dp)
+                                                        )
+                                                        .padding(horizontal = 10.dp, vertical = 4.5.dp),
+                                                    text = stringResource(R.string.statistics_description_achieve_ratio, uiState.groupStatistics.certificationPeriods[index].certificationRate),
+                                                    style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.Both)),
+                                                    color = ColorTextDefault,
+                                                    softWrap = false
+                                                )
+
+                                                Canvas(
+                                                    modifier = Modifier
+                                                        .width(8.dp)
+                                                        .height(6.dp)
+                                                ) {
+                                                    val path = Path().apply {
+                                                        moveTo(0f, 0f)
+                                                        lineTo(size.width, 0f)
+                                                        lineTo(size.width / 2f, size.height)
+                                                        close()
+                                                    }
+                                                    drawPath(path = path, color = ColorBgPrimary)
+                                                }
+
+                                                Box(
+                                                    modifier = Modifier
+                                                        .padding(top = 2.dp)
+                                                        .clip(CircleShape)
+                                                        .size(13.dp)
+                                                        .background(ColorBgInverse)
+                                                ) {
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .align(Alignment.Center)
+                                                            .clip(CircleShape)
+                                                            .size(9.dp)
+                                                            .background(ColorBgPrimary)
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    Spacer(modifier = Modifier.size(50.dp, graphHeight.dp))
+                                }
+                            }
+
+                            if (certificationStatistics != null) {
                                 Text(
                                     modifier = Modifier
                                         .padding(top = 10.dp)
@@ -296,73 +363,15 @@ private fun StatisticsContents(
                                             condition = uiState.isStatisticsLoading,
                                             widthDp = 50.dp
                                         ),
-                                    text = "${certificationPeriods[index].day}${stringResource(R.string.unit_day_passed)}",
+                                    text = "${certificationStatistics.day}${stringResource(R.string.unit_day_passed)}",
                                     style = Body2_S,
                                     color = ColorTextDefault
                                 )
-                            }
-
-                            if (index == certificationPeriods.lastIndex) {
-                                Column(
-                                    modifier = Modifier
-                                        .align(Alignment.TopCenter)
-                                        .width(100.dp) // 달성률 숫자 구성에 따라 전체 Column 의 width 가 변경되는 문제를 방지하기 위해 충분히 큰 값 설정한 뒤 중앙 정렬
-                                        .offset( // 그래프 막대 상단 중앙에 인디케이터 고정
-                                            x = -(25).dp,
-                                            y = -(44).dp
-                                        ),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        modifier = Modifier
-                                            .background(
-                                                color = ColorBgPrimary,
-                                                shape = RoundedCornerShape(16.dp)
-                                            )
-                                            .padding(
-                                                horizontal = 10.dp,
-                                                vertical = 4.5.dp
-                                            ),
-                                        text = stringResource(R.string.statistics_description_achieve_ratio, 12),
-                                        style = Body2_S.copy(lineHeightStyle = LineHeightStyle.Default.copy(trim = LineHeightStyle.Trim.Both)),
-                                        color = ColorTextDefault
-                                    )
-
-                                    Canvas(
-                                        modifier = Modifier
-                                            .width(8.dp)
-                                            .height(6.dp)
-                                    ) {
-                                        val path = Path().apply {
-                                            moveTo(0f, 0f)
-
-                                            lineTo(size.width, 0f)
-                                            lineTo(size.width / 2f, size.height)
-                                            close()
-                                        }
-
-                                        drawPath(
-                                            path = path,
-                                            color = ColorBgPrimary
-                                        )
-                                    }
-
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(top = 4.dp)
-                                            .clip(CircleShape)
-                                            .size(13.dp)
-                                            .background(ColorBgInverse)
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .align(Alignment.Center)
-                                                .clip(CircleShape)
-                                                .size(9.dp)
-                                                .background(ColorBgPrimary)
-                                        )
-                                    }
-                                }
+                            } else {
+                                Spacer(modifier = Modifier
+                                    .padding(top = 10.dp)
+                                    .height(20.dp)
+                                    .width(50.dp))
                             }
                         }
                     }

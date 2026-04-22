@@ -5,6 +5,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import site.dogether.domain.use_case.group.GetJoiningGroupsUseCase
 import site.dogether.domain.use_case.user.GetGroupStatisticsUseCase
+import site.dogether.domain.model.user.GroupCertificationStatistics
 import site.dogether.presentation.Screen
 import site.dogether.presentation.base.BaseViewModel
 import site.dogether.presentation.base.UiEffect
@@ -92,7 +93,18 @@ class StatisticsViewModel(
             updateState { it.copy(isStatisticsLoading = true) }
 
             getGroupStatisticsUseCase(groupId).onSuccess { groupStatistics ->
-                updateState { it.copy(groupStatistics = groupStatistics) }
+                val certificationPeriods = groupStatistics.certificationPeriods
+                val lastDay = certificationPeriods.lastOrNull()?.day ?: 0
+                val displayCertificationPeriods = (lastDay - 3..lastDay).filter { it > 0 }.map { currentDay ->
+                    certificationPeriods.find { it.day == currentDay } ?: GroupCertificationStatistics(day = currentDay)
+                }.toImmutableList()
+
+                updateState {
+                    it.copy(
+                        groupStatistics = groupStatistics,
+                        displayCertificationPeriods = displayCertificationPeriods
+                    )
+                }
             }.onFailure {
                 postEffect(
                     UiEffect.NavigateToErrorWithCallback(
